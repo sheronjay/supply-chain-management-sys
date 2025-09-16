@@ -1,0 +1,180 @@
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 250px;
+  background-color: #2c3e50;
+  color: white;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  z-index: 1000;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #34495e;
+  height: 60px;
+  box-sizing: border-box;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  margin-right: 10px;
+}
+
+.toggle-btn:hover {
+  background-color: #34495e;
+}
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  width: 20px;
+  height: 15px;
+  position: relative;
+}
+
+.hamburger span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background-color: white;
+  margin-bottom: 3px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.hamburger span:last-child {
+  margin-bottom: 0;
+}
+
+.hamburger.collapsed span:first-child {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.collapsed span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.collapsed span:last-child {
+  transform: rotate(-45deg) translate(7px, -6px);
+}
+
+.sidebar-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar.collapsed .sidebar-title {
+  opacity: 0;
+}
+
+.sidebar-nav {
+  padding: 1rem 0;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li {
+  margin-bottom: 0.5rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.2s, padding 0.3s;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  background-color: #34495e;
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+  min-width: 24px;
+  text-align: center;
+  margin-right: 12px;
+}
+
+.nav-text {
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar.collapsed .nav-text,
+.sidebar.collapsed .sidebar-title {
+  display: none;             /* was opacity:0; now removed from layout */
+}
+
+.sidebar.collapsed .nav-item {
+  /* kill any side padding/gaps so icon can truly center */
+  padding: 0;                    /* <- important */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar.collapsed .nav-icon {
+  /* give the icon the full sidebar lane and center it */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;                   /* same as collapsed sidebar width */
+  height: 48px;                  /* click target height (tweak if you like) */
+  margin: 0;                     /* remove old spacing */
+  min-width: 0;                  /* overrides the earlier min-width:24px */
+  text-align: center;
+}
+
+/* reponsive */
+/* Responsive: keep sidebar visible, auto-compact at small widths */
+@media (max-width: 768px) {
+  /* Never slide it away */
+  .sidebar {
+    transform: none;            /* override the translate */
+    width: 70px;                /* force compact width */
+  }
+
+  /* Mirror collapsed visuals even if the class isn't set */
+  .sidebar .sidebar-title,
+  .sidebar .nav-text {
+    opacity: 0;
+  }
+
+  .sidebar .nav-item {
+    justify-content: center;
+    padding: 0.75rem;
+  }
+
+  .sidebar .nav-icon {
+    margin-right: 0;
+  }
+}
