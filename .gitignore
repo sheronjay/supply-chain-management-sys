@@ -1,4 +1,4 @@
-# Logs
+git rebase origin/main# Logs
 logs
 *.log
 npm-debug.log*
