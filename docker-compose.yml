@@ -1,0 +1,29 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: supply_db
+    environment:
+      MYSQL_ROOT_PASSWORD: group#19
+      MYSQL_DATABASE: supplychain
+      MYSQL_USER: group_19
+      MYSQL_PASSWORD: group#19
+    ports:
+      - "3307:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "group_19", "-pgroup#19"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  adminer:
+    image: adminer
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+
+volumes:
+  db-data:
