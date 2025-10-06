@@ -4,7 +4,7 @@ const navItems = [
   { key: 'Dashboard', label: 'Dashboard', icon: 'dashboard' },
   { key: 'Orders', label: 'Orders', icon: 'orders' },
   { key: 'TrainSchedule', label: 'Train Schedule', icon: 'train' },
-  { key: 'VehicleUtilization', label: 'Vehicle Utilization', icon: 'vehicle' },
+  /*{ key: 'VehicleUtilization', label: 'Vehicle Utilization', icon: 'vehicle' },*/
   { key: 'ReportOverview', label: 'Report Overview', icon: 'report' },
   { key: 'UserManagement', label: 'User Management', icon: 'users' },
 ]
@@ -44,15 +44,15 @@ const Icon = ({ type }) => {
           <circle cx="14" cy="16.5" r="1.5" />
         </svg>
       )
-    case 'vehicle':
-      return (
-        <svg viewBox="0 0 24 24" className="sidebar__icon" aria-hidden>
-          <path d="M3 8h9v7H3z" />
-          <path d="M12 11h4l3 4v3h-2.2" />
-          <circle cx="7.5" cy="18" r="1.8" />
-          <circle cx="16.5" cy="18" r="1.8" />
-        </svg>
-      )
+    // case 'vehicle':
+    //   return (
+    //     <svg viewBox="0 0 24 24" className="sidebar__icon" aria-hidden>
+    //       <path d="M3 8h9v7H3z" />
+    //       <path d="M12 11h4l3 4v3h-2.2" />
+    //       <circle cx="7.5" cy="18" r="1.8" />
+    //       <circle cx="16.5" cy="18" r="1.8" />
+    //     </svg>
+    //   )
     case 'report':
       return (
         <svg viewBox="0 0 24 24" className="sidebar__icon" aria-hidden>

@@ -31,11 +31,11 @@ const pageConfig = {
     subtitle: 'Train Schedule',
     element: <TrainSchedule />,
   },
-  VehicleUtilization: {
-    title: 'Vehicle Utilization',
-    subtitle: 'Vehicle Utilization',
-    element: createPlaceholder('Vehicle Utilization'),
-  },
+  // VehicleUtilization: {
+  //   title: 'Vehicle Utilization',
+  //   subtitle: 'Vehicle Utilization',
+  //   element: createPlaceholder('Vehicle Utilization'),
+  // },
   ReportOverview: {
     title: 'Report Overview',
     subtitle: 'Report Overview',
