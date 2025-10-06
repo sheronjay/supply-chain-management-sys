@@ -2,6 +2,10 @@ import { useMemo, useState } from 'react'
 import Sidebar from './components/Sidebar/Sidebar'
 import TopBar from './components/TopBar/TopBar'
 import Dashboard from './pages/Dashboard/Dashboard'
+import Orders from './pages/Orders/Orders'
+import TrainSchedule from './pages/TrainSchedule/TrainSchedule'
+import ReportOverview from './pages/ReportOverview/ReportOverview'
+import UserManagement from './pages/UserManagement/UserManagement'
 import './App.css'
 
 const createPlaceholder = (label) => (
@@ -20,12 +24,12 @@ const pageConfig = {
   Orders: {
     title: 'Orders',
     subtitle: 'Orders',
-    element: createPlaceholder('Orders'),
+    element: <Orders />,
   },
   TrainSchedule: {
     title: 'Train Schedule',
     subtitle: 'Train Schedule',
-    element: createPlaceholder('Train Schedule'),
+    element: <TrainSchedule />,
   },
   VehicleUtilization: {
     title: 'Vehicle Utilization',
@@ -35,12 +39,12 @@ const pageConfig = {
   ReportOverview: {
     title: 'Report Overview',
     subtitle: 'Report Overview',
-    element: createPlaceholder('Report Overview'),
+    element: <ReportOverview />,
   },
   UserManagement: {
     title: 'User Management',
     subtitle: 'User Management',
-    element: createPlaceholder('User Management'),
+    element: <UserManagement />,
   },
   Settings: {
     title: 'Settings',

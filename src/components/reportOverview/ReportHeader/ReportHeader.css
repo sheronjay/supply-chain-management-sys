@@ -1,0 +1,16 @@
+.report-overview__header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.report-overview__header h2 {
+  margin: 0;
+  font-size: 28px;
+  color: #0f172a;
+}
+
+.report-overview__header p {
+  margin: 0;
+  color: #64748b;
+}

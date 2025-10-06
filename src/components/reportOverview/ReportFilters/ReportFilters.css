@@ -1,0 +1,15 @@
+.report-overview__filters {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.report-overview__filter {
+  border: 1px solid #cbd5f5;
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  color: #1e293b;
+  font-weight: 500;
+  cursor: pointer;
+}
