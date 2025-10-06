@@ -1,0 +1,55 @@
+.train-schedule__alerts {
+  display: grid;
+  gap: 16px;
+}
+
+.train-schedule__alert {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 18px 22px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.05);
+}
+
+.train-schedule__alert-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 6px;
+}
+
+.train-schedule__alert h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  color: #0f172a;
+}
+
+.train-schedule__alert p {
+  margin: 0;
+  color: #475569;
+  font-size: 14px;
+}
+
+.train-schedule__alert--warning .train-schedule__alert-indicator {
+  background: #f59e0b;
+}
+
+.train-schedule__alert--error .train-schedule__alert-indicator {
+  background: #ef4444;
+}
+
+.train-schedule__alert--warning {
+  border-left: 6px solid rgba(245, 158, 11, 0.4);
+}
+
+.train-schedule__alert--error {
+  border-left: 6px solid rgba(239, 68, 68, 0.4);
+}
+
+@media (max-width: 640px) {
+  .train-schedule__alert {
+    flex-direction: column;
+  }
+}
