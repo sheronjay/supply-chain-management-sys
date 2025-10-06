@@ -1,3 +1,5 @@
+import './Sidebar.css'
+
 const navItems = [
   { key: 'Dashboard', label: 'Dashboard', icon: 'dashboard' },
   { key: 'Orders', label: 'Orders', icon: 'orders' },

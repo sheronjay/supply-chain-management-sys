@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
-import Sidebar from './components/Sidebar.jsx'
-import TopBar from './components/TopBar.jsx'
-import Dashboard from './pages/Dashboard.jsx'
+import Sidebar from './components/Sidebar/Sidebar'
+import TopBar from './components/TopBar/TopBar'
+import Dashboard from './pages/Dashboard/Dashboard'
 import './App.css'
 
 const createPlaceholder = (label) => (

@@ -1,4 +1,5 @@
-import { buildLinePath, createPoints } from './chartUtils'
+import './SatisfactionCard.css'
+import { buildLinePath, createPoints } from '../utils/chartUtils'
 
 const SatisfactionCard = ({ satisfaction }) => {
   const smallChartWidth = 320

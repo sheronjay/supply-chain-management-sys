@@ -1,4 +1,5 @@
-import { buildAreaPath, buildLinePath, createPoints } from './chartUtils'
+import './OrderHistoryCard.css'
+import { buildAreaPath, buildLinePath, createPoints } from '../utils/chartUtils'
 
 const OrderHistoryCard = ({ history }) => {
   const chartWidth = 620
