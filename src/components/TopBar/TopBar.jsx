@@ -1,3 +1,5 @@
+import './TopBar.css'
+
 const SearchIcon = () => (
   <svg viewBox="0 0 24 24" aria-hidden className="topbar__icon">
     <circle cx="11" cy="11" r="6.5" />

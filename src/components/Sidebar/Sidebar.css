@@ -1,0 +1,116 @@
+.sidebar {
+  width: 264px;
+  background: #ffffff;
+  border-right: 1px solid #e6ecf5;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.05);
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar__brand-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #6953fe, #7f8eff);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.sidebar__brand-text h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.sidebar__brand-text span {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar__bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar__nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: none;
+  background: transparent;
+  color: #4b5563;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 12px 16px;
+  border-radius: 14px;
+  transition: background 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+}
+
+.sidebar__icon {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.sidebar__nav-item--active {
+  background: linear-gradient(135deg, rgba(103, 89, 255, 0.18), rgba(103, 89, 255, 0.05));
+  color: #3d38ce;
+}
+
+.sidebar__nav-item:hover {
+  background: rgba(103, 89, 255, 0.08);
+  color: #3d38ce;
+}
+
+.sidebar__nav-item--secondary {
+  color: #64748b;
+}
+
+.sidebar__nav-item--secondary:hover {
+  background: rgba(15, 23, 42, 0.04);
+  color: #334155;
+}
+
+@media (max-width: 960px) {
+  .sidebar {
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+  }
+
+  .sidebar__nav,
+  .sidebar__bottom {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .sidebar__nav-item {
+    padding: 10px 12px;
+  }
+}

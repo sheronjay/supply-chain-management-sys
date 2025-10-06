@@ -1,7 +1,8 @@
-import AlertsCard from '../components/dashboard/AlertsCard'
-import OrderHistoryCard from '../components/dashboard/OrderHistoryCard'
-import SatisfactionCard from '../components/dashboard/SatisfactionCard'
-import SummaryCards from '../components/dashboard/SummaryCards'
+import './Dashboard.css'
+import AlertsCard from '../../components/dashboard/AlertsCard/AlertsCard'
+import OrderHistoryCard from '../../components/dashboard/OrderHistoryCard/OrderHistoryCard'
+import SatisfactionCard from '../../components/dashboard/SatisfactionCard/SatisfactionCard'
+import SummaryCards from '../../components/dashboard/SummaryCards/SummaryCards'
 
 const summaryCards = [
   {

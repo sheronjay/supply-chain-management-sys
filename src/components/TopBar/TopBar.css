@@ -1,0 +1,137 @@
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 20px 28px;
+  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.06);
+}
+
+.topbar__title h1 {
+  margin: 4px 0 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.topbar__subtitle {
+  margin: 0;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #9ca3af;
+}
+
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.topbar__search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f4f6fc;
+  border-radius: 18px;
+  padding: 10px 16px;
+}
+
+.topbar__search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.topbar__search input::placeholder {
+  color: #9ca3af;
+}
+
+.topbar__icon {
+  width: 18px;
+  height: 18px;
+  stroke: #6b7280;
+  stroke-width: 1.8;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.topbar__pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: #f4f6fc;
+  padding: 10px 16px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  color: #374151;
+  cursor: pointer;
+}
+
+.topbar__icon-button {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  border: none;
+  background: #f4f6fc;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.topbar__indicator {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff6b6b, #f43f5e);
+}
+
+.topbar__profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar__avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fcd34d, #f97316);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+}
+
+.topbar__name {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.topbar__role {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .topbar__actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}

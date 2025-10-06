@@ -1,0 +1,70 @@
+.alerts__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.alerts__item {
+  display: flex;
+  gap: 14px;
+  border-radius: 18px;
+  padding: 16px;
+  align-items: flex-start;
+}
+
+.alerts__content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.alerts__status {
+  min-width: 62px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.alerts__title {
+  margin: 0 0 6px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.alerts__description {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.alerts__item--warning {
+  background: rgba(254, 226, 226, 0.5);
+}
+
+.alerts__item--warning .alerts__status {
+  background: rgba(248, 113, 113, 0.2);
+  color: #b91c1c;
+}
+
+.alerts__item--caution {
+  background: rgba(254, 243, 199, 0.5);
+}
+
+.alerts__item--caution .alerts__status {
+  background: rgba(251, 191, 36, 0.2);
+  color: #b45309;
+}
+
+.alerts__item--positive {
+  background: rgba(209, 250, 229, 0.5);
+}
+
+.alerts__item--positive .alerts__status {
+  background: rgba(52, 211, 153, 0.2);
+  color: #047857;
+}
