@@ -23,7 +23,7 @@ const summaryCards = [
   },
   {
     id: 'deliveries',
-    title: 'On-Time Delivery',
+    title: 'Completed Deliveries',
     value: '97.2%',
     change: '+2.1% vs target',
     hint: 'Delivered on schedule',
