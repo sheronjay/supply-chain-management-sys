@@ -207,4 +207,317 @@ CREATE TABLE IF NOT EXISTS admins (
   CONSTRAINT uq_admins_email UNIQUE (email)
 ) ENGINE=InnoDB;
 
+-- =========================
+-- Core reference data
+-- =========================
+INSERT INTO stores (store_id, city_id, station_id, address, type, is_open) VALUES
+('ST-KDY-01','Kandy','SLR-KDY','No.12 William Gopallawa Mawatha, Kandy','Warehouse',1),
+('ST-CMB-01','Colombo','SLR-CMBF','No.1 Olcott Mawatha, Colombo 11','Regional Store',1),
+('ST-NGO-01','Negombo','SLR-NGO','No.233 Chilaw Rd, Negombo','Regional Store',1),
+('ST-GAL-01','Galle','SLR-GAL','No.45 Rampart Rd, Galle','Regional Store',1),
+('ST-MAT-01','Matara','SLR-MAT','No.88 Beach Rd, Matara','Regional Store',1),
+('ST-JAF-01','Jaffna','SLR-JAF','No.20 KKS Rd, Jaffna','Regional Store',1),
+('ST-TRI-01','Trincomalee','SLR-TRI','No.17 Dockyard Rd, Trincomalee','Regional Store',1),
+('ST-KDY-02','Kandy','SLR-KDY','No.5 Peradeniya Rd, Kandy','Retail',1);
+
+INSERT INTO trains (train_id, train_name) VALUES
+('TRN-UD1','Udarata Cargo 1'),
+('TRN-CST','Coastal Cargo'),
+('TRN-NOR','Northern Cargo'),
+('TRN-EAS','Eastern Cargo');
+
+INSERT INTO trucks (truck_id, store_id, reg_number, used_hours, availability) VALUES
+('TRK-001','ST-CMB-01','WP-NA-1234', 812.50,1),
+('TRK-002','ST-NGO-01','WP-KK-5678', 420.00,1),
+('TRK-003','ST-GAL-01','SP-PA-2345', 355.75,1),
+('TRK-004','ST-MAT-01','SP-KM-9876', 602.30,1),
+('TRK-005','ST-JAF-01','NP-GH-1122', 190.00,1),
+('TRK-006','ST-TRI-01','EP-TR-3344', 260.50,1),
+('TRK-007','ST-CMB-01','WP-CB-8899', 120.00,1),
+('TRK-008','ST-NGO-01','WP-NG-6611', 205.90,1),
+('TRK-009','ST-GAL-01','SP-GL-7788', 410.25,1),
+('TRK-010','ST-MAT-01','SP-MT-4455', 140.60,1);
+
+INSERT INTO vehicles (vehicle_id, vehicle_type, vehicle_status, register_number) VALUES
+('VEH-001','Truck',1,'WP-NA-1234'),
+('VEH-002','Truck',1,'WP-KK-5678'),
+('VEH-003','Truck',1,'SP-PA-2345'),
+('VEH-004','Truck',1,'SP-KM-9876'),
+('VEH-005','Truck',1,'NP-GH-1122'),
+('VEH-006','Truck',1,'EP-TR-3344'),
+('VEH-007','Truck',1,'WP-CB-8899'),
+('VEH-008','Truck',1,'WP-NG-6611'),
+('VEH-009','Truck',1,'SP-GL-7788'),
+('VEH-010','Truck',1,'SP-MT-4455');
+
+-- =========================
+-- Train operations
+-- =========================
+INSERT INTO train_schedules (trip_id, day_date, start_time, train_id, end_store_id) VALUES
+('TRIP-2025-07-01-CMB','2025-07-01','06:00:00','TRN-UD1','ST-CMB-01'),
+('TRIP-2025-07-02-NGO','2025-07-02','06:00:00','TRN-UD1','ST-NGO-01'),
+('TRIP-2025-07-03-GAL','2025-07-03','06:00:00','TRN-CST','ST-GAL-01'),
+('TRIP-2025-07-04-MAT','2025-07-04','06:00:00','TRN-CST','ST-MAT-01'),
+('TRIP-2025-07-05-JAF','2025-07-05','05:30:00','TRN-NOR','ST-JAF-01'),
+('TRIP-2025-07-06-TRI','2025-07-06','05:30:00','TRN-EAS','ST-TRI-01'),
+('TRIP-2025-08-01-CMB','2025-08-01','06:00:00','TRN-UD1','ST-CMB-01'),
+('TRIP-2025-08-03-GAL','2025-08-03','06:00:00','TRN-CST','ST-GAL-01'),
+('TRIP-2025-08-05-JAF','2025-08-05','05:30:00','TRN-NOR','ST-JAF-01'),
+('TRIP-2025-08-07-TRI','2025-08-07','05:30:00','TRN-EAS','ST-TRI-01'),
+('TRIP-2025-09-01-CMB','2025-09-01','06:00:00','TRN-UD1','ST-CMB-01'),
+('TRIP-2025-09-04-MAT','2025-09-04','06:00:00','TRN-CST','ST-MAT-01');
+
+INSERT INTO destinations (destination_id, trip_id, store_id, arrival, departure) VALUES
+('DST-0001','TRIP-2025-07-01-CMB','ST-KDY-01','05:40','06:00'),
+('DST-0002','TRIP-2025-07-01-CMB','ST-CMB-01','08:30','09:00'),
+
+('DST-0003','TRIP-2025-07-02-NGO','ST-KDY-01','05:40','06:00'),
+('DST-0004','TRIP-2025-07-02-NGO','ST-NGO-01','08:00','08:15'),
+
+('DST-0005','TRIP-2025-07-03-GAL','ST-KDY-01','05:40','06:00'),
+('DST-0006','TRIP-2025-07-03-GAL','ST-GAL-01','09:45','10:00'),
+
+('DST-0007','TRIP-2025-07-04-MAT','ST-KDY-01','05:40','06:00'),
+('DST-0008','TRIP-2025-07-04-MAT','ST-MAT-01','10:30','10:45'),
+
+('DST-0009','TRIP-2025-07-05-JAF','ST-KDY-01','05:10','05:30'),
+('DST-0010','TRIP-2025-07-05-JAF','ST-JAF-01','12:15','12:45'),
+
+('DST-0011','TRIP-2025-07-06-TRI','ST-KDY-01','05:10','05:30'),
+('DST-0012','TRIP-2025-07-06-TRI','ST-TRI-01','11:20','11:40'),
+
+('DST-0013','TRIP-2025-08-01-CMB','ST-KDY-01','05:40','06:00'),
+('DST-0014','TRIP-2025-08-01-CMB','ST-CMB-01','08:30','08:50'),
+
+('DST-0015','TRIP-2025-08-03-GAL','ST-KDY-01','05:40','06:00'),
+('DST-0016','TRIP-2025-08-03-GAL','ST-GAL-01','09:40','10:00'),
+
+('DST-0017','TRIP-2025-08-05-JAF','ST-KDY-01','05:10','05:30'),
+('DST-0018','TRIP-2025-08-05-JAF','ST-JAF-01','12:05','12:25'),
+
+('DST-0019','TRIP-2025-08-07-TRI','ST-KDY-01','05:10','05:30'),
+('DST-0020','TRIP-2025-08-07-TRI','ST-TRI-01','11:25','11:45'),
+
+('DST-0021','TRIP-2025-09-01-CMB','ST-KDY-01','05:40','06:00'),
+('DST-0022','TRIP-2025-09-01-CMB','ST-CMB-01','08:30','08:50'),
+
+('DST-0023','TRIP-2025-09-04-MAT','ST-KDY-01','05:40','06:00'),
+('DST-0024','TRIP-2025-09-04-MAT','ST-MAT-01','10:25','10:45');
+
+-- =========================
+-- Routing (10 routes minimum)
+-- =========================
+INSERT INTO truck_routes (route_id, truck_id, end_location, distance_km, start_location) VALUES
+('R-0001','TRK-001','Colombo 11 (Pettah Wholesale)', 8.50,'ST-CMB-01'),
+('R-0002','TRK-007','Colombo 05 (Thimbirigasyaya)',12.20,'ST-CMB-01'),
+('R-0003','TRK-002','Negombo Kochchikade', 18.30,'ST-NGO-01'),
+('R-0004','TRK-008','Negombo Katana', 14.10,'ST-NGO-01'),
+('R-0005','TRK-003','Galle Unawatuna', 7.80,'ST-GAL-01'),
+('R-0006','TRK-009','Galle Hikkaduwa', 18.90,'ST-GAL-01'),
+('R-0007','TRK-004','Matara Weligama', 20.10,'ST-MAT-01'),
+('R-0008','TRK-010','Matara Hakmana', 16.70,'ST-MAT-01'),
+('R-0009','TRK-005','Jaffna Nallur', 6.40,'ST-JAF-01'),
+('R-0010','TRK-006','Trinco Uppuveli', 6.90,'ST-TRI-01');
+
+-- =========================
+-- Products
+-- =========================
+INSERT INTO products (product_id, product_name, unit_price, space_consumption_rate, stock_quantity, order_per_quarter) VALUES
+('PRD-DET-1KG','Detergent 1kg', 850.00,0.50, 1200, 900),
+('PRD-SHP-500','Shampoo 500ml', 950.00,0.30, 1500, 1100),
+('PRD-SOAP-100','Bath Soap 100g', 180.00,0.10, 5000, 4200),
+('PRD-TP-120','Toothpaste 120g', 320.00,0.12, 3000, 2100),
+('PRD-TEA-200','Ceylon Tea 200g', 700.00,0.25, 2200, 1600),
+('PRD-MLK-1L','UHT Milk 1L', 380.00,0.40, 2400, 1800),
+('PRD-BIS-200','Biscuits 200g', 250.00,0.15, 4000, 3000),
+('PRD-CLR-1L','Floor Cleaner 1L', 620.00,0.35, 1300, 900),
+('PRD-OFK-5L','Cooking Oil 5L', 2200.00,0.80, 800, 500),
+('PRD-RIC-10','Rice 10kg', 1500.00,1.20, 900, 600);
+
+-- =========================
+-- Customers
+-- =========================
+INSERT INTO customers (customer_id, email, phone_number, city, name) VALUES
+('CUST-0001','sunrise.wholesale@shop.lk','+94-11-2345678','Colombo','Sunrise Wholesale'),
+('CUST-0002','pettah.mart@shop.lk','+94-11-2233445','Colombo','Pettah Mart'),
+('CUST-0003','negombo.grocers@shop.lk','+94-31-2228888','Negombo','Negombo Grocers'),
+('CUST-0004','kochchikade.store@shop.lk','+94-31-2288999','Negombo','Kochchikade Store'),
+('CUST-0005','galle.rampart@shop.lk','+94-91-2244556','Galle','Rampart Super'),
+('CUST-0006','unawatuna.mini@shop.lk','+94-91-2255667','Galle','Unawatuna Mini Mart'),
+('CUST-0007','matara.center@shop.lk','+94-41-2233445','Matara','Matara Center'),
+('CUST-0008','weligama.fooda@shop.lk','+94-41-2277889','Matara','Fooda Weligama'),
+('CUST-0009','jaffna.corner@shop.lk','+94-21-2233001','Jaffna','Nallur Corner'),
+('CUST-0010','trinco.breeze@shop.lk','+94-26-2233556','Trincomalee','Breeze Stores'),
+('CUST-0011','thimbiri.mini@shop.lk','+94-11-2555000','Colombo','Thimbiri Mini Mart'),
+('CUST-0012','katana.shop@shop.lk','+94-31-2999000','Negombo','Katana Shop'),
+('CUST-0013','hikka.foodcity@shop.lk','+94-91-2777000','Galle','Hikka Food City'),
+('CUST-0014','hakmana.bargain@shop.lk','+94-41-2455000','Matara','Hakmana Bargain'),
+('CUST-0015','uppuveli.seaside@shop.lk','+94-26-2777333','Trincomalee','Uppuveli Seaside');
+
+-- =========================
+-- Orders (40 orders across Q3–Q4 2025)
+-- status: PLACED / SCHEDULED / DELIVERED
+-- =========================
+INSERT INTO orders (order_id, customer_id, store_id, route_id, ordered_date, total_price, status) VALUES
+('ORD-0001','CUST-0001','ST-CMB-01','R-0001','2025-07-02',  24300.00,'DELIVERED'),
+('ORD-0002','CUST-0002','ST-CMB-01','R-0001','2025-07-03',   9800.00,'DELIVERED'),
+('ORD-0003','CUST-0003','ST-NGO-01','R-0003','2025-07-04',  18650.00,'DELIVERED'),
+('ORD-0004','CUST-0004','ST-NGO-01','R-0004','2025-07-05',   7650.00,'DELIVERED'),
+('ORD-0005','CUST-0005','ST-GAL-01','R-0005','2025-07-06',  12800.00,'DELIVERED'),
+('ORD-0006','CUST-0006','ST-GAL-01','R-0005','2025-07-08',  10450.00,'DELIVERED'),
+('ORD-0007','CUST-0007','ST-MAT-01','R-0007','2025-07-09',  15200.00,'DELIVERED'),
+('ORD-0008','CUST-0008','ST-MAT-01','R-0007','2025-07-10',   8200.00,'DELIVERED'),
+('ORD-0009','CUST-0009','ST-JAF-01','R-0009','2025-07-11',   9150.00,'DELIVERED'),
+('ORD-0010','CUST-0010','ST-TRI-01','R-0010','2025-07-12',   8670.00,'DELIVERED'),
+('ORD-0011','CUST-0011','ST-CMB-01','R-0002','2025-08-01',   7350.00,'DELIVERED'),
+('ORD-0012','CUST-0001','ST-CMB-01','R-0001','2025-08-02',  19850.00,'DELIVERED'),
+('ORD-0013','CUST-0003','ST-NGO-01','R-0004','2025-08-03',   9600.00,'DELIVERED'),
+('ORD-0014','CUST-0004','ST-NGO-01','R-0003','2025-08-04',  14150.00,'DELIVERED'),
+('ORD-0015','CUST-0005','ST-GAL-01','R-0006','2025-08-05',  22000.00,'DELIVERED'),
+('ORD-0016','CUST-0006','ST-GAL-01','R-0005','2025-08-06',   6700.00,'DELIVERED'),
+('ORD-0017','CUST-0007','ST-MAT-01','R-0008','2025-08-07',  11900.00,'DELIVERED'),
+('ORD-0018','CUST-0008','ST-MAT-01','R-0007','2025-08-08',   9980.00,'DELIVERED'),
+('ORD-0019','CUST-0009','ST-JAF-01','R-0009','2025-08-09',  13450.00,'DELIVERED'),
+('ORD-0020','CUST-0010','ST-TRI-01','R-0010','2025-08-10',   7850.00,'DELIVERED'),
+('ORD-0021','CUST-0011','ST-CMB-01','R-0002','2025-09-02',   8250.00,'DELIVERED'),
+('ORD-0022','CUST-0002','ST-CMB-01','R-0001','2025-09-03',  17100.00,'SCHEDULED'),
+('ORD-0023','CUST-0012','ST-NGO-01','R-0004','2025-09-04',   6650.00,'SCHEDULED'),
+('ORD-0024','CUST-0013','ST-GAL-01','R-0006','2025-09-05',   9400.00,'SCHEDULED'),
+('ORD-0025','CUST-0014','ST-MAT-01','R-0008','2025-09-06',  11000.00,'SCHEDULED'),
+('ORD-0026','CUST-0015','ST-TRI-01','R-0010','2025-09-07',   5200.00,'SCHEDULED'),
+('ORD-0027','CUST-0001','ST-CMB-01','R-0001','2025-09-10',  24600.00,'SCHEDULED'),
+('ORD-0028','CUST-0003','ST-NGO-01','R-0003','2025-09-11',   8350.00,'SCHEDULED'),
+('ORD-0029','CUST-0005','ST-GAL-01','R-0005','2025-09-12',  10250.00,'SCHEDULED'),
+('ORD-0030','CUST-0007','ST-MAT-01','R-0007','2025-09-13',   9100.00,'SCHEDULED'),
+('ORD-0031','CUST-0009','ST-JAF-01','R-0009','2025-09-14',  15750.00,'SCHEDULED'),
+('ORD-0032','CUST-0011','ST-CMB-01','R-0002','2025-09-15',   5800.00,'SCHEDULED'),
+('ORD-0033','CUST-0012','ST-NGO-01','R-0004','2025-09-16',   7450.00,'PLACED'),
+('ORD-0034','CUST-0013','ST-GAL-01','R-0006','2025-09-17',  12000.00,'PLACED'),
+('ORD-0035','CUST-0014','ST-MAT-01','R-0008','2025-09-18',   8300.00,'PLACED'),
+('ORD-0036','CUST-0015','ST-TRI-01','R-0010','2025-09-19',   6000.00,'PLACED'),
+('ORD-0037','CUST-0002','ST-CMB-01','R-0001','2025-10-01',  19900.00,'PLACED'),
+('ORD-0038','CUST-0004','ST-NGO-01','R-0003','2025-10-02',   7700.00,'PLACED'),
+('ORD-0039','CUST-0006','ST-GAL-01','R-0005','2025-10-03',   9600.00,'PLACED'),
+('ORD-0040','CUST-0008','ST-MAT-01','R-0007','2025-10-04',  10550.00,'PLACED');
+
+-- =========================
+-- Order items (mostly 2 items/order to keep it compact)
+-- item_capacity kept simple as an integer proxy for space units consumed
+-- =========================
+INSERT INTO order_items (order_id, product_id, quantity, item_capacity, unit_price) VALUES
+('ORD-0001','PRD-DET-1KG',10,5,850.00), ('ORD-0001','PRD-SOAP-100',50,5,180.00),
+('ORD-0002','PRD-TP-120',20,3,320.00),  ('ORD-0002','PRD-BIS-200',10,2,250.00),
+('ORD-0003','PRD-TEA-200',15,4,700.00), ('ORD-0003','PRD-DET-1KG',8,4,850.00),
+('ORD-0004','PRD-SHP-500',6,2,950.00),  ('ORD-0004','PRD-MLK-1L',20,8,380.00),
+('ORD-0005','PRD-OFK-5L',3,3,2200.00),  ('ORD-0005','PRD-SOAP-100',60,6,180.00),
+('ORD-0006','PRD-CLR-1L',10,4,620.00),  ('ORD-0006','PRD-BIS-200',20,3,250.00),
+('ORD-0007','PRD-RIC-10',8,10,1500.00), ('ORD-0007','PRD-TEA-200',10,3,700.00),
+('ORD-0008','PRD-DET-1KG',5,3,850.00),  ('ORD-0008','PRD-TP-120',10,2,320.00),
+('ORD-0009','PRD-SHP-500',8,3,950.00),  ('ORD-0009','PRD-SOAP-100',40,4,180.00),
+('ORD-0010','PRD-MLK-1L',15,6,380.00),  ('ORD-0010','PRD-BIS-200',20,3,250.00),
+('ORD-0011','PRD-DET-1KG',6,3,850.00),  ('ORD-0011','PRD-TP-120',10,2,320.00),
+('ORD-0012','PRD-OFK-5L',5,5,2200.00),  ('ORD-0012','PRD-TEA-200',10,3,700.00),
+('ORD-0013','PRD-BIS-200',30,5,250.00), ('ORD-0013','PRD-CLR-1L',8,3,620.00),
+('ORD-0014','PRD-DET-1KG',12,6,850.00), ('ORD-0014','PRD-SHP-500',6,2,950.00),
+('ORD-0015','PRD-RIC-10',12,15,1500.00),('ORD-0015','PRD-TEA-200',20,5,700.00),
+('ORD-0016','PRD-MLK-1L',18,7,380.00),  ('ORD-0016','PRD-TP-120',15,3,320.00),
+('ORD-0017','PRD-OFK-5L',4,4,2200.00),  ('ORD-0017','PRD-SOAP-100',80,8,180.00),
+('ORD-0018','PRD-CLR-1L',12,5,620.00),  ('ORD-0018','PRD-BIS-200',25,4,250.00),
+('ORD-0019','PRD-RIC-10',9,11,1500.00), ('ORD-0019','PRD-DET-1KG',10,5,850.00),
+('ORD-0020','PRD-TEA-200',8,2,700.00),  ('ORD-0020','PRD-MLK-1L',12,5,380.00),
+('ORD-0021','PRD-TP-120',18,3,320.00),  ('ORD-0021','PRD-BIS-200',18,3,250.00),
+('ORD-0022','PRD-DET-1KG',14,7,850.00), ('ORD-0022','PRD-TEA-200',10,3,700.00),
+('ORD-0023','PRD-SHP-500',5,2,950.00),  ('ORD-0023','PRD-MLK-1L',10,4,380.00),
+('ORD-0024','PRD-BIS-200',40,6,250.00), ('ORD-0024','PRD-CLR-1L',10,4,620.00),
+('ORD-0025','PRD-OFK-5L',3,3,2200.00),  ('ORD-0025','PRD-RIC-10',6,8,1500.00),
+('ORD-0026','PRD-TEA-200',6,2,700.00),  ('ORD-0026','PRD-SOAP-100',50,5,180.00),
+('ORD-0027','PRD-DET-1KG',15,8,850.00), ('ORD-0027','PRD-OFK-5L',4,4,2200.00),
+('ORD-0028','PRD-TP-120',14,3,320.00),  ('ORD-0028','PRD-BIS-200',22,4,250.00),
+('ORD-0029','PRD-CLR-1L',12,5,620.00),  ('ORD-0029','PRD-SHP-500',7,3,950.00),
+('ORD-0030','PRD-RIC-10',7,9,1500.00),  ('ORD-0030','PRD-MLK-1L',14,6,380.00),
+('ORD-0031','PRD-TEA-200',20,5,700.00), ('ORD-0031','PRD-SOAP-100',70,7,180.00),
+('ORD-0032','PRD-TP-120',12,3,320.00),  ('ORD-0032','PRD-DET-1KG',6,3,850.00),
+('ORD-0033','PRD-BIS-200',26,4,250.00), ('ORD-0033','PRD-MLK-1L',10,4,380.00),
+('ORD-0034','PRD-SHP-500',10,4,950.00), ('ORD-0034','PRD-TEA-200',12,3,700.00),
+('ORD-0035','PRD-CLR-1L',9,4,620.00),  ('ORD-0035','PRD-DET-1KG',8,4,850.00),
+('ORD-0036','PRD-RIC-10',5,7,1500.00),  ('ORD-0036','PRD-SOAP-100',60,6,180.00),
+('ORD-0037','PRD-OFK-5L',6,6,2200.00),  ('ORD-0037','PRD-TP-120',18,3,320.00),
+('ORD-0038','PRD-BIS-200',24,4,250.00), ('ORD-0038','PRD-MLK-1L',12,5,380.00),
+('ORD-0039','PRD-DET-1KG',9,5,850.00),  ('ORD-0039','PRD-TEA-200',10,3,700.00),
+('ORD-0040','PRD-SHP-500',7,3,950.00),  ('ORD-0040','PRD-CLR-1L',8,3,620.00);
+
+-- =========================
+-- Delivery schedules (subset marked delivered)
+-- =========================
+INSERT INTO delivery_schedules (delivery_id, order_id, vehicle_id, delivered_date, vehicle_arrival_time, vehicle_departure_time, delivery_status) VALUES
+('DLV-0001','ORD-0001','VEH-001','2025-07-03','09:10:00','09:35:00',1),
+('DLV-0002','ORD-0002','VEH-001','2025-07-04','10:00:00','10:20:00',1),
+('DLV-0003','ORD-0003','VEH-002','2025-07-05','09:00:00','09:20:00',1),
+('DLV-0004','ORD-0004','VEH-008','2025-07-06','10:15:00','10:30:00',1),
+('DLV-0005','ORD-0005','VEH-003','2025-07-07','11:00:00','11:25:00',1),
+('DLV-0006','ORD-0006','VEH-003','2025-07-09','09:40:00','09:55:00',1),
+('DLV-0007','ORD-0007','VEH-004','2025-07-10','10:30:00','10:50:00',1),
+('DLV-0008','ORD-0008','VEH-004','2025-07-11','09:20:00','09:35:00',1),
+('DLV-0009','ORD-0009','VEH-005','2025-07-12','08:50:00','09:10:00',1),
+('DLV-0010','ORD-0010','VEH-006','2025-07-13','09:15:00','09:35:00',1),
+('DLV-0011','ORD-0011','VEH-007','2025-08-02','10:05:00','10:20:00',1),
+('DLV-0012','ORD-0012','VEH-001','2025-08-03','09:15:00','09:40:00',1),
+('DLV-0013','ORD-0013','VEH-008','2025-08-04','10:00:00','10:15:00',1),
+('DLV-0014','ORD-0014','VEH-002','2025-08-05','09:30:00','09:55:00',1),
+('DLV-0015','ORD-0015','VEH-009','2025-08-06','10:45:00','11:05:00',1),
+('DLV-0016','ORD-0016','VEH-003','2025-08-07','09:30:00','09:50:00',1),
+('DLV-0017','ORD-0017','VEH-010','2025-08-08','11:10:00','11:25:00',1),
+('DLV-0018','ORD-0018','VEH-004','2025-08-09','09:35:00','09:55:00',1),
+('DLV-0019','ORD-0019','VEH-005','2025-08-10','10:00:00','10:20:00',1),
+('DLV-0020','ORD-0020','VEH-006','2025-08-11','09:25:00','09:45:00',1),
+
+('DLV-0021','ORD-0021','VEH-007','2025-09-03','10:10:00','10:30:00',1),
+('DLV-0022','ORD-0022','VEH-001',NULL,NULL,NULL,0),
+('DLV-0023','ORD-0023','VEH-002',NULL,NULL,NULL,0),
+('DLV-0024','ORD-0024','VEH-009',NULL,NULL,NULL,0),
+('DLV-0025','ORD-0025','VEH-010',NULL,NULL,NULL,0),
+('DLV-0026','ORD-0026','VEH-006',NULL,NULL,NULL,0),
+('DLV-0027','ORD-0027','VEH-001',NULL,NULL,NULL,0),
+('DLV-0028','ORD-0028','VEH-002',NULL,NULL,NULL,0),
+('DLV-0029','ORD-0029','VEH-003',NULL,NULL,NULL,0),
+('DLV-0030','ORD-0030','VEH-004',NULL,NULL,NULL,0),
+('DLV-0031','ORD-0031','VEH-005',NULL,NULL,NULL,0),
+('DLV-0032','ORD-0032','VEH-007',NULL,NULL,NULL,0),
+('DLV-0033','ORD-0033','VEH-008',NULL,NULL,NULL,0),
+('DLV-0034','ORD-0034','VEH-009',NULL,NULL,NULL,0),
+('DLV-0035','ORD-0035','VEH-010',NULL,NULL,NULL,0),
+('DLV-0036','ORD-0036','VEH-006',NULL,NULL,NULL,0),
+('DLV-0037','ORD-0037','VEH-001',NULL,NULL,NULL,0),
+('DLV-0038','ORD-0038','VEH-002',NULL,NULL,NULL,0),
+('DLV-0039','ORD-0039','VEH-003',NULL,NULL,NULL,0),
+('DLV-0040','ORD-0040','VEH-004',NULL,NULL,NULL,0);
+
+-- =========================
+-- Users & Roles
+-- =========================
+INSERT INTO users (user_id, store_id, name, password, designation, is_employed) VALUES
+('USR-ADM-01',NULL,'System Admin','$2y$dummyhash','Admin',1),
+('USR-MGR-KDY','ST-KDY-01','Anura Perera','$2y$dummyhash','Store Manager',1),
+('USR-MGR-CMB','ST-CMB-01','Rashmi De Silva','$2y$dummyhash','Store Manager',1),
+('USR-DRV-01','ST-CMB-01','Kumara Jayasuriya','$2y$dummyhash','Driver',1),
+('USR-DRV-02','ST-NGO-01','Sujeewa Fernando','$2y$dummyhash','Driver',1),
+('USR-DRV-03','ST-GAL-01','Isuru Weerasekara','$2y$dummyhash','Driver',1),
+('USR-ASS-01','ST-CMB-01','Nadeesha Karu','$2y$dummyhash','Assistant',1),
+('USR-ASS-02','ST-NGO-01','Ruwan Perera','$2y$dummyhash','Assistant',1);
+
+INSERT INTO store_managers (manager_id) VALUES
+('USR-MGR-KDY'),
+('USR-MGR-CMB');
+
+INSERT INTO delivery_employees (user_id, working_hours, availability) VALUES
+('USR-DRV-01','Mon–Fri 08:00–17:00',1),
+('USR-DRV-02','Tue–Sat 08:00–17:00',1),
+('USR-DRV-03','Mon–Fri 09:00–18:00',1),
+('USR-ASS-01','Mon–Sat 08:00–16:00',1),
+('USR-ASS-02','Tue–Sat 09:00–17:00',1);
+
+INSERT INTO admins (admin_id, username, email, password) VALUES
+('ADM-ROOT','root','root@kandypack.lk','$2y$dummyhash');
+
+
 SET FOREIGN_KEY_CHECKS = 1;
