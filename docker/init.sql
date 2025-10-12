@@ -1,10 +1,9 @@
-CREATE DATABASE IF NOT EXISTS supplychain;
-USE supplychain;
-
-
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 SET time_zone = '+00:00';
+
+CREATE DATABASE IF NOT EXISTS `supplychain`;
+USE `supplychain`;
 
 -- =========================
 -- Core reference tables
@@ -27,7 +26,7 @@ CREATE TABLE IF NOT EXISTS trucks (
   truck_id        VARCHAR(255) PRIMARY KEY,
   store_id        VARCHAR(255),
   reg_number      VARCHAR(255),                  -- unique vehicle registration
-  used_hours      DECIMAL(4,2),
+  used_hours      DECIMAL(6,2),
   availability    TINYINT(1) NOT NULL DEFAULT 1,
   CONSTRAINT uq_trucks_reg UNIQUE (reg_number),
   CONSTRAINT fk_trucks_store
