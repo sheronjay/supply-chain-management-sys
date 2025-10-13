@@ -4,6 +4,8 @@ import OrderHistoryCard from '../../components/dashboard/OrderHistoryCard/OrderH
 import SatisfactionCard from '../../components/dashboard/SatisfactionCard/SatisfactionCard'
 import SummaryCards from '../../components/dashboard/SummaryCards/SummaryCards'
 import { fetchMonthlyRevenue } from '../../services/dashboardService'
+import { fetchNewOrdersCount } from '../../services/dashboardService'
+import { fetchCompletedDeliveries } from '../../services/dashboardService'
 import { useState, useEffect } from "react";
 
 const  createInitialSummaryCards = () => [
@@ -33,7 +35,7 @@ const  createInitialSummaryCards = () => [
   },
   {
     id: 'satisfaction',
-    title: 'Customer Rating',
+    title: 'Late Deliveries',
     value: '4.8 / 5',
     change: 'Based on 1.2k reviews',
     hint: 'Customer feedback',
@@ -96,24 +98,47 @@ const Dashboard = () => {
   useEffect(() => {
     let isMounted = true
 
-    const loadRevenue = async () => {
+    const loadDashboardData = async () => {
       try {
-        const data = await fetchMonthlyRevenue()
+        const [revenueData, ordersData,completedDeliveriesData] = await Promise.all([
+          fetchMonthlyRevenue(),
+          fetchNewOrdersCount(),
+          fetchCompletedDeliveries(),
+        ])
         if (!isMounted) return
 
-        const formattedValue = formatCurrency(data.totalRevenue)
-        const monthLabel = formatMonthLabel(data.month)
+        const formattedRevenue = formatCurrency(revenueData.totalRevenue)
+        const monthLabel = formatMonthLabel(revenueData.month)
+
+        const formattedOrdersCount = ordersData.newOrdersCount
+        const lastMonthOrdersCount = ordersData.lastMonthOrdersCount
+
+        const formattedCompletedDeliveries = completedDeliveriesData.completedDeliveries
 
         setSummaryCards((prevCards) =>
           prevCards.map((card) =>
             card.id === 'revenue'
               ? {
                   ...card,
-                  value: formattedValue,
+                  value: formattedRevenue,
                   change: 'Updated from live orders data',
                   hint: `Sales this month (${monthLabel})`,
                 }
-              : card
+              : card.id === 'orders'
+                ? {
+                    ...card,
+                    value: formattedOrdersCount,
+                    change: `+${((formattedOrdersCount - lastMonthOrdersCount)*100/lastMonthOrdersCount).toFixed(2)}% vs last month`,
+                    hint: `Orders this month (${monthLabel})`,
+                  }
+                : card.id === 'deliveries'
+                ? {
+                    ...card,
+                    value: formattedCompletedDeliveries,
+                    change: 'Updated from live orders data',
+                    hint: `Deliveries this month (${monthLabel})`,
+                  }
+                  : card
           )
         )
       } catch (error) {
@@ -129,13 +154,28 @@ const Dashboard = () => {
                   change: 'Could not reach API',
                   hint: 'Please try again later.',
                 }
-              : card
+              : card.id === 'orders'
+                ? {
+                    ...card,
+                    value: 'Unavailable',
+                    change: 'Could not reach API',
+                    hint: 'Please try again later.',
+                  }
+                : card.id === 'deliveries'
+                ? {
+                    ...card,
+                    value: 'Unavailable',
+                    change: 'Could not reach API',
+                    hint: 'Please try again later.',
+                  }
+                  : card
           )
         )
       }
     }
 
-    loadRevenue()
+
+    loadDashboardData()
 
     return () => {
       isMounted = false

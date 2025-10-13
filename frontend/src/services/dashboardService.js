@@ -10,3 +10,25 @@ export const fetchMonthlyRevenue = async (monthKey) => {
 
   return response.json()
 }
+
+export const fetchNewOrdersCount = async (monthKey) => {
+  const query = monthKey ? `?month=${encodeURIComponent(monthKey)}` : ''
+  const response = await fetch(`${API_BASE_URL}/api/dashboard/new-orders-count${query}`)
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch new orders count')
+  }
+
+  return response.json()
+}
+
+export const fetchCompletedDeliveries = async (monthKey) => {
+  const query = monthKey ? `?month=${encodeURIComponent(monthKey)}` : ''
+  const response = await fetch(`${API_BASE_URL}/api/dashboard/completed-deliveries${query}`)
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch completed deliveries')
+  }
+
+  return response.json()
+}

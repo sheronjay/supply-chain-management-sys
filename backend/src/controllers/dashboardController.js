@@ -53,6 +53,54 @@ const getMonthlyRevenue = async (req, res) => {
   }
 }
 
+const getNewOrdersCount = async (req, res) => {
+  try {
+    const {year, month} = getMonthFromRequest(req)
+    
+    const [rows] = await pool.query(
+      'SELECT  COUNT(*) AS newOrdersCount FROM orders WHERE YEAR(ordered_date) = ? AND MONTH(ordered_date) = ?',
+      [year, month]
+    )
+    const [lastMonthRows] = await pool.query(
+      'SELECT  COUNT(*) AS lastMonthOrdersCount FROM orders WHERE YEAR(ordered_date) = ? AND MONTH(ordered_date) = ?',
+      [year, month - 1]
+    )
+
+
+    const newOrdersCount = Number(rows[0]?.newOrdersCount || 0)
+    const lastMonthOrdersCount = Number(lastMonthRows[0]?.lastMonthOrdersCount || 0)
+
+    res.json({
+      newOrdersCount,
+      lastMonthOrdersCount,
+    })
+
+  } catch (error) {
+    console.error('Failed to load new orders count', error)
+    res.status(500).json({ message: 'Unable to load new orders count' })
+  }
+}
+
+const getCompletedDeliveries = async (req, res) => {
+  try {
+    const {year, month} = getMonthFromRequest(req)
+
+    const [rows] = await pool.query(
+      'SELECT COUNT(*) AS completedDeliveries FROM orders WHERE YEAR(ordered_date) = ? AND MONTH(ordered_date) = ? AND status = "DELIVERED"',
+      [year, month]
+    )
+
+    const completedDeliveries = Number(rows[0]?.completedDeliveries || 0)
+    res.json({ completedDeliveries })
+  } catch (error) {
+    console.error('Failed to load completed deliveries', error)
+    res.status(500).json({ message: 'Unable to load completed deliveries' })
+  }
+}
+
+
 module.exports = {
   getMonthlyRevenue,
+  getNewOrdersCount,
+  getCompletedDeliveries,
 }
