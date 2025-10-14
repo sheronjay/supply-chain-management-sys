@@ -55,9 +55,14 @@
 }
 
 .order-chart__axis {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  display: flex;
+  justify-content: space-between;
   font-size: 0.85rem;
   color: #9ca3af;
+  padding: 0 0;
+}
+
+.order-chart__axis span {
+  flex: 0 0 auto;
   text-align: center;
 }

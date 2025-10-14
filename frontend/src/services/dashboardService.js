@@ -32,3 +32,14 @@ export const fetchCompletedDeliveries = async (monthKey) => {
 
   return response.json()
 }
+
+export const fetchOrderHistory = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/dashboard/order-history`)
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch order history')
+  }
+
+  return response.json()
+}
+  

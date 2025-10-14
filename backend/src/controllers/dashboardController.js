@@ -98,9 +98,56 @@ const getCompletedDeliveries = async (req, res) => {
   }
 }
 
+const getOrderHistory = async (req, res) => {
+  try{
+    //FOR testing use a fixed date  
+    const endDate = new Date('2025-10-27');
+    const startDate = new Date(endDate);
+    startDate.setDate(endDate.getDate() - 6);
+
+    const [rows] = await pool.query(
+      `SELECT
+        DATE(ordered_date) AS orderDate,
+        COUNT(*) AS orderCount,
+        SUM(total_price) AS totalRevenue
+      FROM orders
+      WHERE ordered_date BETWEEN ? AND ?
+      GROUP BY DATE(ordered_date)
+      ORDER BY orderDate ASC`,
+      [startDate, endDate]
+    )
+
+    const dateMap = {};
+    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() +1)) {
+      const dateStr = d.toISOString().split('T')[0];
+      dateMap[dateStr] = { orderCount: 0, totalRevenue: 0 };
+    }
+
+    rows.forEach(row => {
+      const dateStr = new Date(row.orderDate).toISOString().split('T')[0];
+      dateMap[dateStr] = {
+        orderCount: Number(row.orderCount),
+        totalRevenue: Number(row.totalRevenue),
+      };
+    });
+
+    const result = Object.entries(dateMap).map(([date, data]) => ({
+      date,
+      ...data
+    }));
+    
+    res.json(result);
+
+  } catch (error) {
+    console.error('Failed to load order history', error)
+    res.status(500).json({ error: 'Unable to load order history' })
+  }
+}
+
 
 module.exports = {
   getMonthlyRevenue,
   getNewOrdersCount,
   getCompletedDeliveries,
+  getOrderHistory,
 }

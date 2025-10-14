@@ -1,5 +1,6 @@
 import './OrderHistoryCard.css'
 import { buildAreaPath, buildLinePath, createPoints } from '../utils/chartUtils'
+import { useState } from 'react'
 
 const OrderHistoryCard = ({ history }) => {
   const chartWidth = 620
@@ -7,6 +8,7 @@ const OrderHistoryCard = ({ history }) => {
   const orderPoints = createPoints(history.values, chartWidth, chartHeight)
   const orderHighlightIndex = history.values.indexOf(Math.max(...history.values))
   const orderHighlight = orderPoints[orderHighlightIndex]
+  const [hoveredIndex, setHoveredIndex] = useState(null)
 
   return (
     <article className="card card--wide">
@@ -64,25 +66,28 @@ const OrderHistoryCard = ({ history }) => {
               key={point.x}
               cx={point.x}
               cy={point.y}
-              r={index === orderHighlightIndex ? 6 : 4}
-              className={`order-chart__dot ${
-                index === orderHighlightIndex ? 'order-chart__dot--active' : ''
-              }`}
+              r={hoveredIndex === index ? 6 : 4}
+              className="order-chart__dot order-chart__dot--active"
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              style={{ cursor: 'pointer' }}
             />
           ))}
         </svg>
-        <div
-          className="order-chart__tooltip"
-          style={{
-            left: `${(orderHighlight.x / chartWidth) * 100}%`,
-            top: `${(orderHighlight.y / chartHeight) * 100}%`,
-          }}
-        >
-          <span className="order-chart__tooltip-value">
-            {history.values[orderHighlightIndex]}%
-          </span>
-          <span className="order-chart__tooltip-label">Fulfilment rate</span>
-        </div>
+        {hoveredIndex !== null && (
+          <div
+            className="order-chart__tooltip"
+            style={{
+              left: `${(orderPoints[hoveredIndex].x / chartWidth) * 100}%`,
+              top: `${(orderPoints[hoveredIndex].y / chartHeight) * 100}%`,
+            }}
+          >
+            <span className="order-chart__tooltip-value">
+              {history.values[hoveredIndex]}
+            </span>
+            <span className="order-chart__tooltip-label">Order count</span>
+          </div>
+        )}
       </div>
 
       <div className="order-chart__axis">

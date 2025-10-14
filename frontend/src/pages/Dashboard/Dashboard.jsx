@@ -6,6 +6,7 @@ import SummaryCards from '../../components/dashboard/SummaryCards/SummaryCards'
 import { fetchMonthlyRevenue } from '../../services/dashboardService'
 import { fetchNewOrdersCount } from '../../services/dashboardService'
 import { fetchCompletedDeliveries } from '../../services/dashboardService'
+import { fetchOrderHistory } from '../../services/dashboardService'
 import { useState, useEffect } from "react";
 
 const  createInitialSummaryCards = () => [
@@ -43,10 +44,10 @@ const  createInitialSummaryCards = () => [
   },
 ]
 
-const orderHistory = {
+const createInitialOrderHistory = () => ({
   labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-  values: [24, 38, 29, 54, 48, 63, 58],
-}
+  values: [0, 0, 0, 0, 0, 0, 0],
+})
 
 const satisfaction = {
   labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -94,16 +95,18 @@ const formatMonthLabel = (monthKey) => {
 
 const Dashboard = () => {
   const [summaryCards, setSummaryCards] = useState(createInitialSummaryCards)
+  const [orderHistory, setOrderHistory] = useState(createInitialOrderHistory)
 
   useEffect(() => {
     let isMounted = true
 
     const loadDashboardData = async () => {
       try {
-        const [revenueData, ordersData,completedDeliveriesData] = await Promise.all([
+        const [revenueData, ordersData,completedDeliveriesData, orderHistoryData] = await Promise.all([
           fetchMonthlyRevenue(),
           fetchNewOrdersCount(),
           fetchCompletedDeliveries(),
+          fetchOrderHistory(),
         ])
         if (!isMounted) return
 
@@ -141,6 +144,19 @@ const Dashboard = () => {
                   : card
           )
         )
+
+        // Transform order history data
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+        const labels = orderHistoryData.map(item => {
+          const date = new Date(item.date)
+          return dayNames[date.getDay()]
+        })
+        const values = orderHistoryData.map(item => item.orderCount)
+
+        setOrderHistory({
+          labels,
+          values,
+        })
       } catch (error) {
         console.error('Failed to fetch revenue for dashboard', error)
         if (!isMounted) return
