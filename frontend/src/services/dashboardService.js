@@ -53,4 +53,14 @@ export const fetchLateDeliveries = async (monthKey) => {
 
   return response.json()
 }
+
+export const fetchSystemAlerts = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/dashboard/alerts`)
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch system alerts')
+  }
+
+  return response.json()
+}
   

@@ -183,10 +183,113 @@ const getLateDeliveries = async (req, res) => {
 }
 
 
+const getSystemAlerts = async (req, res) => {
+  try {
+    const alerts = []
+
+    // Alert 1: Late Deliveries (orders delivered more than 14 days after order date)
+    const [lateDeliveriesRows] = await pool.query(
+      `SELECT COUNT(*) as count
+       FROM order_delivery_tracking
+       WHERE delivered_date IS NOT NULL
+         AND DATEDIFF(delivered_date, ordered_date) > 14
+         AND MONTH(ordered_date) = MONTH(CURRENT_DATE())
+         AND YEAR(ordered_date) = YEAR(CURRENT_DATE())`
+    )
+    
+    const lateDeliveriesCount = Number(lateDeliveriesRows[0]?.count || 0)
+    if (lateDeliveriesCount > 0) {
+      alerts.push({
+        id: 'alert-late-deliveries',
+        title: 'Late Deliveries Detected',
+        description: `${lateDeliveriesCount} order${lateDeliveriesCount > 1 ? 's' : ''} exceeded the 14-day SLA window this month.`,
+        status: lateDeliveriesCount > 5 ? 'High' : 'Medium',
+        tone: lateDeliveriesCount > 5 ? 'warning' : 'caution',
+      })
+    }
+
+    // Alert 2: Low Stock Products (stock below 20% of quarterly order average)
+    const [lowStockRows] = await pool.query(
+      `SELECT product_id, product_name, stock_quantity, order_per_quarter
+       FROM products
+       WHERE stock_quantity < (order_per_quarter * 0.2)
+       ORDER BY (stock_quantity / order_per_quarter) ASC
+       LIMIT 3`
+    )
+
+    if (lowStockRows.length > 0) {
+      const productNames = lowStockRows.map(p => p.product_name).join(', ')
+      alerts.push({
+        id: 'alert-low-stock',
+        title: 'Low Inventory Alert',
+        description: `${lowStockRows.length} product${lowStockRows.length > 1 ? 's' : ''} running low: ${productNames}.`,
+        status: lowStockRows.length > 2 ? 'High' : 'Medium',
+        tone: lowStockRows.length > 2 ? 'warning' : 'caution',
+      })
+    }
+
+    // Alert 3: Pending Orders (orders that are PLACED but not SCHEDULED)
+    const [pendingOrdersRows] = await pool.query(
+      `SELECT COUNT(*) as count
+       FROM orders
+       WHERE status = 'PLACED'
+         AND DATEDIFF(CURRENT_DATE(), ordered_date) > 2`
+    )
+
+    const pendingOrdersCount = Number(pendingOrdersRows[0]?.count || 0)
+    if (pendingOrdersCount > 0) {
+      alerts.push({
+        id: 'alert-pending-orders',
+        title: 'Pending Orders Require Attention',
+        description: `${pendingOrdersCount} order${pendingOrdersCount > 1 ? 's have' : ' has'} been unscheduled for more than 2 days.`,
+        status: pendingOrdersCount > 10 ? 'High' : 'Medium',
+        tone: pendingOrdersCount > 10 ? 'warning' : 'caution',
+      })
+    }
+
+    // Alert 4: Truck Maintenance (trucks with high usage hours)
+    const [highUsageTrucksRows] = await pool.query(
+      `SELECT truck_id, reg_number, used_hours
+       FROM trucks
+       WHERE used_hours > 500 AND availability = 1
+       ORDER BY used_hours DESC
+       LIMIT 2`
+    )
+
+    if (highUsageTrucksRows.length > 0) {
+      const truckIds = highUsageTrucksRows.map(t => t.reg_number).join(', ')
+      alerts.push({
+        id: 'alert-truck-maintenance',
+        title: 'Fleet Maintenance Due',
+        description: `Vehicle${highUsageTrucksRows.length > 1 ? 's' : ''} ${truckIds} ${highUsageTrucksRows.length > 1 ? 'have' : 'has'} high usage hours and may need inspection.`,
+        status: 'Low',
+        tone: 'positive',
+      })
+    }
+
+    // If no alerts, send a success message
+    if (alerts.length === 0) {
+      alerts.push({
+        id: 'alert-all-clear',
+        title: 'All Systems Normal',
+        description: 'No critical issues detected. Operations running smoothly.',
+        status: 'Info',
+        tone: 'positive',
+      })
+    }
+
+    res.json(alerts)
+  } catch (error) {
+    console.error('Failed to load system alerts', error)
+    res.status(500).json({ message: 'Unable to load system alerts' })
+  }
+}
+
 module.exports = {
   getMonthlyRevenue,
   getNewOrdersCount,
   getCompletedDeliveries,
   getOrderHistory,
   getLateDeliveries,
+  getSystemAlerts,
 }

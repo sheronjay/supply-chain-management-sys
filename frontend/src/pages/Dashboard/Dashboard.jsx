@@ -8,6 +8,7 @@ import { fetchNewOrdersCount } from '../../services/dashboardService'
 import { fetchCompletedDeliveries } from '../../services/dashboardService'
 import { fetchOrderHistory } from '../../services/dashboardService'
 import { fetchLateDeliveries } from '../../services/dashboardService'
+import { fetchSystemAlerts } from '../../services/dashboardService'
 import { useState, useEffect } from "react";
 
 const  createInitialSummaryCards = () => [
@@ -56,26 +57,12 @@ const satisfaction = {
   previous: [68, 72, 76, 82, 86, 88],
 }
 
-const alerts = [
+const createInitialAlerts = () => [
   {
-    id: 1,
-    title: 'Delivery Delay',
-    description: '2 orders exceeded the SLA window.',
-    status: 'High',
-    tone: 'warning',
-  },
-  {
-    id: 2,
-    title: 'Inventory Threshold',
-    description: 'SKU-0981 and SKU-1023 are running low.',
-    status: 'Medium',
-    tone: 'caution',
-  },
-  {
-    id: 3,
-    title: 'Fleet Maintenance',
-    description: 'Vehicle KP-02 scheduled for inspection tomorrow.',
-    status: 'Low',
+    id: 'alert-loading',
+    title: 'Loading Alerts',
+    description: 'Fetching system alerts...',
+    status: 'Info',
     tone: 'positive',
   },
 ]
@@ -97,18 +84,20 @@ const formatMonthLabel = (monthKey) => {
 const Dashboard = () => {
   const [summaryCards, setSummaryCards] = useState(createInitialSummaryCards)
   const [orderHistory, setOrderHistory] = useState(createInitialOrderHistory)
+  const [alerts, setAlerts] = useState(createInitialAlerts)
 
   useEffect(() => {
     let isMounted = true
 
     const loadDashboardData = async () => {
       try {
-        const [revenueData, ordersData,completedDeliveriesData, orderHistoryData, lateDeliveriesData] = await Promise.all([
+        const [revenueData, ordersData,completedDeliveriesData, orderHistoryData, lateDeliveriesData, alertsData] = await Promise.all([
           fetchMonthlyRevenue(),
           fetchNewOrdersCount(),
           fetchCompletedDeliveries(),
           fetchOrderHistory(),
           fetchLateDeliveries(),
+          fetchSystemAlerts(),
         ])
         if (!isMounted) return
 
@@ -170,6 +159,9 @@ const Dashboard = () => {
           labels,
           values,
         })
+
+        // Set alerts from API
+        setAlerts(alertsData)
       } catch (error) {
         console.error('Failed to fetch revenue for dashboard', error)
         if (!isMounted) return
@@ -207,6 +199,16 @@ const Dashboard = () => {
                   : card
           )
         )
+
+        setAlerts([
+          {
+            id: 'alert-error',
+            title: 'Data Loading Error',
+            description: 'Could not fetch system alerts. Please try again later.',
+            status: 'High',
+            tone: 'warning',
+          },
+        ])
       }
     }
 
