@@ -168,6 +168,15 @@ CREATE TABLE IF NOT EXISTS delivery_schedules (
     ON UPDATE CASCADE ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
+DROP VIEW IF EXISTS order_delivery_tracking;
+CREATE VIEW order_delivery_tracking AS
+SELECT
+  o.order_id,
+  o.ordered_date,
+  o.status,
+  ds.delivered_date
+FROM orders AS o
+LEFT JOIN delivery_schedules AS ds ON ds.order_id = o.order_id;
 -- =========================
 -- Users & Roles
 -- =========================
