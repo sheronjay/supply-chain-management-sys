@@ -41,7 +41,7 @@ const  createInitialSummaryCards = () => [
     value: 'Loading…',
     change: 'Fetching data…',
     hint: 'Orders delivered after 14 days',
-    accent: 'sky',
+    accent: 'red',
   },
 ]
 

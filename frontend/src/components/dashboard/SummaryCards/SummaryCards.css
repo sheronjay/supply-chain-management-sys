@@ -14,17 +14,14 @@
   box-shadow: 0 16px 30px rgba(15, 23, 42, 0.04);
 }
 
-.summary-card__badge {
-  width: 56px;
-  height: 56px;
-  border-radius: 20px;
-  flex-shrink: 0;
-}
-
-.summary-card__content h3 {
+.summary-card__title {
   margin: 0;
   font-size: 0.95rem;
   color: #6b7280;
+  padding: 8px 16px;
+  border-radius: 12px;
+  display: inline-block;
+  width: fit-content;
 }
 
 .summary-card__value {
@@ -47,20 +44,28 @@
   color: #9ca3af;
 }
 
-.summary-card--peach .summary-card__badge {
+.summary-card__title--peach {
   background: linear-gradient(135deg, rgba(249, 115, 22, 0.18), rgba(249, 115, 22, 0.36));
 }
 
-.summary-card--lavender .summary-card__badge {
+.summary-card__title--lavender {
   background: linear-gradient(135deg, rgba(129, 140, 248, 0.18), rgba(99, 102, 241, 0.32));
 }
 
-.summary-card--mint .summary-card__badge {
+.summary-card__title--mint {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.32));
 }
 
-.summary-card--sky .summary-card__badge {
+.summary-card__title--sky {
   background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(37, 99, 235, 0.32));
+}
+
+.summary-card__title--red {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(220, 38, 38, 0.36));
+}
+
+.summary-card--red .summary-card__change {
+  color: #ef4444;
 }
 
 @media (max-width: 768px) {
