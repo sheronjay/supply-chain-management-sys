@@ -1,7 +1,6 @@
 import './Dashboard.css'
 import AlertsCard from '../../components/dashboard/AlertsCard/AlertsCard'
 import OrderHistoryCard from '../../components/dashboard/OrderHistoryCard/OrderHistoryCard'
-import SatisfactionCard from '../../components/dashboard/SatisfactionCard/SatisfactionCard'
 import SummaryCards from '../../components/dashboard/SummaryCards/SummaryCards'
 import { fetchMonthlyRevenue } from '../../services/dashboardService'
 import { fetchNewOrdersCount } from '../../services/dashboardService'
@@ -50,12 +49,6 @@ const createInitialOrderHistory = () => ({
   labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
   values: [0, 0, 0, 0, 0, 0, 0],
 })
-
-const satisfaction = {
-  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-  current: [74, 78, 84, 88, 92, 95],
-  previous: [68, 72, 76, 82, 86, 88],
-}
 
 const createInitialAlerts = () => [
   {
@@ -226,7 +219,6 @@ const Dashboard = () => {
       <section className="dashboard__main">
         <OrderHistoryCard history={orderHistory} />
         <div className="dashboard__aside">
-          <SatisfactionCard satisfaction={satisfaction} />
           <AlertsCard alerts={alerts} />
         </div>
       </section>
