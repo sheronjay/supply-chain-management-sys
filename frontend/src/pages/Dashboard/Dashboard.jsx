@@ -96,11 +96,22 @@ const Dashboard = () => {
 
         const formattedRevenue = formatCurrency(revenueData.totalRevenue)
         const monthLabel = formatMonthLabel(revenueData.month)
+        const lastMonthRevenue = revenueData.lastMonthRevenue
+        
+        // Calculate revenue percentage change
+        let revenueChangeText = 'No previous data'
+        if (lastMonthRevenue > 0) {
+          const revenueChangePercent = ((revenueData.totalRevenue - lastMonthRevenue) / lastMonthRevenue * 100).toFixed(2)
+          const sign = revenueChangePercent >= 0 ? '+' : ''
+          revenueChangeText = `${sign}${revenueChangePercent}% vs last month`
+        }
 
         const formattedOrdersCount = ordersData.newOrdersCount
         const lastMonthOrdersCount = ordersData.lastMonthOrdersCount
 
         const formattedCompletedDeliveries = completedDeliveriesData.completedDeliveries
+        const deliveryPercentage = completedDeliveriesData.deliveryPercentage
+        const totalOrders = completedDeliveriesData.totalOrders
 
         const lateDeliveriesCount = lateDeliveriesData.lateDeliveries
         const lateDeliveriesPercentage = lateDeliveriesData.lateDeliveriesPercentage
@@ -112,7 +123,7 @@ const Dashboard = () => {
               ? {
                   ...card,
                   value: formattedRevenue,
-                  change: 'Updated from live orders data',
+                  change: revenueChangeText,
                   hint: `Sales this month (${monthLabel})`,
                 }
               : card.id === 'orders'
@@ -126,7 +137,7 @@ const Dashboard = () => {
                 ? {
                     ...card,
                     value: formattedCompletedDeliveries,
-                    change: 'Updated from live orders data',
+                    change: `${deliveryPercentage}% of ${totalOrders} orders delivered`,
                     hint: `Deliveries this month (${monthLabel})`,
                   }
                 : card.id === 'satisfaction'

@@ -41,11 +41,24 @@ const getMonthlyRevenue = async (req, res) => {
       [year, month]
     )
 
+    // Get last month's revenue for comparison
+    const lastMonth = month === 1 ? 12 : month - 1
+    const lastMonthYear = month === 1 ? year - 1 : year
+
+    const [lastMonthRows] = await pool.query(
+      `SELECT COALESCE(SUM(total_price), 0) AS totalRevenue
+       FROM orders
+       WHERE YEAR(ordered_date) = ? AND MONTH(ordered_date) = ?`,
+      [lastMonthYear, lastMonth]
+    )
+
     const totalRevenue = Number(rows[0]?.totalRevenue || 0)
+    const lastMonthRevenue = Number(lastMonthRows[0]?.totalRevenue || 0)
 
     res.json({
       month: `${year}-${String(month).padStart(2, '0')}`,
       totalRevenue,
+      lastMonthRevenue,
     })
   } catch (error) {
     console.error('Failed to load monthly revenue', error)
@@ -85,13 +98,29 @@ const getCompletedDeliveries = async (req, res) => {
   try {
     const {year, month} = getMonthFromRequest(req)
 
+    // Get completed deliveries count
     const [rows] = await pool.query(
       'SELECT COUNT(*) AS completedDeliveries FROM orders WHERE YEAR(ordered_date) = ? AND MONTH(ordered_date) = ? AND status = "DELIVERED"',
       [year, month]
     )
 
+    // Get total orders for the month to calculate percentage
+    const [totalRows] = await pool.query(
+      'SELECT COUNT(*) AS totalOrders FROM orders WHERE YEAR(ordered_date) = ? AND MONTH(ordered_date) = ?',
+      [year, month]
+    )
+
     const completedDeliveries = Number(rows[0]?.completedDeliveries || 0)
-    res.json({ completedDeliveries })
+    const totalOrders = Number(totalRows[0]?.totalOrders || 0)
+    const deliveryPercentage = totalOrders > 0 
+      ? ((completedDeliveries / totalOrders) * 100).toFixed(1)
+      : 0
+
+    res.json({ 
+      completedDeliveries,
+      totalOrders,
+      deliveryPercentage
+    })
   } catch (error) {
     console.error('Failed to load completed deliveries', error)
     res.status(500).json({ message: 'Unable to load completed deliveries' })
