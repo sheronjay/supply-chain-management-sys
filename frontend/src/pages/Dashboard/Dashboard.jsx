@@ -7,6 +7,7 @@ import { fetchMonthlyRevenue } from '../../services/dashboardService'
 import { fetchNewOrdersCount } from '../../services/dashboardService'
 import { fetchCompletedDeliveries } from '../../services/dashboardService'
 import { fetchOrderHistory } from '../../services/dashboardService'
+import { fetchLateDeliveries } from '../../services/dashboardService'
 import { useState, useEffect } from "react";
 
 const  createInitialSummaryCards = () => [
@@ -37,9 +38,9 @@ const  createInitialSummaryCards = () => [
   {
     id: 'satisfaction',
     title: 'Late Deliveries',
-    value: '4.8 / 5',
-    change: 'Based on 1.2k reviews',
-    hint: 'Customer feedback',
+    value: 'Loading…',
+    change: 'Fetching data…',
+    hint: 'Orders delivered after 14 days',
     accent: 'sky',
   },
 ]
@@ -102,11 +103,12 @@ const Dashboard = () => {
 
     const loadDashboardData = async () => {
       try {
-        const [revenueData, ordersData,completedDeliveriesData, orderHistoryData] = await Promise.all([
+        const [revenueData, ordersData,completedDeliveriesData, orderHistoryData, lateDeliveriesData] = await Promise.all([
           fetchMonthlyRevenue(),
           fetchNewOrdersCount(),
           fetchCompletedDeliveries(),
           fetchOrderHistory(),
+          fetchLateDeliveries(),
         ])
         if (!isMounted) return
 
@@ -117,6 +119,10 @@ const Dashboard = () => {
         const lastMonthOrdersCount = ordersData.lastMonthOrdersCount
 
         const formattedCompletedDeliveries = completedDeliveriesData.completedDeliveries
+
+        const lateDeliveriesCount = lateDeliveriesData.lateDeliveries
+        const lateDeliveriesPercentage = lateDeliveriesData.lateDeliveriesPercentage
+        const totalDeliveries = lateDeliveriesData.totalDeliveries
 
         setSummaryCards((prevCards) =>
           prevCards.map((card) =>
@@ -140,6 +146,13 @@ const Dashboard = () => {
                     value: formattedCompletedDeliveries,
                     change: 'Updated from live orders data',
                     hint: `Deliveries this month (${monthLabel})`,
+                  }
+                : card.id === 'satisfaction'
+                ? {
+                    ...card,
+                    value: `${lateDeliveriesCount}`,
+                    change: `${lateDeliveriesPercentage}% of ${totalDeliveries} deliveries`,
+                    hint: `Late deliveries this month (${monthLabel})`,
                   }
                   : card
           )
@@ -178,6 +191,13 @@ const Dashboard = () => {
                     hint: 'Please try again later.',
                   }
                 : card.id === 'deliveries'
+                ? {
+                    ...card,
+                    value: 'Unavailable',
+                    change: 'Could not reach API',
+                    hint: 'Please try again later.',
+                  }
+                : card.id === 'satisfaction'
                 ? {
                     ...card,
                     value: 'Unavailable',

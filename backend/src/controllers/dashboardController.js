@@ -144,10 +144,49 @@ const getOrderHistory = async (req, res) => {
   }
 }
 
+const getLateDeliveries = async (req, res) => {
+  try {
+    const { year, month } = getMonthFromRequest(req)
+
+    // Query to get late deliveries count and percentage
+    // An order is considered late if delivered more than 14 days after order date
+    const [rows] = await pool.query(
+      `SELECT 
+        COUNT(*) as totalDeliveries,
+        SUM(CASE 
+          WHEN DATEDIFF(delivered_date, ordered_date) > 14 THEN 1 
+          ELSE 0 
+        END) as lateDeliveries
+      FROM order_delivery_tracking
+      WHERE YEAR(ordered_date) = ? 
+        AND MONTH(ordered_date) = ?
+        AND delivered_date IS NOT NULL`,
+      [year, month]
+    )
+
+    const totalDeliveries = Number(rows[0]?.totalDeliveries || 0)
+    const lateDeliveries = Number(rows[0]?.lateDeliveries || 0)
+    const lateDeliveriesPercentage = totalDeliveries > 0 
+      ? ((lateDeliveries / totalDeliveries) * 100).toFixed(1)
+      : 0
+
+    res.json({
+      lateDeliveries,
+      totalDeliveries,
+      lateDeliveriesPercentage,
+      month: `${year}-${String(month).padStart(2, '0')}`
+    })
+  } catch (error) {
+    console.error('Failed to load late deliveries', error)
+    res.status(500).json({ message: 'Unable to load late deliveries' })
+  }
+}
+
 
 module.exports = {
   getMonthlyRevenue,
   getNewOrdersCount,
   getCompletedDeliveries,
   getOrderHistory,
+  getLateDeliveries,
 }

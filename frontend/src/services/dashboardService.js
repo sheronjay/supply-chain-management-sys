@@ -42,4 +42,15 @@ export const fetchOrderHistory = async () => {
 
   return response.json()
 }
+
+export const fetchLateDeliveries = async (monthKey) => {
+  const query = monthKey ? `?month=${encodeURIComponent(monthKey)}` : ''
+  const response = await fetch(`${API_BASE_URL}/api/dashboard/late-deliveries${query}`)
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch late deliveries')
+  }
+
+  return response.json()
+}
   
