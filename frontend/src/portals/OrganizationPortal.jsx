@@ -3,7 +3,6 @@ import Sidebar from '../components/Sidebar/Sidebar'
 import TopBar from '../components/TopBar/TopBar'
 import Dashboard from '../pages/Dashboard/Dashboard'
 import Orders from '../pages/Orders/Orders'
-import UserOrders from '../pages/userOrders/UserOrders'
 import TrainSchedule from '../pages/TrainSchedule/TrainSchedule'
 import ReportOverview from '../pages/ReportOverview/ReportOverview'
 import UserManagement from '../pages/UserManagement/UserManagement'
@@ -27,11 +26,6 @@ const pageConfig = {
     title: 'Orders',
     subtitle: 'Orders',
     element: <Orders />,
-  },
-  UserOrders: {
-    title: 'My Orders',
-    subtitle: 'User Orders',
-    element: <UserOrders />,
   },
   TrainSchedule: {
     title: 'Train Schedule',

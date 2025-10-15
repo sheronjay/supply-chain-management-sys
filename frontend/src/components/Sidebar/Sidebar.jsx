@@ -3,7 +3,6 @@ import './Sidebar.css'
 const navItems = [
   { key: 'Dashboard', label: 'Dashboard', icon: 'dashboard' },
   { key: 'Orders', label: 'Orders', icon: 'orders' },
-  { key: 'UserOrders', label: 'My Orders', icon: 'userorders' },
   { key: 'TrainSchedule', label: 'Train Schedule', icon: 'train' },
   /*{ key: 'VehicleUtilization', label: 'Vehicle Utilization', icon: 'vehicle' },*/
   { key: 'ReportOverview', label: 'Report Overview', icon: 'report' },
