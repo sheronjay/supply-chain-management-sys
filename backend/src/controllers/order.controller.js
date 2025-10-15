@@ -1,4 +1,4 @@
-import * as orderService from '../services/order.service.js';
+import * as orderService from '../../services/order.service.js';
 
 export async function listOrders(req, res, next) {
     try {

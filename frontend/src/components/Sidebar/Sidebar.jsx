@@ -3,6 +3,7 @@ import './Sidebar.css'
 const navItems = [
   { key: 'Dashboard', label: 'Dashboard', icon: 'dashboard' },
   { key: 'Orders', label: 'Orders', icon: 'orders' },
+  { key: 'UserOrders', label: 'My Orders', icon: 'userorders' },
   { key: 'TrainSchedule', label: 'Train Schedule', icon: 'train' },
   /*{ key: 'VehicleUtilization', label: 'Vehicle Utilization', icon: 'vehicle' },*/
   { key: 'ReportOverview', label: 'Report Overview', icon: 'report' },
@@ -30,6 +31,14 @@ const Icon = ({ type }) => {
         <svg viewBox="0 0 24 24" className="sidebar__icon" aria-hidden>
           <path d="M6 7h12l.8 10.4A2 2 0 0 1 16.82 19H7.18A2 2 0 0 1 5.2 17.4Z" />
           <path d="M9 7V5a3 3 0 0 1 6 0v2" />
+        </svg>
+      )
+    case 'userorders':
+      return (
+        <svg viewBox="0 0 24 24" className="sidebar__icon" aria-hidden>
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+          <path d="M8 13h8M8 17h5" />
+          <path d="M17 21v-8h-5" />
         </svg>
       )
     case 'train':
