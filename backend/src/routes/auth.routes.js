@@ -1,8 +1,11 @@
 import { Router } from 'express'
-import { login, verifyToken } from '../controllers/auth.controller.js'
+import { login, signup, verifyToken } from '../controllers/auth.controller.js'
 import { authenticateToken } from '../../middleware/auth.js'
 
 const router = Router()
+
+// Signup route
+router.post('/signup', signup)
 
 // Login route
 router.post('/login', login)

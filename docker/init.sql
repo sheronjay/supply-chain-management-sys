@@ -106,6 +106,7 @@ CREATE TABLE IF NOT EXISTS customers (
   phone_number    VARCHAR(32),                    -- ERD shows int; using VARCHAR is safer
   city            VARCHAR(255),
   name            VARCHAR(255),
+  password        VARCHAR(255),                   -- Hashed password for authentication
   CONSTRAINT uq_customers_email UNIQUE (email)
 ) ENGINE=InnoDB;
 
@@ -412,23 +413,13 @@ INSERT INTO products (product_id, product_name, unit_price, space_consumption_ra
 
 -- =========================
 -- Customers
+-- Test Customer Accounts:
+-- Customer 1: email='sunrise.wholesale@shop.lk', password='password123'
+-- Customer 2: email='pettah.mart@shop.lk', password='password123'
 -- =========================
-INSERT INTO customers (customer_id, email, phone_number, city, name) VALUES
-('CUST-0001','sunrise.wholesale@shop.lk','+94-11-2345678','Colombo','Sunrise Wholesale'),
-('CUST-0002','pettah.mart@shop.lk','+94-11-2233445','Colombo','Pettah Mart'),
-('CUST-0003','negombo.grocers@shop.lk','+94-31-2228888','Negombo','Negombo Grocers'),
-('CUST-0004','kochchikade.store@shop.lk','+94-31-2288999','Negombo','Kochchikade Store'),
-('CUST-0005','galle.rampart@shop.lk','+94-91-2244556','Galle','Rampart Super'),
-('CUST-0006','unawatuna.mini@shop.lk','+94-91-2255667','Galle','Unawatuna Mini Mart'),
-('CUST-0007','matara.center@shop.lk','+94-41-2233445','Matara','Matara Center'),
-('CUST-0008','weligama.fooda@shop.lk','+94-41-2277889','Matara','Fooda Weligama'),
-('CUST-0009','jaffna.corner@shop.lk','+94-21-2233001','Jaffna','Nallur Corner'),
-('CUST-0010','trinco.breeze@shop.lk','+94-26-2233556','Trincomalee','Breeze Stores'),
-('CUST-0011','thimbiri.mini@shop.lk','+94-11-2555000','Colombo','Thimbiri Mini Mart'),
-('CUST-0012','katana.shop@shop.lk','+94-31-2999000','Negombo','Katana Shop'),
-('CUST-0013','hikka.foodcity@shop.lk','+94-91-2777000','Galle','Hikka Food City'),
-('CUST-0014','hakmana.bargain@shop.lk','+94-41-2455000','Matara','Hakmana Bargain'),
-('CUST-0015','uppuveli.seaside@shop.lk','+94-26-2777333','Trincomalee','Uppuveli Seaside');
+INSERT INTO customers (customer_id, email, phone_number, city, name, password) VALUES
+('CUST-0001','sunrise.wholesale@shop.lk','+94-11-2345678','Colombo','Sunrise Wholesale','$2b$10$LLUv.hPs6q..X8qReXuzjuK.CX7BMuxldJZhN9biPpR7AJiwSp6yC'),
+('CUST-0002','pettah.mart@shop.lk','+94-11-2233445','Colombo','Pettah Mart','$2b$10$LLUv.hPs6q..X8qReXuzjuK.CX7BMuxldJZhN9biPpR7AJiwSp6yC');
 
 -- =========================
 -- Orders (40 orders across Q3–Q4 2025)

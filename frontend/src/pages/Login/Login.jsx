@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { login } from '../../services/authService'
 import './Login.css'
 
-const Login = ({ onLoginSuccess }) => {
+const Login = ({ onLoginSuccess, onSwitchToSignup }) => {
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
@@ -121,12 +121,25 @@ const Login = ({ onLoginSuccess }) => {
         </form>
 
         <div className="login-footer">
-          <p>
+          <div className="login-signup-prompt">
+            <p>
+              New customer?{' '}
+              <button
+                type="button"
+                className="login-signup-btn"
+                onClick={onSwitchToSignup}
+                disabled={loading}
+              >
+                Create an account
+              </button>
+            </p>
+          </div>
+          <p className="login-admin-note">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
-            Authorized personnel only. Please contact your administrator for access.
+            Employees: Contact your administrator for access.
           </p>
         </div>
       </div>
