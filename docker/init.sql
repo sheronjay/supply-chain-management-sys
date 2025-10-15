@@ -177,6 +177,19 @@ SELECT
   ds.delivered_date
 FROM orders AS o
 LEFT JOIN delivery_schedules AS ds ON ds.order_id = o.order_id;
+
+DROP VIEW IF EXISTS order_items_view;
+CREATE VIEW order_items_view AS
+SELECT
+  oi.order_id,
+  oi.product_id,
+  p.product_name,
+  oi.quantity,
+  oi.unit_price,
+  (oi.quantity * oi.unit_price) AS amount
+FROM order_items AS oi
+LEFT JOIN products AS p ON oi.product_id = p.product_id;
+
 -- =========================
 -- Users & Roles
 -- =========================
@@ -562,7 +575,17 @@ INSERT INTO order_items (order_id, product_id, quantity, item_capacity, unit_pri
 ('ORD-0057','PRD-DET-1KG',12,6,850.00), ('ORD-0057','PRD-TEA-200',10,3,700.00),
 ('ORD-0058','PRD-TP-120',18,3,320.00),  ('ORD-0058','PRD-BIS-200',25,4,250.00),
 ('ORD-0059','PRD-CLR-1L',13,5,620.00),  ('ORD-0059','PRD-SHP-500',10,4,950.00),
-('ORD-0060','PRD-MLK-1L',16,7,380.00),  ('ORD-0060','PRD-SOAP-100',70,7,180.00);
+('ORD-0060','PRD-MLK-1L',16,7,380.00),  ('ORD-0060','PRD-SOAP-100',70,7,180.00),
+('ORD-0061','PRD-DET-1KG',8,4,850.00),  ('ORD-0061','PRD-TP-120',10,2,320.00),
+('ORD-0062','PRD-RIC-10',9,11,1500.00), ('ORD-0062','PRD-TEA-200',10,3,700.00),
+('ORD-0063','PRD-CLR-1L',10,4,620.00),  ('ORD-0063','PRD-BIS-200',22,4,250.00),
+('ORD-0064','PRD-OFK-5L',5,5,2200.00),  ('ORD-0064','PRD-MLK-1L',15,6,380.00),
+('ORD-0065','PRD-DET-1KG',12,6,850.00), ('ORD-0065','PRD-SHP-500',8,3,950.00),
+('ORD-0066','PRD-TP-120',16,3,320.00),  ('ORD-0066','PRD-SOAP-100',60,6,180.00),
+('ORD-0067','PRD-RIC-10',11,13,1500.00),('ORD-0067','PRD-TEA-200',14,4,700.00),
+('ORD-0068','PRD-BIS-200',28,5,250.00), ('ORD-0068','PRD-CLR-1L',9,4,620.00),
+('ORD-0069','PRD-SHP-500',10,4,950.00), ('ORD-0069','PRD-MLK-1L',12,5,380.00),
+('ORD-0070','PRD-DET-1KG',13,7,850.00), ('ORD-0070','PRD-OFK-5L',4,4,2200.00);
 
 -- =========================
 -- Delivery schedules (subset marked delivered)
