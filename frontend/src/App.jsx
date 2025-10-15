@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import Sidebar from './components/Sidebar/Sidebar'
 import TopBar from './components/TopBar/TopBar'
 import Dashboard from './pages/Dashboard/Dashboard'
@@ -7,6 +7,8 @@ import UserOrders from './pages/userOrders/UserOrders'
 import TrainSchedule from './pages/TrainSchedule/TrainSchedule'
 import ReportOverview from './pages/ReportOverview/ReportOverview'
 import UserManagement from './pages/UserManagement/UserManagement'
+import Login from './pages/Login/Login'
+import { isAuthenticated, logout, getCurrentUser } from './services/authService'
 import './App.css'
 
 const createPlaceholder = (label) => (
@@ -62,8 +64,8 @@ const pageConfig = {
     subtitle: 'Sign Out',
     element: (
       <div className="placeholder">
-        <h2>Sign Out</h2>
-        <p>Your session remains active in this preview build.</p>
+        <h2>Signing out...</h2>
+        <p>You are being logged out.</p>
       </div>
     ),
   },
@@ -71,14 +73,59 @@ const pageConfig = {
 
 function App() {
   const [activePage, setActivePage] = useState('Dashboard')
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null)
 
+  // Check authentication on mount
+  useEffect(() => {
+    const checkAuth = () => {
+      const authenticated = isAuthenticated()
+      setIsLoggedIn(authenticated)
+      
+      if (authenticated) {
+        const user = getCurrentUser()
+        setCurrentUser(user)
+      }
+    }
+
+    checkAuth()
+  }, [])
+
+  const handleLoginSuccess = (user) => {
+    setIsLoggedIn(true)
+    setCurrentUser(user)
+    setActivePage('Dashboard')
+  }
+
+  const handleSignOut = () => {
+    logout()
+    setIsLoggedIn(false)
+    setCurrentUser(null)
+    setActivePage('Dashboard')
+  }
+
+  // Handle navigation - special case for SignOut
+  const handleNavigate = (page) => {
+    if (page === 'SignOut') {
+      handleSignOut()
+    } else {
+      setActivePage(page)
+    }
+  }
+
+  // Calculate page config (must be before conditional return)
   const { title, subtitle, element } = useMemo(() => {
     return pageConfig[activePage] ?? pageConfig.Dashboard
   }, [activePage])
 
+  // Show login page if not authenticated
+  if (!isLoggedIn) {
+    return <Login onLoginSuccess={handleLoginSuccess} />
+  }
+
   return (
     <div className="app-shell">
-      <Sidebar activePage={activePage} onNavigate={setActivePage} />
+      <Sidebar activePage={activePage} onNavigate={handleNavigate} />
       <main className="app-main">
         <TopBar title={title} subtitle={subtitle} />
         <div className="app-content">{element}</div>

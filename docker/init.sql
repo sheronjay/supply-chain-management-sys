@@ -659,8 +659,14 @@ INSERT INTO delivery_schedules (delivery_id, order_id, vehicle_id, delivered_dat
 
 -- =========================
 -- Users & Roles
+-- Test Accounts for Login System
+-- Admin: username='admin', password='admin123'
+-- Store Manager: username='john_doe', password='password123'
+-- Delivery Employee: username='jane_smith', password='password123'
 -- =========================
 INSERT INTO users (user_id, store_id, name, password, designation, is_employed) VALUES
+('USR-001','ST-CMB-01','john_doe','$2b$10$LLUv.hPs6q..X8qReXuzjuK.CX7BMuxldJZhN9biPpR7AJiwSp6yC','Store Manager',1),
+('USR-002','ST-KDY-01','jane_smith','$2b$10$LLUv.hPs6q..X8qReXuzjuK.CX7BMuxldJZhN9biPpR7AJiwSp6yC','Delivery Driver',1),
 ('USR-ADM-01',NULL,'System Admin','$2y$dummyhash','Admin',1),
 ('USR-MGR-KDY','ST-KDY-01','Anura Perera','$2y$dummyhash','Store Manager',1),
 ('USR-MGR-CMB','ST-CMB-01','Rashmi De Silva','$2y$dummyhash','Store Manager',1),
@@ -671,10 +677,12 @@ INSERT INTO users (user_id, store_id, name, password, designation, is_employed) 
 ('USR-ASS-02','ST-NGO-01','Ruwan Perera','$2y$dummyhash','Assistant',1);
 
 INSERT INTO store_managers (manager_id) VALUES
+('USR-001'),
 ('USR-MGR-KDY'),
 ('USR-MGR-CMB');
 
 INSERT INTO delivery_employees (user_id, working_hours, availability) VALUES
+('USR-002','08:00-17:00',1),
 ('USR-DRV-01','Mon–Fri 08:00–17:00',1),
 ('USR-DRV-02','Tue–Sat 08:00–17:00',1),
 ('USR-DRV-03','Mon–Fri 09:00–18:00',1),
@@ -682,6 +690,7 @@ INSERT INTO delivery_employees (user_id, working_hours, availability) VALUES
 ('USR-ASS-02','Tue–Sat 09:00–17:00',1);
 
 INSERT INTO admins (admin_id, username, email, password) VALUES
+('ADM-001','admin','admin@supplychain.com','$2b$10$ZIoWAw1nygtyfc.uOA5EmueiUSJZOe644H/4K8PN7yzIkefppk4lC'),
 ('ADM-ROOT','root','root@kandypack.lk','$2y$dummyhash');
 
 
