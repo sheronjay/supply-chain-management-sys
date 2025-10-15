@@ -6,6 +6,7 @@ import Orders from '../pages/Orders/Orders'
 import TrainSchedule from '../pages/TrainSchedule/TrainSchedule'
 import ReportOverview from '../pages/ReportOverview/ReportOverview'
 import UserManagement from '../pages/UserManagement/UserManagement'
+import DeliverySchedule from '../pages/DeliverySchedule/DeliverySchedule'
 import Login from '../pages/Login/Login'
 import { isAuthenticated, logout, getCurrentUser } from '../services/authService'
 
@@ -21,31 +22,43 @@ const pageConfig = {
     title: 'Supply Chain Overview',
     subtitle: 'Dashboard',
     element: <Dashboard />,
+    allowedRoles: ['admin', 'store_manager'],
   },
   Orders: {
     title: 'Orders',
     subtitle: 'Orders',
     element: <Orders />,
+    allowedRoles: ['admin', 'store_manager'],
   },
   TrainSchedule: {
     title: 'Train Schedule',
     subtitle: 'Train Schedule',
     element: <TrainSchedule />,
+    allowedRoles: ['admin', 'store_manager'],
   },
   ReportOverview: {
     title: 'Report Overview',
     subtitle: 'Report Overview',
     element: <ReportOverview />,
+    allowedRoles: ['admin', 'store_manager'],
   },
   UserManagement: {
     title: 'User Management',
     subtitle: 'User Management',
     element: <UserManagement />,
+    allowedRoles: ['admin'],
+  },
+  DeliverySchedule: {
+    title: 'My Delivery Schedule',
+    subtitle: 'Delivery Schedule',
+    element: <DeliverySchedule />,
+    allowedRoles: ['delivery_employee'],
   },
   Settings: {
     title: 'Settings',
     subtitle: 'Settings',
     element: createPlaceholder('Settings'),
+    allowedRoles: ['admin', 'store_manager', 'delivery_employee'],
   },
   SignOut: {
     title: 'Sign Out',
@@ -56,6 +69,7 @@ const pageConfig = {
         <p>You are being logged out.</p>
       </div>
     ),
+    allowedRoles: ['admin', 'store_manager', 'delivery_employee'],
   },
 }
 
@@ -75,7 +89,12 @@ function OrganizationPortal() {
         // Only allow non-customer roles
         if (user && user.role !== 'customer') {
           setCurrentUser(user)
-          setActivePage('Dashboard')
+          // Set default page based on role
+          if (user.role === 'delivery_employee') {
+            setActivePage('DeliverySchedule')
+          } else {
+            setActivePage('Dashboard')
+          }
         } else {
           // Redirect customers to customer portal
           window.location.href = '/customer'
@@ -96,7 +115,12 @@ function OrganizationPortal() {
     
     setIsLoggedIn(true)
     setCurrentUser(user)
-    setActivePage('Dashboard')
+    // Set default page based on role
+    if (user.role === 'delivery_employee') {
+      setActivePage('DeliverySchedule')
+    } else {
+      setActivePage('Dashboard')
+    }
   }
 
   const handleSignOut = () => {

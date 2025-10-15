@@ -1,0 +1,239 @@
+.delivery-schedule {
+  padding: 2rem;
+}
+
+.delivery-schedule__header {
+  margin-bottom: 2rem;
+}
+
+.delivery-schedule__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+}
+
+.delivery-schedule__subtitle {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.delivery-schedule__tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.delivery-schedule__tab {
+  background: none;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s ease;
+}
+
+.delivery-schedule__tab:hover {
+  color: #7C3AED;
+}
+
+.delivery-schedule__tab--active {
+  color: #7C3AED;
+  border-bottom-color: #7C3AED;
+}
+
+.delivery-schedule__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.delivery-schedule__stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.delivery-schedule__stat-label {
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.delivery-schedule__stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.delivery-schedule__stat-value--pending {
+  color: #F59E0B;
+}
+
+.delivery-schedule__stat-value--completed {
+  color: #10B981;
+}
+
+.delivery-schedule__stat-value--today {
+  color: #7C3AED;
+}
+
+.delivery-schedule__content {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.delivery-schedule__loading {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.delivery-schedule__error {
+  background: #FEE2E2;
+  color: #DC2626;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.delivery-schedule__empty {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.delivery-schedule__empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.delivery-schedule__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.delivery-schedule__table thead {
+  background: #F9FAFB;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.delivery-schedule__table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.delivery-schedule__table td {
+  padding: 1rem;
+  border-bottom: 1px solid #E5E7EB;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+}
+
+.delivery-schedule__table tbody tr:hover {
+  background: #F9FAFB;
+}
+
+.delivery-schedule__status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.delivery-schedule__status-badge--pending {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.delivery-schedule__status-badge--scheduled {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+.delivery-schedule__status-badge--completed {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.delivery-schedule__status-badge--delivered {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.delivery-schedule__status-badge--placed {
+  background: #E0E7FF;
+  color: #3730A3;
+}
+
+.delivery-schedule__action-btn {
+  background: #7C3AED;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.delivery-schedule__action-btn:hover {
+  background: #6D28D9;
+}
+
+.delivery-schedule__action-btn:disabled {
+  background: #D1D5DB;
+  cursor: not-allowed;
+}
+
+.delivery-schedule__details {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.delivery-schedule__vehicle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.delivery-schedule__vehicle-icon {
+  color: #7C3AED;
+}
+
+@media (max-width: 768px) {
+  .delivery-schedule {
+    padding: 1rem;
+  }
+
+  .delivery-schedule__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .delivery-schedule__table {
+    font-size: 0.875rem;
+  }
+
+  .delivery-schedule__table th,
+  .delivery-schedule__table td {
+    padding: 0.5rem;
+  }
+}

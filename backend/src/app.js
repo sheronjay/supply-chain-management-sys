@@ -3,6 +3,7 @@ import cors from 'cors';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import orderRoutes from './routes/order.routes.js';
 import authRoutes from './routes/auth.routes.js';
+import deliveryRoutes from './routes/delivery.routes.js';
 import errorHandler from '../middleware/errorHandler.js';
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/deliveries', deliveryRoutes);
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });

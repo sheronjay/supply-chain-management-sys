@@ -1,12 +1,12 @@
 import './Sidebar.css'
 
 const navItems = [
-  { key: 'Dashboard', label: 'Dashboard', icon: 'dashboard' },
-  { key: 'Orders', label: 'Orders', icon: 'orders' },
-  { key: 'TrainSchedule', label: 'Train Schedule', icon: 'train' },
-  /*{ key: 'VehicleUtilization', label: 'Vehicle Utilization', icon: 'vehicle' },*/
-  { key: 'ReportOverview', label: 'Report Overview', icon: 'report' },
-  { key: 'UserManagement', label: 'User Management', icon: 'users' },
+  { key: 'Dashboard', label: 'Dashboard', icon: 'dashboard', roles: ['admin', 'store_manager'] },
+  { key: 'Orders', label: 'Orders', icon: 'orders', roles: ['admin', 'store_manager'] },
+  { key: 'TrainSchedule', label: 'Train Schedule', icon: 'train', roles: ['admin', 'store_manager'] },
+  { key: 'ReportOverview', label: 'Report Overview', icon: 'report', roles: ['admin', 'store_manager'] },
+  { key: 'UserManagement', label: 'User Management', icon: 'users', roles: ['admin'] },
+  { key: 'DeliverySchedule', label: 'My Deliveries', icon: 'delivery', roles: ['delivery_employee'] },
 ]
 
 const bottomItems = [
@@ -77,6 +77,15 @@ const Icon = ({ type }) => {
           <path d="M15 18.5a4.5 4.5 0 0 1 4-2.5h.5" />
         </svg>
       )
+    case 'delivery':
+      return (
+        <svg viewBox="0 0 24 24" className="sidebar__icon" aria-hidden>
+          <path d="M3 8h9v7H3z" />
+          <path d="M12 11h4l3 4v3h-2.2" />
+          <circle cx="7.5" cy="18" r="1.8" />
+          <circle cx="16.5" cy="18" r="1.8" />
+        </svg>
+      )
     case 'settings':
       return (
         <svg viewBox="0 0 24 24" className="sidebar__icon" aria-hidden>
@@ -97,46 +106,54 @@ const Icon = ({ type }) => {
   }
 }
 
-const Sidebar = ({ activePage, onNavigate }) => (
-  <aside className="sidebar">
-    <div className="sidebar__brand">
-      <div className="sidebar__brand-logo">K</div>
-      <div className="sidebar__brand-text">
-        <h2>Kandypack</h2>
-        <span>Dashboard</span>
+const Sidebar = ({ activePage, onNavigate, currentUser }) => {
+  // Filter navigation items based on user role
+  const filteredNavItems = navItems.filter(item => {
+    if (!item.roles) return true
+    return currentUser && item.roles.includes(currentUser.role)
+  })
+
+  return (
+    <aside className="sidebar">
+      <div className="sidebar__brand">
+        <div className="sidebar__brand-logo">K</div>
+        <div className="sidebar__brand-text">
+          <h2>Kandypack</h2>
+          <span>{currentUser?.role === 'delivery_employee' ? 'Delivery Portal' : 'Dashboard'}</span>
+        </div>
       </div>
-    </div>
 
-    <nav className="sidebar__nav">
-      {navItems.map((item) => (
-        <button
-          key={item.key}
-          type="button"
-          className={`sidebar__nav-item ${
-            activePage === item.key ? 'sidebar__nav-item--active' : ''
-          }`}
-          onClick={() => onNavigate(item.key)}
-        >
-          <Icon type={item.icon} />
-          <span>{item.label}</span>
-        </button>
-      ))}
-    </nav>
+      <nav className="sidebar__nav">
+        {filteredNavItems.map((item) => (
+          <button
+            key={item.key}
+            type="button"
+            className={`sidebar__nav-item ${
+              activePage === item.key ? 'sidebar__nav-item--active' : ''
+            }`}
+            onClick={() => onNavigate(item.key)}
+          >
+            <Icon type={item.icon} />
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </nav>
 
-    <div className="sidebar__bottom">
-      {bottomItems.map((item) => (
-        <button
-          key={item.key}
-          type="button"
-          className="sidebar__nav-item sidebar__nav-item--secondary"
-          onClick={() => onNavigate(item.key)}
-        >
-          <Icon type={item.icon} />
-          <span>{item.label}</span>
-        </button>
-      ))}
-    </div>
-  </aside>
-)
+      <div className="sidebar__bottom">
+        {bottomItems.map((item) => (
+          <button
+            key={item.key}
+            type="button"
+            className="sidebar__nav-item sidebar__nav-item--secondary"
+            onClick={() => onNavigate(item.key)}
+          >
+            <Icon type={item.icon} />
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </div>
+    </aside>
+  )
+}
 
 export default Sidebar
