@@ -167,21 +167,35 @@
   border-radius: 999px;
   font-weight: 600;
   font-size: 13px;
+  text-transform: capitalize;
 }
 
+/* DELIVERED - Green */
 .orders__status--success {
-  background: rgba(34, 197, 94, 0.15);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.08));
   color: #15803d;
+  border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
+/* PLACED - Orange/Yellow */
 .orders__status--warning {
-  background: rgba(250, 204, 21, 0.2);
-  color: #a16207;
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.15), rgba(251, 146, 60, 0.08));
+  color: #c2410c;
+  border: 1px solid rgba(251, 146, 60, 0.3);
 }
 
+/* SCHEDULED - Blue */
+.orders__status--info {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.08));
+  color: #1e40af;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* CANCELLED - Red */
 .orders__status--danger {
-  background: rgba(248, 113, 113, 0.2);
+  background: linear-gradient(135deg, rgba(248, 113, 113, 0.15), rgba(248, 113, 113, 0.08));
   color: #b91c1c;
+  border: 1px solid rgba(248, 113, 113, 0.3);
 }
 
 .orders__action {

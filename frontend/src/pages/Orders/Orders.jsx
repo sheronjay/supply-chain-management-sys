@@ -55,6 +55,9 @@ const Orders = () => {
   };
 
   const statusTone = { 
+    DELIVERED: 'success',
+    SCHEDULED: 'info', 
+    PLACED: 'warning',
     Delivered: 'success', 
     Pending: 'warning', 
     Canceled: 'danger',
