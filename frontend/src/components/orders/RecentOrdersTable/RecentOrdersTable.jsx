@@ -5,6 +5,8 @@ const RecentOrdersTable = ({ orders, statusTone, onViewOrder }) => {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 20;
 
   // Get unique statuses from orders
   const uniqueStatuses = ['ALL', ...new Set(orders.map(order => order.status))];
@@ -29,17 +31,82 @@ const RecentOrdersTable = ({ orders, statusTone, onViewOrder }) => {
     return true;
   });
 
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+  const startIndex = (currentPage - 1) * ordersPerPage;
+  const endIndex = startIndex + ordersPerPage;
+  const currentOrders = filteredOrders.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
   const handleStatusChange = (e) => {
     setStatusFilter(e.target.value);
+    setCurrentPage(1);
   };
 
   const handleDateRangeApply = () => {
     setShowDatePicker(false);
+    setCurrentPage(1);
   };
 
   const handleClearDateRange = () => {
     setDateRange({ start: '', end: '' });
     setShowDatePicker(false);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxPagesToShow = 5;
+    
+    if (totalPages <= maxPagesToShow) {
+      // Show all pages if total is less than max
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always show first page
+      pages.push(1);
+      
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+      
+      // Add ellipsis after first page if needed
+      if (startPage > 2) {
+        pages.push('...');
+      }
+      
+      // Add middle pages
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+      
+      // Add ellipsis before last page if needed
+      if (endPage < totalPages - 1) {
+        pages.push('...');
+      }
+      
+      // Always show last page
+      pages.push(totalPages);
+    }
+    
+    return pages;
   };
 
   return (
@@ -111,8 +178,8 @@ const RecentOrdersTable = ({ orders, statusTone, onViewOrder }) => {
           </tr>
         </thead>
         <tbody>
-          {filteredOrders.length > 0 ? (
-            filteredOrders.map((order) => (
+          {currentOrders.length > 0 ? (
+            currentOrders.map((order) => (
               <tr key={order.id}>
                 <td>{order.id}</td>
                 <td>{order.customer}</td>
@@ -144,8 +211,47 @@ const RecentOrdersTable = ({ orders, statusTone, onViewOrder }) => {
       </table>
       <footer className="orders__table-footer">
         <p>
-          Showing <strong>{filteredOrders.length}</strong> of <strong>{orders.length}</strong> orders
+          Showing <strong>{startIndex + 1}</strong> to <strong>{Math.min(endIndex, filteredOrders.length)}</strong> of <strong>{filteredOrders.length}</strong> orders
         </p>
+        
+        {totalPages > 1 && (
+          <div className="orders__pagination">
+            <button 
+              type="button"
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+              className="orders__pagination-btn"
+            >
+              Previous
+            </button>
+            
+            <div className="orders__pagination-numbers">
+              {getPageNumbers().map((page, index) => (
+                page === '...' ? (
+                  <span key={`ellipsis-${index}`} className="orders__pagination-ellipsis">...</span>
+                ) : (
+                  <button
+                    key={page}
+                    type="button"
+                    onClick={() => handlePageChange(page)}
+                    className={`orders__pagination-number ${currentPage === page ? 'active' : ''}`}
+                  >
+                    {page}
+                  </button>
+                )
+              ))}
+            </div>
+            
+            <button 
+              type="button"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="orders__pagination-btn"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </footer>
     </section>
   );
