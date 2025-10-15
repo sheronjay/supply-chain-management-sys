@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import RecentOrdersTable from '../../components/orders/RecentOrdersTable/RecentOrdersTable';
+import OrderDetailsModal from '../../components/orders/OrderDetailsModal/OrderDetailsModal';
 import './Orders.css';
 
 const Orders = () => {
   const [recentOrders, setRecentOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
 
   // Fetch orders from backend
   const fetchOrders = async () => {
@@ -41,10 +44,15 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
-  // Load data on component mount
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  const handleViewOrder = (orderId) => {
+    setSelectedOrderId(orderId);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedOrderId(null);
+  };
 
   const statusTone = { 
     Delivered: 'success', 
@@ -76,7 +84,17 @@ const Orders = () => {
 
   return (
     <div className="orders">
-      <RecentOrdersTable orders={recentOrders} statusTone={statusTone} />
+      <RecentOrdersTable 
+        orders={recentOrders} 
+        statusTone={statusTone}
+        onViewOrder={handleViewOrder}
+      />
+      
+      <OrderDetailsModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        orderId={selectedOrderId}
+      />
     </div>
   );
 };

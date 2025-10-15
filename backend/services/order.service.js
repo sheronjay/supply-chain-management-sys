@@ -19,10 +19,15 @@ export async function listOrders() {
     const ordersWithItems = [];
     for (const order of rows) {
         const [items] = await pool.query(`
-            SELECT oi.*, p.product_name, p.unit_price
-            FROM order_items oi 
-            LEFT JOIN products p ON oi.product_id = p.product_id 
-            WHERE oi.order_id = ?
+            SELECT 
+                order_id,
+                product_id,
+                product_name,
+                quantity,
+                unit_price,
+                amount
+            FROM order_items_view
+            WHERE order_id = ?
         `, [order.order_id]);
         
         ordersWithItems.push({
@@ -38,7 +43,7 @@ export async function listOrders() {
                 name: item.product_name,
                 qty: item.quantity,
                 price: item.unit_price,
-                amount: item.quantity * item.unit_price
+                amount: item.amount
             }))
         });
     }
@@ -64,10 +69,15 @@ export async function getOrderById(orderId) {
     
     const order = orders[0];
     const [items] = await pool.query(`
-        SELECT oi.*, p.product_name, p.unit_price
-        FROM order_items oi 
-        LEFT JOIN products p ON oi.product_id = p.product_id 
-        WHERE oi.order_id = ?
+        SELECT 
+            order_id,
+            product_id,
+            product_name,
+            quantity,
+            unit_price,
+            amount
+        FROM order_items_view
+        WHERE order_id = ?
     `, [orderId]);
     
     return {
@@ -83,7 +93,7 @@ export async function getOrderById(orderId) {
             name: item.product_name,
             qty: item.quantity,
             price: item.unit_price,
-            amount: item.quantity * item.unit_price
+            amount: item.amount
         }))
     };
 }

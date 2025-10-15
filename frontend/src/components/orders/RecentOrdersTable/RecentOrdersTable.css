@@ -30,6 +30,7 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  align-items: flex-start;
 }
 
 .orders__filter {
@@ -40,7 +41,102 @@
   color: #1e293b;
   font-weight: 500;
   cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
 }
+
+.orders__filter:hover {
+  background: #e0e7ff;
+  border-color: #a5b4fc;
+}
+
+.orders__filter:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.orders__date-filter {
+  position: relative;
+}
+
+.orders__date-picker {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.orders__date-picker label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.orders__date-picker input[type="date"] {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #1e293b;
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+
+.orders__date-picker input[type="date"]:focus {
+  outline: none;
+  border-color: #6366f1;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.orders__date-picker-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.orders__date-picker-actions button {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.orders__date-picker-actions button:first-child {
+  background: #6366f1;
+  color: white;
+}
+
+.orders__date-picker-actions button:first-child:hover {
+  background: #4f46e5;
+}
+
+.orders__date-picker-actions button:last-child {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.orders__date-picker-actions button:last-child:hover {
+  background: #e2e8f0;
+}
+
 
 .orders__table {
   width: 100%;
