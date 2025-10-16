@@ -1,0 +1,105 @@
+/* Layout for User Orders page */
+.user-orders-page {
+  padding: 20px;
+  background-color: #f7f7f7;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.user-orders-page .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.user-orders-page h1 {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+/* Add New Order button */
+.add-order-btn {
+  background: #2563eb; /* keep it blue */
+  color: white;
+  border: none;
+  padding: 12px 20px; /* bigger padding for a larger button */
+  font-size: 16px;    /* slightly larger text */
+  border-radius: 8px; /* slightly more rounded */
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.add-order-btn:hover {
+  background: #1d4ed8; /* slightly darker blue on hover */
+}
+
+/* Modal overlay and modal styles */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  width: 400px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal input,
+.modal select {
+  padding: 8px;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.item-row {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.add-item-btn,
+.cancel-btn,
+.create-btn,
+.remove-btn {
+  padding: 6px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.add-item-btn {
+  background: #4caf50;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.remove-btn {
+  background: red;
+  color: white;
+}
+
+.cancel-btn {
+  background: #9ca3af;
+}
+
+.create-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}

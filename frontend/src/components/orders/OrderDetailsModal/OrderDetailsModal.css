@@ -1,0 +1,244 @@
+.order-details-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.order-details-content {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.order-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.order-details-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.order-details-close-btn {
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  line-height: 1;
+}
+
+.order-details-close-btn:hover {
+  color: #111827;
+}
+
+.order-details-body {
+  padding: 24px;
+}
+
+.order-details-loading,
+.order-details-error {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.order-details-error p {
+  color: #ef4444;
+  margin-bottom: 16px;
+}
+
+.order-details-error button {
+  padding: 8px 16px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.order-details-error button:hover {
+  background-color: #2563eb;
+}
+
+.order-details-info {
+  margin-bottom: 24px;
+}
+
+.order-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.order-detail-row:last-child {
+  border-bottom: none;
+}
+
+.order-detail-label {
+  font-weight: 500;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.order-detail-value {
+  font-weight: 500;
+  color: #111827;
+  font-size: 14px;
+}
+
+.order-detail-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.order-detail-status--pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.order-detail-status--delivered {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.order-detail-status--canceled,
+.order-detail-status--cancelled {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.order-items-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.order-items-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.order-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.order-items-table thead {
+  background-color: #f9fafb;
+}
+
+.order-items-table th {
+  padding: 12px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.order-items-table td {
+  padding: 12px;
+  font-size: 14px;
+  color: #111827;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.order-items-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.order-items-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.no-items {
+  text-align: center;
+  color: #6b7280;
+  padding: 20px;
+  font-size: 14px;
+}
+
+.order-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  padding: 16px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.order-total-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.order-total-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .order-details-content {
+    max-width: 100%;
+    margin: 10px;
+  }
+
+  .order-details-header,
+  .order-details-body {
+    padding: 16px;
+  }
+
+  .order-items-table {
+    font-size: 12px;
+  }
+
+  .order-items-table th,
+  .order-items-table td {
+    padding: 8px;
+  }
+
+  .order-total {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}

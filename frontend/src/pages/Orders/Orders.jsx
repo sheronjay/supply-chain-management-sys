@@ -1,56 +1,105 @@
-import OrderSummary from '../../components/orders/OrderSummary/OrderSummary'
-import OrderStats from '../../components/orders/OrderStats/OrderStats'
-import RecentOrdersTable from '../../components/orders/RecentOrdersTable/RecentOrdersTable'
-import './Orders.css'
+import { useState, useEffect } from "react";
+import RecentOrdersTable from '../../components/orders/RecentOrdersTable/RecentOrdersTable';
+import OrderDetailsModal from '../../components/orders/OrderDetailsModal/OrderDetailsModal';
+import './Orders.css';
 
-const orderStats = [
-  {
-    id: 'total',
-    title: 'Total Orders',
-    value: '1,280',
-    hint: '+15% from last month',
-  },
-  {
-    id: 'pending',
-    title: 'Pending',
-    value: '125',
-    hint: 'Awaiting fulfillment',
-  },
-  {
-    id: 'delivered',
-    title: 'Delivered',
-    value: '1,155',
-    hint: '90% completion rate',
-  },
-  {
-    id: 'average',
-    title: 'Avg. Order Value',
-    value: 'LKR 325,505',
-    hint: 'Updated 1 hour ago',
-    accent: 'highlight',
-  },
-]
+const Orders = () => {
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
 
-const recentOrders = [
-  { id: 'ORD001', customer: 'Alice Smith', date: '2025-08-02', status: 'Delivered' },
-  { id: 'ORD002', customer: 'Bob Johnson', date: '2025-08-12', status: 'Pending' },
-  { id: 'ORD003', customer: 'Charlie Brown', date: '2025-08-13', status: 'Canceled' },
-  { id: 'ORD004', customer: 'Diana Prince', date: '2025-08-16', status: 'Delivered' },
-  { id: 'ORD005', customer: 'Eva Adams', date: '2025-08-18', status: 'Pending' },
-]
+  // Fetch orders from backend
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:5000/api/orders');
+      if (response.ok) {
+        const data = await response.json();
+        // Map the data to include the 'date' field that the table expects
+        const ordersWithDate = data.map(order => ({
+          ...order,
+          date: order.deliveryDate ? new Date(order.deliveryDate).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          }) : 'N/A'
+        }));
+        setRecentOrders(ordersWithDate);
+        setError(null);
+      } else {
+        throw new Error('Failed to fetch orders');
+      }
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+      setError('Failed to load orders. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-const statusTone = {
-  Delivered: 'success',
-  Pending: 'warning',
-  Canceled: 'danger',
-}
+  // Load data on component mount
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
-const Orders = () => (
-  <div className="orders">
-    <OrderSummary />
-    <OrderStats stats={orderStats} />
-    <RecentOrdersTable orders={recentOrders} statusTone={statusTone} />
-  </div>
-)
+  const handleViewOrder = (orderId) => {
+    setSelectedOrderId(orderId);
+    setIsModalOpen(true);
+  };
 
-export default Orders
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedOrderId(null);
+  };
+
+  const statusTone = { 
+    DELIVERED: 'success',
+    SCHEDULED: 'info', 
+    PLACED: 'warning',
+    Delivered: 'success', 
+    Pending: 'warning', 
+    Canceled: 'danger',
+    Cancelled: 'danger'
+  };
+
+  if (loading) {
+    return (
+      <div className="orders">
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <p>Loading orders...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="orders">
+        <div style={{ padding: '2rem', textAlign: 'center', color: 'red' }}>
+          <p>{error}</p>
+          <button onClick={fetchOrders} style={{ marginTop: '1rem' }}>Retry</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="orders">
+      <RecentOrdersTable 
+        orders={recentOrders} 
+        statusTone={statusTone}
+        onViewOrder={handleViewOrder}
+      />
+      
+      <OrderDetailsModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        orderId={selectedOrderId}
+      />
+    </div>
+  );
+};
+
+export default Orders;

@@ -1,4 +1,4 @@
-const pool = require('../db/pool')
+import pool from '../db/pool.js';
 
 const parseMonthParam = (rawMonth) => {
   if (!rawMonth) {
@@ -314,11 +314,11 @@ const getSystemAlerts = async (req, res) => {
   }
 }
 
-module.exports = {
+export {
   getMonthlyRevenue,
   getNewOrdersCount,
   getCompletedDeliveries,
   getOrderHistory,
   getLateDeliveries,
   getSystemAlerts,
-}
+};
