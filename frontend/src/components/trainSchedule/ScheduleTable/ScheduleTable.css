@@ -1,117 +1,238 @@
+/* ========== Main Card ========== */
 .train-schedule__card {
   background: #ffffff;
-  border-radius: 24px;
+  border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.06);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  font-family: "Poppins", sans-serif;
+  color: #1a1a1a;
+  width: 100%; /* ✅ Full width */
+  margin: 20px 0;
+  box-sizing: border-box;
 }
 
+/* ========== Tabs ========== */
 .train-schedule__tabs {
   display: flex;
-  gap: 12px;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 .train-schedule__tab {
+  background: #e6f0ff;
   border: none;
-  padding: 10px 16px;
-  border-radius: 12px;
-  background: #e2e8f0;
-  color: #1e293b;
+  border-radius: 8px;
+  padding: 10px 20px;
   font-weight: 600;
+  color: #004aad;
   cursor: pointer;
+  transition: 0.3s;
+}
+
+.train-schedule__tab:hover {
+  background: #d0e4ff;
 }
 
 .train-schedule__tab--active {
-  background: #2563eb;
-  color: #ffffff;
-  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+  background: #004aad;
+  color: white;
 }
 
-.train-schedule__table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.train-schedule__table thead {
-  background: #f1f5f9;
-}
-
-.train-schedule__table th,
-.train-schedule__table td {
-  padding: 14px 16px;
-  text-align: left;
-  font-size: 14px;
-  color: #1f2937;
-}
-
-.train-schedule__table tbody tr + tr {
-  border-top: 1px solid #e2e8f0;
-}
-
-.train-schedule__status {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 13px;
-}
-
-.train-schedule__status--success {
-  background: rgba(34, 197, 94, 0.15);
-  color: #16a34a;
-}
-
-.train-schedule__status--warning {
-  background: rgba(250, 204, 21, 0.2);
-  color: #a16207;
-}
-
-.train-schedule__status--danger {
-  background: rgba(248, 113, 113, 0.2);
-  color: #b91c1c;
-}
-
-.train-schedule__status--neutral {
-  background: rgba(59, 130, 246, 0.15);
-  color: #1d4ed8;
-}
-
-.train-schedule__footer {
+/* ========== Header and Add Button ========== */
+.train-schedule__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  color: #64748b;
+  margin-bottom: 16px;
 }
 
+.train-schedule__header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #004aad;
+}
+
+.train-schedule__add-btn {
+  background: #004aad;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.train-schedule__add-btn:hover {
+  background: #005de6;
+}
+
+/* ========== Table Styles ========== */
+.train-schedule__table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.train-schedule__table th {
+  background: #004aad;
+  color: white;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.train-schedule__table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 0.95rem;
+  color: #1e293b;
+  word-wrap: break-word;
+}
+
+/* ========== Status Badges ========== */
+.train-schedule__status {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  display: inline-block;
+}
+
+.train-schedule__status--success {
+  background: #e6ffed;
+  color: #008000;
+}
+
+.train-schedule__status--warning {
+  background: #fff6e6;
+  color: #d98200;
+}
+
+.train-schedule__status--danger {
+  background: #ffe6e6;
+  color: #d00000;
+}
+
+.train-schedule__status--neutral {
+  background: #e6f0ff;
+  color: #004aad;
+}
+
+/* ========== Pagination ========== */
 .train-schedule__pagination {
   display: flex;
-  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 .train-schedule__pagination button {
+  background: #004aad;
+  color: white;
   border: none;
-  background: #e2e8f0;
-  padding: 8px 14px;
-  border-radius: 12px;
+  border-radius: 6px;
+  padding: 6px 14px;
   cursor: pointer;
-  font-weight: 600;
+  transition: 0.3s;
 }
 
-.train-schedule__pagination .is-active {
-  background: #2563eb;
-  color: #ffffff;
-  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+.train-schedule__pagination button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
+.train-schedule__pagination button:hover:not(:disabled) {
+  background: #005de6;
+}
+
+/* ========== Add Form (Popup) ========== */
+.train-schedule__add-form {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.train-schedule__add-form h3 {
+  color: #004aad;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.train-schedule__add-form form,
+.train-schedule__add-form > div {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  width: 400px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.train-schedule__add-form input {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 1rem;
+}
+
+.train-schedule__form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.train-schedule__form-actions button {
+  background: #004aad;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.train-schedule__form-actions button:hover {
+  background: #005de6;
+}
+
+.train-schedule__form-actions button:last-child {
+  background: #888;
+}
+
+.train-schedule__form-actions button:last-child:hover {
+  background: #555;
+}
+
+/* ========== Responsive Fix ========== */
 @media (max-width: 640px) {
   .train-schedule__card {
-    padding: 18px;
+    padding: 16px;
+  }
+
+  .train-schedule__table th,
+  .train-schedule__table td {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  .train-schedule__add-form form,
+  .train-schedule__add-form > div {
+    width: 90%;
   }
 }
