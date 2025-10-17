@@ -6,8 +6,14 @@ CREATE DATABASE IF NOT EXISTS `supplychain`;
 USE `supplychain`;
 
 -- =========================
--- Core reference tables
--- =========================
+-- Core referenceCREATE TABLE IF NOT EXISTS delivery_employees (
+  user_id         VARCHAR(255) PRIMARY KEY,       -- ERD "Delivery employee (PK User_ID)"
+  working_hours   DECIMAL(6,2),                   -- Total hours worked
+  availability    TINYINT(1) NOT NULL DEFAULT 1,
+  CONSTRAINT fk_delivery_employees_user
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB;-- =========================
 CREATE TABLE IF NOT EXISTS stores (
   store_id        VARCHAR(255) PRIMARY KEY,
   city            VARCHAR(255)
@@ -578,11 +584,11 @@ INSERT INTO store_managers (manager_id) VALUES
 ('USR-MGR-CMB');
 
 INSERT INTO delivery_employees (user_id, working_hours, availability) VALUES
-('USR-DRV-01','Mon–Fri 08:00–17:00',1),
-('USR-DRV-02','Tue–Sat 08:00–17:00',1),
-('USR-DRV-03','Mon–Fri 09:00–18:00',1),
-('USR-ASS-01','Mon–Sat 08:00–16:00',1),
-('USR-ASS-02','Tue–Sat 09:00–17:00',1);
+('USR-DRV-01',25.50,1),
+('USR-DRV-02',18.75,1),
+('USR-DRV-03',32.25,1),
+('USR-ASS-01',16.00,1),
+('USR-ASS-02',23.50,1);
 
 INSERT INTO admins (admin_id, username, email, password) VALUES
 ('ADM-ROOT','root','root@kandypack.lk','$2y$dummyhash');
