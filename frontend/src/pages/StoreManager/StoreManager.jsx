@@ -82,18 +82,7 @@ const StoreManager = () => {
   }
 
   const totalOrders = orders.length
-  const totalValue = orders.reduce((sum, order) => sum + parseFloat(order.total_price || 0), 0)
-  const totalCapacity = orders.reduce(
-    (sum, order) => sum + parseFloat(order.total_capacity_required || 0),
-    0
-  )
-
   const totalInventory = inventory.length
-  const inventoryValue = inventory.reduce((sum, order) => sum + parseFloat(order.total_price || 0), 0)
-  const inventoryCapacity = inventory.reduce(
-    (sum, order) => sum + parseFloat(order.total_capacity_required || 0),
-    0
-  )
 
   return (
     <div className="store-manager">
@@ -178,101 +167,6 @@ const StoreManager = () => {
           {error}
         </div>
       )}
-
-      {/* Statistics Cards */}
-      <div className="store-manager-stats">
-        {activeTab === 'orders' ? (
-          <>
-            <div className="stat-card">
-              <div className="stat-icon stat-icon-orders">
-                <svg viewBox="0 0 24 24">
-                  <path
-                    d="M20 7h-4V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                </svg>
-              </div>
-              <div className="stat-content">
-                <div className="stat-value">{totalOrders}</div>
-                <div className="stat-label">Pending Acceptance</div>
-              </div>
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-icon stat-icon-value">
-                <svg viewBox="0 0 24 24">
-                  <line x1="12" y1="1" x2="12" y2="23" stroke="currentColor" strokeWidth="2" />
-                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" fill="none" stroke="currentColor" strokeWidth="2" />
-                </svg>
-              </div>
-              <div className="stat-content">
-                <div className="stat-value">
-                  Rs. {totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </div>
-                <div className="stat-label">Total Value</div>
-              </div>
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-icon stat-icon-capacity">
-                <svg viewBox="0 0 24 24">
-                  <rect x="3" y="8" width="18" height="12" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
-                  <path d="M3 8l9-6 9 6" fill="none" stroke="currentColor" strokeWidth="2" />
-                </svg>
-              </div>
-              <div className="stat-content">
-                <div className="stat-value">{totalCapacity.toFixed(2)} m³</div>
-                <div className="stat-label">Total Capacity</div>
-              </div>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="stat-card">
-              <div className="stat-icon stat-icon-orders">
-                <svg viewBox="0 0 24 24">
-                  <rect x="3" y="8" width="18" height="12" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
-                  <path d="M3 8l9-6 9 6" fill="none" stroke="currentColor" strokeWidth="2" />
-                </svg>
-              </div>
-              <div className="stat-content">
-                <div className="stat-value">{totalInventory}</div>
-                <div className="stat-label">Items in Inventory</div>
-              </div>
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-icon stat-icon-value">
-                <svg viewBox="0 0 24 24">
-                  <line x1="12" y1="1" x2="12" y2="23" stroke="currentColor" strokeWidth="2" />
-                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" fill="none" stroke="currentColor" strokeWidth="2" />
-                </svg>
-              </div>
-              <div className="stat-content">
-                <div className="stat-value">
-                  Rs. {inventoryValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </div>
-                <div className="stat-label">Inventory Value</div>
-              </div>
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-icon stat-icon-capacity">
-                <svg viewBox="0 0 24 24">
-                  <rect x="3" y="8" width="18" height="12" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
-                  <path d="M3 8l9-6 9 6" fill="none" stroke="currentColor" strokeWidth="2" />
-                </svg>
-              </div>
-              <div className="stat-content">
-                <div className="stat-value">{inventoryCapacity.toFixed(2)} m³</div>
-                <div className="stat-label">Storage Used</div>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
 
       {/* Content based on active tab */}
       <div className="store-manager-content">
