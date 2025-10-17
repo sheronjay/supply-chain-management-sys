@@ -17,6 +17,15 @@ const allNavItems = [
 const mainStoreManagerNavItems = [
   { key: 'MainStores', label: 'Main Stores', icon: 'mainstores' },
   { key: 'TrainSchedule', label: 'Train Schedule', icon: 'train' },
+  { key: 'UserManagement', label: 'User Management', icon: 'users' },
+]
+
+// Navigation items for Store Manager (restricted access)
+const storeManagerNavItems = [
+  { key: 'Dashboard', label: 'Dashboard', icon: 'dashboard' },
+  { key: 'Orders', label: 'Orders', icon: 'orders' },
+  { key: 'StoreManager', label: 'Store Manager', icon: 'storemanager' },
+  { key: 'ReportOverview', label: 'Report Overview', icon: 'report' },
 ]
 
 // Navigation items for Drivers and Assistants (restricted access)
@@ -144,6 +153,8 @@ const Sidebar = ({ activePage, onNavigate, userDesignation }) => {
   
   if (userDesignation === 'Main Store Manager') {
     navItems = mainStoreManagerNavItems;
+  } else if (userDesignation === 'Store Manager') {
+    navItems = storeManagerNavItems;
   } else if (userDesignation === 'Driver' || userDesignation === 'Assistant') {
     navItems = driverNavItems;
   }
