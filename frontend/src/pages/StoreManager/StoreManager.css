@@ -198,6 +198,62 @@
   font-weight: 500;
 }
 
+/* Tabs */
+.store-manager-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #6b7280;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  margin-bottom: -2px;
+}
+
+.tab-button:hover {
+  color: #374151;
+  background: #f9fafb;
+}
+
+.tab-button.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+}
+
+.tab-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.tab-badge {
+  display: inline-block;
+  background: #667eea;
+  color: white;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  min-width: 20px;
+  text-align: center;
+}
+
+.tab-button:not(.active) .tab-badge {
+  background: #9ca3af;
+}
+
 /* Content Section */
 .store-manager-content {
   margin-top: 2rem;
@@ -237,6 +293,22 @@
   .btn-refresh {
     width: 100%;
     justify-content: center;
+  }
+
+  .store-manager-tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .store-manager-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-button {
+    white-space: nowrap;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
   }
 
   .store-manager-stats {

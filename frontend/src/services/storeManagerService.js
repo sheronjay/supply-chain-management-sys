@@ -12,6 +12,17 @@ export async function fetchStoreOrders(storeId = 'ST-CMB-01') {
 }
 
 /**
+ * Fetch all orders with status 'IN-STORE' for a specific store (inventory)
+ */
+export async function fetchStoreInventory(storeId = 'ST-CMB-01') {
+  const response = await fetch(`${API_BASE_URL}/store-manager/inventory/${storeId}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch store inventory: ${response.statusText}`);
+  }
+  return response.json();
+}
+
+/**
  * Accept an order - update status from 'TRAIN' to 'IN-STORE'
  */
 export async function acceptOrder(orderId, managerId = 'MGR-CMB-001') {
