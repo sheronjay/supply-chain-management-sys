@@ -51,18 +51,33 @@ CREATE TABLE IF NOT EXISTS trucks (
 -- Train operations
 -- =========================
 CREATE TABLE IF NOT EXISTS train_schedules (
-  trip_id        VARCHAR(255) PRIMARY KEY,
-  day_date       DATE,
-  start_time     TIME,
-  arrival_time   TIME,
-  train_id       VARCHAR(255),
-  end_store_id   VARCHAR(255),
+  trip_id          VARCHAR(255) PRIMARY KEY,
+  day_date         DATE,
+  start_time       TIME,
+  arrival_time     TIME,
+  train_id         VARCHAR(255),
+  end_store_id     VARCHAR(255),
+  available_capacity DECIMAL(10,2) DEFAULT 0,
   CONSTRAINT fk_ts_train
     FOREIGN KEY (train_id) REFERENCES trains(train_id)
     ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT fk_ts_end_store
     FOREIGN KEY (end_store_id) REFERENCES stores(store_id)
     ON UPDATE CASCADE ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- Junction table to track which orders are assigned to which train schedules
+CREATE TABLE IF NOT EXISTS train_schedule_orders (
+  trip_id        VARCHAR(255),
+  order_id       VARCHAR(255),
+  assigned_date  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (trip_id, order_id),
+  CONSTRAINT fk_tso_trip
+    FOREIGN KEY (trip_id) REFERENCES train_schedules(trip_id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_tso_order
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+    ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- =========================
@@ -269,36 +284,36 @@ INSERT INTO trucks (truck_id, store_id, reg_number, capacity, used_hours, availa
 -- =========================
 -- Train operations
 -- =========================
-INSERT INTO train_schedules (trip_id, day_date, start_time, arrival_time, train_id, end_store_id) VALUES
+INSERT INTO train_schedules (trip_id, day_date, start_time, arrival_time, train_id, end_store_id, available_capacity) VALUES
 -- Week of Oct 20-26, 2025
-('TRIP-2025-10-20-CMB','2025-10-20','06:00:00','08:30:00','TRN-UD1','ST-CMB-01'),
-('TRIP-2025-10-21-NGO','2025-10-21','06:00:00','08:00:00','TRN-UD2','ST-NGO-01'),
-('TRIP-2025-10-22-GAL','2025-10-22','06:00:00','09:40:00','TRN-CST','ST-GAL-01'),
-('TRIP-2025-10-23-MAT','2025-10-23','06:00:00','10:30:00','TRN-CST2','ST-MAT-01'),
-('TRIP-2025-10-24-JAF','2025-10-24','05:30:00','12:05:00','TRN-NOR','ST-JAF-01'),
-('TRIP-2025-10-25-TRI','2025-10-25','05:30:00','11:25:00','TRN-EAS','ST-TRI-01'),
-('TRIP-2025-10-26-CMB','2025-10-26','06:00:00','08:30:00','TRN-UD1','ST-CMB-01'),
+('TRIP-2025-10-20-CMB','2025-10-20','06:00:00','08:30:00','TRN-UD1','ST-CMB-01', 500.00),
+('TRIP-2025-10-21-NGO','2025-10-21','06:00:00','08:00:00','TRN-UD2','ST-NGO-01', 500.00),
+('TRIP-2025-10-22-GAL','2025-10-22','06:00:00','09:40:00','TRN-CST','ST-GAL-01', 450.00),
+('TRIP-2025-10-23-MAT','2025-10-23','06:00:00','10:30:00','TRN-CST2','ST-MAT-01', 450.00),
+('TRIP-2025-10-24-JAF','2025-10-24','05:30:00','12:05:00','TRN-NOR','ST-JAF-01', 400.00),
+('TRIP-2025-10-25-TRI','2025-10-25','05:30:00','11:25:00','TRN-EAS','ST-TRI-01', 400.00),
+('TRIP-2025-10-26-CMB','2025-10-26','06:00:00','08:30:00','TRN-UD1','ST-CMB-01', 500.00),
 
 -- Week of Oct 27 - Nov 2, 2025
-('TRIP-2025-10-27-NGO','2025-10-27','06:00:00','08:00:00','TRN-UD2','ST-NGO-01'),
-('TRIP-2025-10-28-GAL','2025-10-28','06:00:00','09:40:00','TRN-CST','ST-GAL-01'),
-('TRIP-2025-10-29-MAT','2025-10-29','06:00:00','10:30:00','TRN-CST2','ST-MAT-01'),
-('TRIP-2025-10-30-JAF','2025-10-30','05:30:00','12:05:00','TRN-NOR','ST-JAF-01'),
-('TRIP-2025-10-31-TRI','2025-10-31','05:30:00','11:25:00','TRN-EAS','ST-TRI-01'),
-('TRIP-2025-11-01-CMB','2025-11-01','06:00:00','08:30:00','TRN-UD1','ST-CMB-01'),
-('TRIP-2025-11-02-NGO','2025-11-02','06:00:00','08:00:00','TRN-UD2','ST-NGO-01'),
+('TRIP-2025-10-27-NGO','2025-10-27','06:00:00','08:00:00','TRN-UD2','ST-NGO-01', 500.00),
+('TRIP-2025-10-28-GAL','2025-10-28','06:00:00','09:40:00','TRN-CST','ST-GAL-01', 450.00),
+('TRIP-2025-10-29-MAT','2025-10-29','06:00:00','10:30:00','TRN-CST2','ST-MAT-01', 450.00),
+('TRIP-2025-10-30-JAF','2025-10-30','05:30:00','12:05:00','TRN-NOR','ST-JAF-01', 400.00),
+('TRIP-2025-10-31-TRI','2025-10-31','05:30:00','11:25:00','TRN-EAS','ST-TRI-01', 400.00),
+('TRIP-2025-11-01-CMB','2025-11-01','06:00:00','08:30:00','TRN-UD1','ST-CMB-01', 500.00),
+('TRIP-2025-11-02-NGO','2025-11-02','06:00:00','08:00:00','TRN-UD2','ST-NGO-01', 500.00),
 
 -- Week of Nov 3-9, 2025
-('TRIP-2025-11-03-GAL','2025-11-03','06:00:00','09:40:00','TRN-CST','ST-GAL-01'),
-('TRIP-2025-11-04-MAT','2025-11-04','06:00:00','10:30:00','TRN-CST2','ST-MAT-01'),
-('TRIP-2025-11-05-JAF','2025-11-05','05:30:00','12:05:00','TRN-NOR','ST-JAF-01'),
-('TRIP-2025-11-06-TRI','2025-11-06','05:30:00','11:25:00','TRN-EAS','ST-TRI-01'),
-('TRIP-2025-11-07-CMB','2025-11-07','06:00:00','08:30:00','TRN-UD1','ST-CMB-01'),
-('TRIP-2025-11-08-NGO','2025-11-08','06:00:00','08:00:00','TRN-UD2','ST-NGO-01'),
-('TRIP-2025-11-09-GAL','2025-11-09','06:00:00','09:40:00','TRN-CST','ST-GAL-01'),
+('TRIP-2025-11-03-GAL','2025-11-03','06:00:00','09:40:00','TRN-CST','ST-GAL-01', 450.00),
+('TRIP-2025-11-04-MAT','2025-11-04','06:00:00','10:30:00','TRN-CST2','ST-MAT-01', 450.00),
+('TRIP-2025-11-05-JAF','2025-11-05','05:30:00','12:05:00','TRN-NOR','ST-JAF-01', 400.00),
+('TRIP-2025-11-06-TRI','2025-11-06','05:30:00','11:25:00','TRN-EAS','ST-TRI-01', 400.00),
+('TRIP-2025-11-07-CMB','2025-11-07','06:00:00','08:30:00','TRN-UD1','ST-CMB-01', 500.00),
+('TRIP-2025-11-08-NGO','2025-11-08','06:00:00','08:00:00','TRN-UD2','ST-NGO-01', 500.00),
+('TRIP-2025-11-09-GAL','2025-11-09','06:00:00','09:40:00','TRN-CST','ST-GAL-01', 450.00),
 
 -- Nov 10, 2025
-('TRIP-2025-11-10-MAT','2025-11-10','06:00:00','10:30:00','TRN-CST2','ST-MAT-01');
+('TRIP-2025-11-10-MAT','2025-11-10','06:00:00','10:30:00','TRN-CST2','ST-MAT-01', 450.00);
 
 -- =========================
 -- Products

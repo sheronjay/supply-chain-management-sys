@@ -3,3 +3,13 @@
   flex-direction: column;
   gap: 24px;
 }
+
+.train-schedule .loading-message {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 60px 40px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  color: #64748b;
+  font-size: 14px;
+}

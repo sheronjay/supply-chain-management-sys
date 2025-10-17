@@ -1,20 +1,31 @@
 import './ScheduleHeader.css'
 
-const ScheduleHeader = () => (
-  <header className="train-schedule__header">
-    <div>
-      <h2>Train Schedule Overview</h2>
-      <p>Today, August 07, 2025</p>
-    </div>
-    <div className="train-schedule__actions">
-      <button type="button" className="train-schedule__button train-schedule__button--primary">
-        Add New Trip
-      </button>
-      <button type="button" className="train-schedule__button train-schedule__button--secondary">
-        Export Schedule
-      </button>
-    </div>
-  </header>
-)
+const ScheduleHeader = ({ onRefresh }) => {
+  const today = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+
+  return (
+    <header className="train-schedule__header">
+      <div>
+        <h2>Train Schedule Overview</h2>
+        <p>Today, {today}</p>
+      </div>
+      <div className="train-schedule__actions">
+        {onRefresh && (
+          <button 
+            type="button" 
+            className="train-schedule__button train-schedule__button--secondary"
+            onClick={onRefresh}
+          >
+            Refresh Schedule
+          </button>
+        )}
+      </div>
+    </header>
+  )
+}
 
 export default ScheduleHeader

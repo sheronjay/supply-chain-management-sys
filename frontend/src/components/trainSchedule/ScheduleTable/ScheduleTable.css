@@ -47,6 +47,27 @@
   color: #1f2937;
 }
 
+.train-schedule__table .train-id {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.train-schedule__table .capacity-used {
+  font-weight: 600;
+  color: #dc2626;
+}
+
+.train-schedule__table .capacity-available {
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.train-schedule__table .capacity-total {
+  font-weight: 600;
+  color: #0f172a;
+}
+
 .train-schedule__table tbody tr + tr {
   border-top: 1px solid #e2e8f0;
 }

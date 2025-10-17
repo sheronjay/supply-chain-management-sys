@@ -4,6 +4,7 @@ import TopBar from './components/TopBar/TopBar'
 import Dashboard from './pages/Dashboard/Dashboard'
 import Orders from './pages/Orders/Orders'
 import UserOrders from './pages/userOrders/UserOrders'
+import MainStores from './pages/MainStores/MainStores'
 import TrainSchedule from './pages/TrainSchedule/TrainSchedule'
 import ReportOverview from './pages/ReportOverview/ReportOverview'
 import UserManagement from './pages/UserManagement/UserManagement'
@@ -31,6 +32,11 @@ const pageConfig = {
     title: 'My Orders',
     subtitle: 'User Orders',
     element: <UserOrders />,
+  },
+  MainStores: {
+    title: 'Main Stores',
+    subtitle: 'Order Processing',
+    element: <MainStores />,
   },
   TrainSchedule: {
     title: 'Train Schedule',

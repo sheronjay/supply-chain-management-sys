@@ -6,52 +6,56 @@ const ScheduleTable = ({ trips, statusTone }) => (
       <button type="button" className="train-schedule__tab train-schedule__tab--active">
         Train Schedule
       </button>
-      <button type="button" className="train-schedule__tab">Truck Schedule</button>
-      <button type="button" className="train-schedule__tab">Assigned Orders</button>
     </header>
 
     <table className="train-schedule__table">
       <thead>
         <tr>
+          <th>Date</th>
           <th>Departure</th>
           <th>Train ID</th>
-          <th>Assigned Orders</th>
-          <th>Capacity</th>
+          <th>Train Name</th>
+          <th>Used Capacity</th>
+          <th>Available Capacity</th>
+          <th>Total Capacity</th>
           <th>Status</th>
-          <th>Train Lead</th>
-          <th>Route</th>
+          <th>Destination</th>
         </tr>
       </thead>
       <tbody>
-        {trips.map((trip) => (
-          <tr key={trip.id}>
-            <td>{trip.time}</td>
-            <td>{trip.id}</td>
-            <td>{trip.assigned}</td>
-            <td>{trip.capacity}</td>
-            <td>
-              <span className={`train-schedule__status train-schedule__status--${statusTone[trip.status]}`}>
-                {trip.status}
-              </span>
+        {trips.length === 0 ? (
+          <tr>
+            <td colSpan="9" style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
+              No train schedules available
             </td>
-            <td>{trip.lead}</td>
-            <td>{trip.route}</td>
           </tr>
-        ))}
+        ) : (
+          trips.map((trip) => (
+            <tr key={trip.id}>
+              <td>{trip.date}</td>
+              <td>{trip.time}</td>
+              <td className="train-id">{trip.trainId}</td>
+              <td>{trip.trainName}</td>
+              <td className="capacity-used">{trip.assigned} units</td>
+              <td className="capacity-available">{trip.available} units</td>
+              <td className="capacity-total">{trip.capacity} units</td>
+              <td>
+                <span className={`train-schedule__status train-schedule__status--${statusTone[trip.status]}`}>
+                  {trip.status}
+                </span>
+              </td>
+              <td>{trip.route}</td>
+            </tr>
+          ))
+        )}
       </tbody>
     </table>
 
-    <footer className="train-schedule__footer">
-      <span>Showing 6 of 12 trips</span>
-      <div className="train-schedule__pagination">
-        <button type="button">1</button>
-        <button type="button" className="is-active">
-          2
-        </button>
-        <button type="button">3</button>
-        <button type="button">Next &rsaquo;</button>
-      </div>
-    </footer>
+    {trips.length > 0 && (
+      <footer className="train-schedule__footer">
+        <span>Showing {trips.length} trip{trips.length !== 1 ? 's' : ''}</span>
+      </footer>
+    )}
   </section>
 )
 

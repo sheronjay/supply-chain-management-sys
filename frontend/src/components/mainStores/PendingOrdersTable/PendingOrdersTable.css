@@ -1,0 +1,159 @@
+.pending-orders-table-container {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  overflow-x: auto;
+}
+
+.pending-orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.pending-orders-table thead {
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.pending-orders-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pending-orders-table td {
+  padding: 16px;
+  font-size: 14px;
+  color: #1e293b;
+  border-top: 1px solid #f1f5f9;
+}
+
+.pending-orders-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.pending-orders-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.order-id {
+  font-weight: 600;
+  color: #2563eb;
+  font-family: 'Courier New', monospace;
+}
+
+.customer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.customer-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.customer-email {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.destination-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.city {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.sub-city {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.price {
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.capacity {
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.btn-process {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-process:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.pending-orders-empty {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 60px 40px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  color: #cbd5e1;
+  margin-bottom: 20px;
+}
+
+.pending-orders-empty h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: #0f172a;
+}
+
+.pending-orders-empty p {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+}
+
+@media (max-width: 1024px) {
+  .pending-orders-table-container {
+    padding: 16px;
+  }
+
+  .pending-orders-table th,
+  .pending-orders-table td {
+    padding: 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 640px) {
+  .pending-orders-empty {
+    padding: 40px 20px;
+  }
+
+  .empty-icon {
+    width: 60px;
+    height: 60px;
+  }
+}
