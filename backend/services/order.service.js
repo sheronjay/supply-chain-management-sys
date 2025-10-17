@@ -1,8 +1,9 @@
 import pool from '../src/db/pool.js';
 import { v4 as uuidv4 } from 'uuid';
 
-export async function listOrders() {
-    const [rows] = await pool.query(`
+export async function listOrders(storeId = null) {
+    // Build query with optional store filter
+    let query = `
         SELECT 
             o.*,
             c.name as customer_name,
@@ -12,8 +13,19 @@ export async function listOrders() {
         LEFT JOIN customers c ON o.customer_id = c.customer_id
         LEFT JOIN stores s ON o.store_id = s.store_id
         LEFT JOIN sub_cities sc ON o.sub_city_id = sc.sub_city_id
-        ORDER BY o.ordered_date DESC
-    `);
+    `;
+    
+    const params = [];
+    
+    // If storeId is provided, filter by it
+    if (storeId) {
+        query += ` WHERE o.store_id = ?`;
+        params.push(storeId);
+    }
+    
+    query += ` ORDER BY o.ordered_date DESC`;
+    
+    const [rows] = await pool.query(query, params);
     
     // Get items for each order
     const ordersWithItems = [];

@@ -2,7 +2,17 @@ import * as orderService from '../../services/order.service.js';
 
 export async function listOrders(req, res, next) {
     try {
-        const orders = await orderService.listOrders();
+        // If user is authenticated and has a store_id, filter by their store
+        const storeId = req.user?.store_id || null;
+        
+        // Log for debugging
+        if (storeId) {
+            console.log(`Fetching orders for store: ${storeId}`);
+        } else {
+            console.log('Fetching all orders (no store filter)');
+        }
+        
+        const orders = await orderService.listOrders(storeId);
         res.json(orders);
     } catch (err) {
         next(err);
