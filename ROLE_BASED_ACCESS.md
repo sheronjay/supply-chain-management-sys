@@ -33,11 +33,12 @@ The system has been updated to provide role-specific views based on user designa
   - Logout via sidebar "Sign Out"
 
 ### 4. **Drivers & Assistants**
-- **Access**: Full system with sidebar
+- **Access**: Restricted sidebar with Drivers page only
 - **Redirect**: After login → `/drivers` page
 - **Features**:
-  - Sidebar navigation available
-  - Access to delivery functions
+  - Sidebar navigation with 1 page: Drivers
+  - Cannot access other pages (Dashboard, Orders, Store Manager, Main Stores, Reports, etc.)
+  - Access to delivery functions, working hours, and assigned orders
   - Logout via sidebar "Sign Out"
 
 ### 5. **Other Employees (Admin, etc.)**
