@@ -6,14 +6,8 @@ CREATE DATABASE IF NOT EXISTS `supplychain`;
 USE `supplychain`;
 
 -- =========================
--- Core referenceCREATE TABLE IF NOT EXISTS delivery_employees (
-  user_id         VARCHAR(255) PRIMARY KEY,       -- ERD "Delivery employee (PK User_ID)"
-  working_hours   DECIMAL(6,2),                   -- Total hours worked
-  availability    TINYINT(1) NOT NULL DEFAULT 1,
-  CONSTRAINT fk_delivery_employees_user
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
-    ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=InnoDB;-- =========================
+-- Core reference tables
+-- =========================
 CREATE TABLE IF NOT EXISTS stores (
   store_id        VARCHAR(255) PRIMARY KEY,
   city            VARCHAR(255)
