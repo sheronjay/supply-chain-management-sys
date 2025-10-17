@@ -14,6 +14,19 @@ export async function getStoreOrders(req, res, next) {
 }
 
 /**
+ * Get all orders for a specific store with status 'IN-STORE' (inventory)
+ */
+export async function getStoreInventory(req, res, next) {
+    try {
+        const storeId = req.params.storeId || 'ST-CMB-01'; // Default to CMB store
+        const inventory = await storeManagerService.getStoreInventory(storeId);
+        res.json(inventory);
+    } catch (err) {
+        next(err);
+    }
+}
+
+/**
  * Accept an order - change status from 'TRAIN' to 'IN-STORE'
  */
 export async function acceptOrder(req, res, next) {

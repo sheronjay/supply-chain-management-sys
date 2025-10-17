@@ -42,6 +42,47 @@ export async function getStoreOrders(storeId) {
 }
 
 /**
+ * Get all orders with status 'IN-STORE' for a specific store (inventory)
+ */
+export async function getStoreInventory(storeId) {
+    const [rows] = await pool.query(
+        `SELECT 
+            o.order_id,
+            o.customer_id,
+            o.store_id,
+            o.sub_city_id,
+            o.ordered_date,
+            o.total_price,
+            o.status,
+            c.name as customer_name,
+            c.email as customer_email,
+            c.phone_number as customer_phone,
+            sc.sub_city_name,
+            s.city as store_city,
+            GROUP_CONCAT(
+                CONCAT(p.product_name, ' (', oi.quantity, 'x)')
+                SEPARATOR ', '
+            ) as items_summary,
+            COUNT(DISTINCT oi.product_id) as total_items,
+            SUM(oi.quantity * oi.item_capacity) as total_capacity_required
+        FROM orders o
+        LEFT JOIN customers c ON o.customer_id = c.customer_id
+        LEFT JOIN sub_cities sc ON o.sub_city_id = sc.sub_city_id
+        LEFT JOIN stores s ON o.store_id = s.store_id
+        LEFT JOIN order_items oi ON o.order_id = oi.order_id
+        LEFT JOIN products p ON oi.product_id = p.product_id
+        WHERE o.store_id = ? AND o.status = 'IN-STORE'
+        GROUP BY o.order_id, o.customer_id, o.store_id, o.sub_city_id, 
+                 o.ordered_date, o.total_price, o.status,
+                 c.name, c.email, c.phone_number, 
+                 sc.sub_city_name, s.city
+        ORDER BY o.ordered_date DESC`,
+        [storeId]
+    );
+    return rows;
+}
+
+/**
  * Accept an order - update status from 'TRAIN' to 'IN-STORE'
  */
 export async function acceptOrder(orderId, managerId) {
