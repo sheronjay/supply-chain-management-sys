@@ -2,13 +2,15 @@
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: visible;
 }
 
 .store-orders-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  table-layout: fixed;
 }
 
 .store-orders-table thead {
@@ -17,13 +19,24 @@
 }
 
 .store-orders-table th {
-  padding: 1rem;
+  padding: 0.75rem 0.5rem;
   text-align: left;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+/* Column widths */
+.store-orders-table th:nth-child(1) { width: 8%; }  /* Order ID */
+.store-orders-table th:nth-child(2) { width: 16%; } /* Customer */
+.store-orders-table th:nth-child(3) { width: 10%; } /* Sub-City */
+.store-orders-table th:nth-child(4) { width: 9%; }  /* Order Date */
+.store-orders-table th:nth-child(5) { width: 18%; } /* Items */
+.store-orders-table th:nth-child(6) { width: 10%; } /* Total Price */
+.store-orders-table th:nth-child(7) { width: 8%; }  /* Capacity */
+.store-orders-table th:nth-child(8) { width: 8%; }  /* Status */
+.store-orders-table th:nth-child(9) { width: 13%; } /* Action */
 
 .store-orders-table tbody tr {
   border-bottom: 1px solid #e5e7eb;
@@ -35,8 +48,15 @@
 }
 
 .store-orders-table td {
-  padding: 1rem;
+  padding: 0.75rem 0.5rem;
   vertical-align: top;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.store-orders-table td:last-child {
+  text-align: center;
+  white-space: nowrap;
 }
 
 .order-id-cell {
@@ -46,6 +66,8 @@
 .order-id {
   color: #667eea;
   font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  white-space: nowrap;
 }
 
 .customer-info {
@@ -57,11 +79,18 @@
 .customer-name {
   font-weight: 600;
   color: #1f2937;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .customer-contact {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .items-summary {
@@ -73,32 +102,40 @@
 .items-count {
   font-weight: 600;
   color: #059669;
+  font-size: 0.8rem;
 }
 
 .items-detail {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: #6b7280;
-  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .price-cell {
   font-weight: 600;
   color: #059669;
+  font-size: 0.85rem;
+  white-space: nowrap;
 }
 
 .capacity-cell {
   font-weight: 500;
   color: #7c3aed;
+  font-size: 0.8rem;
+  white-space: nowrap;
 }
 
 .status-badge {
   display: inline-block;
-  padding: 0.375rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 10px;
+  font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
 }
 
 .status-train {
@@ -109,13 +146,13 @@
 .btn-accept {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: #fff;
   border: none;
   border-radius: 6px;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -137,9 +174,10 @@
 }
 
 .accept-icon {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   stroke-width: 2.5;
+  flex-shrink: 0;
 }
 
 .button-spinner {
@@ -215,22 +253,42 @@
 /* Responsive */
 @media (max-width: 1200px) {
   .store-orders-table {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
 
   .store-orders-table th,
   .store-orders-table td {
-    padding: 0.75rem;
+    padding: 0.6rem 0.4rem;
   }
 
-  .items-detail {
-    max-width: 150px;
+  .btn-accept {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
   }
 }
 
 @media (max-width: 768px) {
   .store-orders-table-wrapper {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .store-orders-table-wrapper::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .store-orders-table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  .store-orders-table-wrapper::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 4px;
+  }
+
+  .store-orders-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #764ba2;
   }
 
   .store-orders-table {
