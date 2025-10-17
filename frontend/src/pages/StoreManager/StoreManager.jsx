@@ -290,7 +290,12 @@ const StoreManager = () => {
               <h3>Current Inventory</h3>
               <p>Orders that are currently in the store (IN-STORE status)</p>
             </div>
-            <StoreInventoryTable inventory={inventory} loading={loading} />
+            <StoreInventoryTable 
+              inventory={inventory} 
+              loading={loading} 
+              storeId={storeId}
+              onRefresh={loadStoreInventory}
+            />
           </>
         )}
       </div>

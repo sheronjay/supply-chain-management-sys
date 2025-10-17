@@ -103,9 +103,15 @@ CREATE TABLE IF NOT EXISTS orders (
   ordered_date    DATE,
   total_price     DECIMAL(8,2),
   status          VARCHAR(255),
+  truck_id        VARCHAR(255),
+  driver_id       VARCHAR(255),
+  assistant_id    VARCHAR(255),
   KEY idx_orders_customer (customer_id),
   KEY idx_orders_store (store_id),
   KEY idx_orders_sub_city (sub_city_id),
+  KEY idx_orders_truck (truck_id),
+  KEY idx_orders_driver (driver_id),
+  KEY idx_orders_assistant (assistant_id),
   CONSTRAINT fk_orders_customer
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
     ON UPDATE CASCADE ON DELETE SET NULL,
@@ -114,6 +120,15 @@ CREATE TABLE IF NOT EXISTS orders (
     ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT fk_orders_sub_city
     FOREIGN KEY (sub_city_id) REFERENCES sub_cities(sub_city_id)
+    ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT fk_orders_truck
+    FOREIGN KEY (truck_id) REFERENCES trucks(truck_id)
+    ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT fk_orders_driver
+    FOREIGN KEY (driver_id) REFERENCES users(user_id)
+    ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT fk_orders_assistant
+    FOREIGN KEY (assistant_id) REFERENCES users(user_id)
     ON UPDATE CASCADE ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
@@ -132,37 +147,6 @@ CREATE TABLE IF NOT EXISTS order_items (
     FOREIGN KEY (product_id) REFERENCES products(product_id)
     ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB;
-
--- =========================
--- Delivery
--- =========================
-CREATE TABLE IF NOT EXISTS delivery_schedules (
-  delivery_id            VARCHAR(255) PRIMARY KEY,
-  order_id               VARCHAR(255),
-  truck_id               VARCHAR(255),
-  delivered_date         DATE,
-  vehicle_arrival_time   TIME,
-  vehicle_departure_time TIME,
-  delivery_status        TINYINT(1) NOT NULL DEFAULT 0,
-  KEY idx_ds_order (order_id),
-  KEY idx_ds_truck (truck_id),
-  CONSTRAINT fk_ds_order
-    FOREIGN KEY (order_id) REFERENCES orders(order_id)
-    ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT fk_ds_truck
-    FOREIGN KEY (truck_id) REFERENCES trucks(truck_id)
-    ON UPDATE CASCADE ON DELETE SET NULL
-) ENGINE=InnoDB;
-
-DROP VIEW IF EXISTS order_delivery_tracking;
-CREATE VIEW order_delivery_tracking AS
-SELECT
-  o.order_id,
-  o.ordered_date,
-  o.status,
-  ds.delivered_date
-FROM orders AS o
-LEFT JOIN delivery_schedules AS ds ON ds.order_id = o.order_id;
 
 DROP VIEW IF EXISTS order_items_view;
 CREATE VIEW order_items_view AS
@@ -510,76 +494,6 @@ INSERT INTO order_items (order_id, product_id, quantity, item_capacity, unit_pri
 ('ORD-0071','PRD-RIC-10',12,15,1500.00),('ORD-0071','PRD-TEA-200',16,5,700.00),
 ('ORD-0072','PRD-DET-1KG',14,7,850.00), ('ORD-0072','PRD-SOAP-100',60,6,180.00),
 ('ORD-0073','PRD-OFK-5L',5,5,2200.00),  ('ORD-0073','PRD-RIC-10',8,10,1500.00);
-
--- =========================
--- Delivery schedules (subset marked delivered)
--- =========================
-INSERT INTO delivery_schedules (delivery_id, order_id, truck_id, delivered_date, vehicle_arrival_time, vehicle_departure_time, delivery_status) VALUES
--- August Deliveries
-('DLV-0001','ORD-0001','TRK-001','2025-08-02','09:10:00','09:35:00',1),
-('DLV-0002','ORD-0002','TRK-007','2025-08-03','10:00:00','10:20:00',1),
-('DLV-0003','ORD-0003','TRK-002','2025-08-04','09:00:00','09:20:00',1),
-('DLV-0004','ORD-0004','TRK-008','2025-08-05','10:15:00','10:30:00',1),
-('DLV-0005','ORD-0005','TRK-003','2025-08-06','11:00:00','11:25:00',1),
-('DLV-0006','ORD-0006','TRK-009','2025-08-07','09:40:00','09:55:00',1),
-('DLV-0007','ORD-0007','TRK-004','2025-08-08','10:30:00','10:50:00',1),
-('DLV-0008','ORD-0008','TRK-010','2025-08-09','09:20:00','09:35:00',1),
-('DLV-0009','ORD-0009','TRK-005','2025-08-10','08:50:00','09:10:00',1),
-('DLV-0010','ORD-0010','TRK-006','2025-08-11','09:15:00','09:35:00',1),
-('DLV-0011','ORD-0011','TRK-001','2025-08-16','10:05:00','10:20:00',1),
-('DLV-0012','ORD-0012','TRK-002','2025-08-17','09:15:00','09:40:00',1),
-('DLV-0013','ORD-0013','TRK-003','2025-08-18','10:00:00','10:15:00',1),
-('DLV-0014','ORD-0014','TRK-004','2025-08-19','09:30:00','09:55:00',1),
-('DLV-0015','ORD-0015','TRK-006','2025-08-20','10:45:00','11:05:00',1),
-
--- September Deliveries
-('DLV-0016','ORD-0016','TRK-001','2025-09-02','09:30:00','09:50:00',1),
-('DLV-0017','ORD-0017','TRK-007','2025-09-03','11:10:00','11:25:00',1),
-('DLV-0018','ORD-0018','TRK-002','2025-09-04','09:35:00','09:55:00',1),
-('DLV-0019','ORD-0019','TRK-008','2025-09-05','10:00:00','10:20:00',1),
-('DLV-0020','ORD-0020','TRK-003','2025-09-06','09:25:00','09:45:00',1),
-('DLV-0021','ORD-0021','TRK-009','2025-09-07','10:10:00','10:30:00',1),
-('DLV-0022','ORD-0022','TRK-004','2025-09-08','09:15:00','09:40:00',1),
-('DLV-0023','ORD-0023','TRK-010','2025-09-09','10:00:00','10:15:00',1),
-('DLV-0024','ORD-0024','TRK-005','2025-09-10','09:30:00','09:55:00',1),
-('DLV-0025','ORD-0025','TRK-006','2025-09-11','10:45:00','11:05:00',1),
-('DLV-0026','ORD-0026','TRK-001',NULL,NULL,NULL,0),
-('DLV-0027','ORD-0027','TRK-002',NULL,NULL,NULL,0),
-('DLV-0028','ORD-0028','TRK-003',NULL,NULL,NULL,0),
-('DLV-0029','ORD-0029','TRK-004',NULL,NULL,NULL,0),
-('DLV-0030','ORD-0030','TRK-006',NULL,NULL,NULL,0),
-
--- October Deliveries
-('DLV-0031','ORD-0031','TRK-001','2025-10-02','09:20:00','09:45:00',1),
-('DLV-0032','ORD-0032','TRK-007','2025-10-02','10:30:00','10:50:00',1),
-('DLV-0033','ORD-0033','TRK-002','2025-10-03','09:10:00','09:30:00',1),
-('DLV-0034','ORD-0034','TRK-008','2025-10-03','10:15:00','10:35:00',1),
-('DLV-0035','ORD-0035','TRK-003','2025-10-04','11:00:00','11:25:00',1),
-('DLV-0036','ORD-0036','TRK-009','2025-10-04','09:40:00','10:00:00',1),
-('DLV-0037','ORD-0037','TRK-004','2025-10-05','10:30:00','10:55:00',1),
-('DLV-0038','ORD-0038','TRK-010','2025-10-05','09:20:00','09:40:00',1),
-('DLV-0039','ORD-0039','TRK-005','2025-10-06','08:50:00','09:15:00',1),
-('DLV-0040','ORD-0040','TRK-006','2025-10-06','09:15:00','09:40:00',1),
-('DLV-0041','ORD-0041','TRK-001','2025-10-09','10:00:00','10:25:00',1),
-('DLV-0042','ORD-0042','TRK-002','2025-10-10','09:30:00','09:55:00',1),
-('DLV-0043','ORD-0043','TRK-003','2025-10-18','10:00:00','10:20:00',0),
-('DLV-0044','ORD-0044','TRK-004','2025-10-19','09:30:00','09:55:00',0),
-('DLV-0045','ORD-0045','TRK-006','2025-10-20','10:45:00','11:10:00',0),
-('DLV-0046','ORD-0046','TRK-001','2025-10-21','09:15:00','09:40:00',0),
-('DLV-0047','ORD-0047','TRK-002','2025-10-22','10:00:00','10:25:00',0),
-('DLV-0048','ORD-0048','TRK-003',NULL,NULL,NULL,0),
-('DLV-0049','ORD-0049','TRK-004',NULL,NULL,NULL,0),
-('DLV-0050','ORD-0050','TRK-005',NULL,NULL,NULL,0),
-('DLV-0051','ORD-0051','TRK-006',NULL,NULL,NULL,0),
-('DLV-0052','ORD-0052','TRK-001',NULL,NULL,NULL,0),
-('DLV-0053','ORD-0053','TRK-002',NULL,NULL,NULL,0),
-('DLV-0054','ORD-0054','TRK-003',NULL,NULL,NULL,0),
-('DLV-0055','ORD-0055','TRK-004',NULL,NULL,NULL,0),
-('DLV-0056','ORD-0056','TRK-007',NULL,NULL,NULL,0),
-('DLV-0057','ORD-0057','TRK-008',NULL,NULL,NULL,0),
-('DLV-0058','ORD-0058','TRK-009',NULL,NULL,NULL,0),
-('DLV-0059','ORD-0059','TRK-010',NULL,NULL,NULL,0),
-('DLV-0060','ORD-0060','TRK-006',NULL,NULL,NULL,0);
 
 -- =========================
 -- Users & Roles
