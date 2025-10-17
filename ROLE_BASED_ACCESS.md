@@ -15,21 +15,23 @@ The system has been updated to provide role-specific views based on user designa
   - Full-width content area
 
 ### 2. **Main Store Manager** 
-- **Access**: Restricted sidebar with Main Stores and Train Schedule only
+- **Access**: Restricted sidebar with Main Stores, Train Schedule, and User Management
 - **Redirect**: After login → `/main-stores` page
 - **Features**:
-  - Sidebar navigation with 2 pages: Main Stores and Train Schedule
-  - Cannot access other pages (Dashboard, Orders, Reports, etc.)
+  - Sidebar navigation with 3 pages: Main Stores, Train Schedule, and User Management
+  - Cannot access other pages (Dashboard, Orders, My Orders, Store Manager, Drivers, Reports)
   - Shows "Main Store Manager" role in TopBar
   - Can process pending orders and assign to train schedules
+  - Can manage users and roles
   - Logout via sidebar "Sign Out"
 
 ### 3. **Store Manager**
-- **Access**: Full system with sidebar
+- **Access**: Restricted sidebar with Dashboard, Orders, Store Manager, and Report Overview
 - **Redirect**: After login → `/store-manager` page
 - **Features**:
-  - Sidebar navigation available
-  - Access to store management functions
+  - Sidebar navigation with 4 pages: Dashboard, Orders, Store Manager, Report Overview
+  - Cannot access: My Orders, Main Stores, Drivers, Train Schedule, User Management
+  - Access to store management functions, truck assignments, and reports
   - Logout via sidebar "Sign Out"
 
 ### 4. **Drivers & Assistants**
@@ -41,11 +43,11 @@ The system has been updated to provide role-specific views based on user designa
   - Access to delivery functions, working hours, and assigned orders
   - Logout via sidebar "Sign Out"
 
-### 5. **Other Employees (Admin, etc.)**
+### 5. **Admin**
 - **Access**: Full system with sidebar
 - **Redirect**: After login → `/dashboard` page
 - **Features**:
-  - Full sidebar navigation
+  - Full sidebar navigation (all pages)
   - Access to all system features
   - Logout via sidebar "Sign Out"
 
