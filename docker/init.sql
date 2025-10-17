@@ -567,6 +567,7 @@ INSERT INTO delivery_schedules (delivery_id, order_id, truck_id, delivered_date,
 -- =========================
 INSERT INTO users (user_id, store_id, name, password, designation, is_employed) VALUES
 ('USR-ADM-01',NULL,'System Admin','$2y$dummyhash','Admin',1),
+('USR-MGR-MAIN',NULL,'Anura Perera','$2y$dummyhash','Main Store Manager',1),
 ('USR-MGR-CMB','ST-CMB-01','Rashmi De Silva','$2y$dummyhash','Store Manager',1),
 ('USR-DRV-01','ST-CMB-01','Kumara Jayasuriya','$2y$dummyhash','Driver',1),
 ('USR-DRV-02','ST-CMB-01','Sujeewa Fernando','$2y$dummyhash','Driver',1),
@@ -575,6 +576,7 @@ INSERT INTO users (user_id, store_id, name, password, designation, is_employed) 
 ('USR-ASS-02','ST-CMB-01','Ruwan Perera','$2y$dummyhash','Assistant',1);
 
 INSERT INTO store_managers (manager_id) VALUES
+('USR-MGR-MAIN'),
 ('USR-MGR-CMB');
 
 INSERT INTO delivery_employees (user_id, working_hours, availability) VALUES
