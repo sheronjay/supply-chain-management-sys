@@ -1,0 +1,138 @@
+.employee-login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  padding: 20px;
+}
+
+.employee-login-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+}
+
+.employee-login-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.employee-login-header h1 {
+  color: #1a202c;
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.employee-login-header p {
+  color: #718096;
+  font-size: 14px;
+}
+
+.employee-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: #2d3748;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-group input {
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #2c3e50;
+  box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+}
+
+.error-message {
+  background-color: #fed7d7;
+  color: #c53030;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.submit-button {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-top: 8px;
+}
+
+.submit-button:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.customer-link {
+  text-align: center;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.customer-link p {
+  color: #718096;
+  font-size: 13px;
+}
+
+.customer-link a {
+  color: #2c3e50;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.customer-link a:hover {
+  text-decoration: underline;
+}
+
+.info-box {
+  background-color: #edf2f7;
+  border-left: 4px solid #2c3e50;
+  padding: 16px;
+  margin-top: 24px;
+  border-radius: 4px;
+}
+
+.info-text {
+  color: #4a5568;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.info-text strong {
+  color: #2d3748;
+}
