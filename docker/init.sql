@@ -13,6 +13,15 @@ CREATE TABLE IF NOT EXISTS stores (
   city            VARCHAR(255)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS sub_cities (
+  sub_city_id     VARCHAR(255) PRIMARY KEY,
+  sub_city_name   VARCHAR(255),
+  store_id        VARCHAR(255),
+  CONSTRAINT fk_sub_cities_store
+    FOREIGN KEY (store_id) REFERENCES stores(store_id)
+    ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS trains (
   train_id        VARCHAR(255) PRIMARY KEY,
   train_name      VARCHAR(255)
@@ -219,6 +228,36 @@ INSERT INTO stores (store_id, city) VALUES
 ('ST-JAF-01','Jaffna'),
 ('ST-TRI-01','Trincomalee'),
 ('ST-KDY-02','Kandy');
+
+INSERT INTO sub_cities (sub_city_id, sub_city_name, store_id) VALUES
+-- Kandy sub-cities
+('SC-KDY-001','Peradeniya','ST-KDY-01'),
+('SC-KDY-002','Katugastota','ST-KDY-01'),
+('SC-KDY-003','Gampola','ST-KDY-01'),
+-- Colombo sub-cities
+('SC-CMB-001','Pettah','ST-CMB-01'),
+('SC-CMB-002','Thimbirigasyaya','ST-CMB-01'),
+('SC-CMB-003','Dehiwala','ST-CMB-01'),
+-- Negombo sub-cities
+('SC-NGO-001','Kochchikade','ST-NGO-01'),
+('SC-NGO-002','Katana','ST-NGO-01'),
+('SC-NGO-003','Wattala','ST-NGO-01'),
+-- Galle sub-cities
+('SC-GAL-001','Unawatuna','ST-GAL-01'),
+('SC-GAL-002','Hikkaduwa','ST-GAL-01'),
+('SC-GAL-003','Ambalangoda','ST-GAL-01'),
+-- Matara sub-cities
+('SC-MAT-001','Weligama','ST-MAT-01'),
+('SC-MAT-002','Hakmana','ST-MAT-01'),
+('SC-MAT-003','Dikwella','ST-MAT-01'),
+-- Jaffna sub-cities
+('SC-JAF-001','Nallur','ST-JAF-01'),
+('SC-JAF-002','Chavakachcheri','ST-JAF-01'),
+('SC-JAF-003','Point Pedro','ST-JAF-01'),
+-- Trincomalee sub-cities
+('SC-TRI-001','Uppuveli','ST-TRI-01'),
+('SC-TRI-002','Nilaveli','ST-TRI-01'),
+('SC-TRI-003','Kinniya','ST-TRI-01');
 
 INSERT INTO trains (train_id, train_name) VALUES
 ('TRN-UD1','Udarata Cargo 1'),
