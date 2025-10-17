@@ -28,8 +28,19 @@ export default function EmployeeLogin() {
     setError('');
 
     try {
-      await employeeLogin(formData.userId, formData.password);
-      navigate('/dashboard');
+      const result = await employeeLogin(formData.userId, formData.password);
+      
+      // Redirect based on employee designation
+      const user = result.user;
+      if (user.designation === 'Main Store Manager') {
+        navigate('/main-stores');
+      } else if (user.designation === 'Store Manager') {
+        navigate('/store-manager');
+      } else if (user.designation === 'Driver' || user.designation === 'Assistant') {
+        navigate('/drivers');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
       setError(err.message || 'Login failed');
     } finally {

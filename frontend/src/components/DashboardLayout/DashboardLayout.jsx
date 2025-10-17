@@ -55,18 +55,26 @@ export default function DashboardLayout({ children, pageName }) {
     return pageConfig[activePage] ?? pageConfig.Dashboard;
   }, [activePage]);
 
-  // Check if user is a customer
+  // Check if user is a customer (only customers get restricted view without sidebar)
   const isCustomer = user?.userType === 'customer';
+  const showSidebar = !isCustomer;
 
   return (
     <div className="app-shell">
-      {/* Only show sidebar for employees */}
-      {!isCustomer && <Sidebar activePage={activePage} onNavigate={handleNavigate} />}
+      {/* Show sidebar for all employees including Main Store Manager */}
+      {showSidebar && (
+        <Sidebar 
+          activePage={activePage} 
+          onNavigate={handleNavigate} 
+          userDesignation={user?.designation}
+        />
+      )}
       <main className="app-main">
         <TopBar 
           title={title} 
           subtitle={subtitle} 
           userName={user?.name}
+          userDesignation={user?.designation}
           onLogout={() => {
             logout();
             navigate('/');
