@@ -173,6 +173,42 @@
   font-size: 20px;
 }
 
+/* Actions Cell */
+.actions-cell {
+  text-align: center;
+}
+
+.btn-assign-truck {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-assign-truck:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.btn-assign-truck:active {
+  transform: translateY(0);
+}
+
+.truck-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .store-inventory-table-wrapper {
@@ -187,5 +223,15 @@
 
   .items-detail {
     max-width: 150px;
+  }
+
+  .btn-assign-truck {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .truck-icon {
+    width: 14px;
+    height: 14px;
   }
 }

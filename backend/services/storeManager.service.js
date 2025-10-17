@@ -127,3 +127,151 @@ export async function acceptOrder(orderId, managerId) {
         connection.release();
     }
 }
+
+/**
+ * Get all trucks for a specific store
+ */
+export async function getTrucks(storeId) {
+    const [rows] = await pool.query(
+        `SELECT 
+            truck_id,
+            store_id,
+            reg_number,
+            capacity,
+            used_hours,
+            availability
+        FROM trucks
+        WHERE store_id = ? AND availability = 1
+        ORDER BY reg_number`,
+        [storeId]
+    );
+    return rows;
+}
+
+/**
+ * Get all drivers (delivery employees with designation 'Driver') for a specific store
+ * Includes working_hours to check if > 40 hours
+ */
+export async function getDrivers(storeId) {
+    const [rows] = await pool.query(
+        `SELECT 
+            u.user_id,
+            u.name,
+            u.designation,
+            de.working_hours,
+            de.availability,
+            CASE WHEN de.working_hours >= 40 THEN 0 ELSE 1 END as can_assign
+        FROM users u
+        INNER JOIN delivery_employees de ON u.user_id = de.user_id
+        WHERE u.store_id = ? 
+        AND u.designation = 'Driver'
+        AND u.is_employed = 1
+        ORDER BY u.name`,
+        [storeId]
+    );
+    return rows;
+}
+
+/**
+ * Get all assistants (delivery employees with designation 'Assistant') for a specific store
+ * Includes working_hours to check if > 40 hours
+ */
+export async function getAssistants(storeId) {
+    const [rows] = await pool.query(
+        `SELECT 
+            u.user_id,
+            u.name,
+            u.designation,
+            de.working_hours,
+            de.availability,
+            CASE WHEN de.working_hours >= 40 THEN 0 ELSE 1 END as can_assign
+        FROM users u
+        INNER JOIN delivery_employees de ON u.user_id = de.user_id
+        WHERE u.store_id = ? 
+        AND u.designation = 'Assistant'
+        AND u.is_employed = 1
+        ORDER BY u.name`,
+        [storeId]
+    );
+    return rows;
+}
+
+/**
+ * Assign an order to a truck with driver and assistant
+ * Updates the order with truck assignment and changes status to 'TRUCK'
+ */
+export async function assignOrderToTruck(orderId, truckId, driverId, assistantId) {
+    const connection = await pool.getConnection();
+    
+    try {
+        await connection.beginTransaction();
+        
+        // Check if order exists and has status 'IN-STORE'
+        const [orders] = await connection.query(
+            'SELECT order_id, status FROM orders WHERE order_id = ?',
+            [orderId]
+        );
+        
+        if (orders.length === 0) {
+            throw new Error('Order not found');
+        }
+        
+        if (orders[0].status !== 'IN-STORE') {
+            throw new Error(`Order cannot be assigned. Current status: ${orders[0].status}`);
+        }
+
+        // Check if driver has worked more than 40 hours
+        const [drivers] = await connection.query(
+            'SELECT working_hours FROM delivery_employees WHERE user_id = ?',
+            [driverId]
+        );
+        
+        if (drivers.length === 0) {
+            throw new Error('Driver not found');
+        }
+        
+        if (drivers[0].working_hours >= 40) {
+            throw new Error('Driver has already worked 40 or more hours');
+        }
+
+        // Check if assistant has worked more than 40 hours
+        const [assistants] = await connection.query(
+            'SELECT working_hours FROM delivery_employees WHERE user_id = ?',
+            [assistantId]
+        );
+        
+        if (assistants.length === 0) {
+            throw new Error('Assistant not found');
+        }
+        
+        if (assistants[0].working_hours >= 40) {
+            throw new Error('Assistant has already worked 40 or more hours');
+        }
+        
+        // Update order with truck, driver, assistant and change status to 'TRUCK'
+        await connection.query(
+            `UPDATE orders 
+             SET truck_id = ?, driver_id = ?, assistant_id = ?, status = 'TRUCK' 
+             WHERE order_id = ?`,
+            [truckId, driverId, assistantId, orderId]
+        );
+        
+        await connection.commit();
+        
+        return {
+            success: true,
+            message: 'Order assigned to truck successfully',
+            orderId,
+            truckId,
+            driverId,
+            assistantId,
+            newStatus: 'TRUCK'
+        };
+    } catch (err) {
+        await connection.rollback();
+        throw err;
+    } finally {
+        connection.release();
+    }
+}
+
