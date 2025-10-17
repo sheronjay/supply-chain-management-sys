@@ -1,6 +1,6 @@
-const db = require('../db/pool');
-const PDFDocument = require('pdfkit');
-const fs = require('fs');
+import db from '../db/pool.js';
+import PDFDocument from 'pdfkit';
+import fs from 'fs';
 
 const getReportOverview = async (req, res) => {
   try {
@@ -110,7 +110,7 @@ const generatePDFReport = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getReportOverview,
   generatePDFReport
 };

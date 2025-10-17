@@ -4,7 +4,7 @@ import dashboardRoutes from './routes/dashboard.routes.js';
 import orderRoutes from './routes/order.routes.js';
 import mainStoresRoutes from './routes/mainStores.routes.js';
 import errorHandler from '../middleware/errorHandler.js';
-const reportRouter = require('./routes/report')
+import reportRouter from './routes/report.js';
 
 const app = express();
 
