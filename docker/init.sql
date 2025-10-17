@@ -568,10 +568,10 @@ INSERT INTO users (user_id, store_id, name, password, designation, is_employed) 
 ('USR-MGR-KDY','ST-KDY-01','Anura Perera','$2y$dummyhash','Store Manager',1),
 ('USR-MGR-CMB','ST-CMB-01','Rashmi De Silva','$2y$dummyhash','Store Manager',1),
 ('USR-DRV-01','ST-CMB-01','Kumara Jayasuriya','$2y$dummyhash','Driver',1),
-('USR-DRV-02','ST-NGO-01','Sujeewa Fernando','$2y$dummyhash','Driver',1),
-('USR-DRV-03','ST-GAL-01','Isuru Weerasekara','$2y$dummyhash','Driver',1),
+('USR-DRV-02','ST-CMB-01','Sujeewa Fernando','$2y$dummyhash','Driver',1),
+('USR-DRV-03','ST-CMB-01','Isuru Weerasekara','$2y$dummyhash','Driver',1),
 ('USR-ASS-01','ST-CMB-01','Nadeesha Karu','$2y$dummyhash','Assistant',1),
-('USR-ASS-02','ST-NGO-01','Ruwan Perera','$2y$dummyhash','Assistant',1);
+('USR-ASS-02','ST-CMB-01','Ruwan Perera','$2y$dummyhash','Assistant',1);
 
 INSERT INTO store_managers (manager_id) VALUES
 ('USR-MGR-KDY'),
