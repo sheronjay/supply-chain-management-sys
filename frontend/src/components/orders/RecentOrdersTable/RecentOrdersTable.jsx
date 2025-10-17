@@ -20,9 +20,9 @@ const RecentOrdersTable = ({ orders, statusTone, onViewOrder }) => {
 
     // Date range filter
     if (dateRange.start && dateRange.end) {
-      const orderDate = new Date(order.deliveryDate);
-      const startDate = new Date(dateRange.start);
-      const endDate = new Date(dateRange.end);
+      const orderDate = new Date(order.deliveryDate + 'T00:00:00');
+      const startDate = new Date(dateRange.start + 'T00:00:00');
+      const endDate = new Date(dateRange.end + 'T00:00:00');
       if (orderDate < startDate || orderDate > endDate) {
         return false;
       }

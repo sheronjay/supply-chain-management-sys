@@ -9,7 +9,15 @@ const UserOrdersTable = ({ orders, statusTone }) => {
   };
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
+    if (!dateString) return 'N/A';
+    
+    // Handle MySQL DATE format (YYYY-MM-DD) properly
+    // Add 'T00:00:00' to ensure it's treated as local date, not UTC
+    const date = new Date(dateString + 'T00:00:00');
+    
+    // Check if date is valid
+    if (isNaN(date.getTime())) return dateString;
+    
     return date.toLocaleDateString('en-US', { 
       year: 'numeric', 
       month: 'short', 

@@ -34,7 +34,9 @@ const OrderDetailsModal = ({ isOpen, onClose, orderId }) => {
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
+    const date = new Date(dateString + 'T00:00:00');
+    if (isNaN(date.getTime())) return dateString;
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'

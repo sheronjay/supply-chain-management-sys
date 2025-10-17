@@ -20,7 +20,7 @@ const Orders = () => {
         // Map the data to include the 'date' field that the table expects
         const ordersWithDate = data.map(order => ({
           ...order,
-          date: order.deliveryDate ? new Date(order.deliveryDate).toLocaleDateString('en-US', {
+          date: order.deliveryDate ? new Date(order.deliveryDate + 'T00:00:00').toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'short',
             day: 'numeric'
