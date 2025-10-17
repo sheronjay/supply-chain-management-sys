@@ -178,30 +178,29 @@ const getLateDeliveries = async (req, res) => {
     const { year, month } = getMonthFromRequest(req)
 
     // Query to get late deliveries count and percentage
-    // An order is considered late if delivered more than 14 days after order date
+    // An order is considered late if it's not DELIVERED and was placed more than 14 days ago
     const [rows] = await pool.query(
       `SELECT 
-        COUNT(*) as totalDeliveries,
+        COUNT(*) as totalOrders,
         SUM(CASE 
-          WHEN DATEDIFF(delivered_date, ordered_date) > 14 THEN 1 
+          WHEN status != 'DELIVERED' AND DATEDIFF(CURRENT_DATE, ordered_date) > 14 THEN 1 
           ELSE 0 
         END) as lateDeliveries
-      FROM order_delivery_tracking
+      FROM orders
       WHERE YEAR(ordered_date) = ? 
-        AND MONTH(ordered_date) = ?
-        AND delivered_date IS NOT NULL`,
+        AND MONTH(ordered_date) = ?`,
       [year, month]
     )
 
-    const totalDeliveries = Number(rows[0]?.totalDeliveries || 0)
+    const totalOrders = Number(rows[0]?.totalOrders || 0)
     const lateDeliveries = Number(rows[0]?.lateDeliveries || 0)
-    const lateDeliveriesPercentage = totalDeliveries > 0 
-      ? ((lateDeliveries / totalDeliveries) * 100).toFixed(1)
+    const lateDeliveriesPercentage = totalOrders > 0 
+      ? ((lateDeliveries / totalOrders) * 100).toFixed(1)
       : 0
 
     res.json({
       lateDeliveries,
-      totalDeliveries,
+      totalOrders,
       lateDeliveriesPercentage,
       month: `${year}-${String(month).padStart(2, '0')}`
     })
@@ -216,12 +215,12 @@ const getSystemAlerts = async (req, res) => {
   try {
     const alerts = []
 
-    // Alert 1: Late Deliveries (orders delivered more than 14 days after order date)
+    // Alert 1: Late Deliveries (orders not delivered and placed more than 14 days ago)
     const [lateDeliveriesRows] = await pool.query(
       `SELECT COUNT(*) as count
-       FROM order_delivery_tracking
-       WHERE delivered_date IS NOT NULL
-         AND DATEDIFF(delivered_date, ordered_date) > 14
+       FROM orders
+       WHERE status != 'DELIVERED'
+         AND DATEDIFF(CURRENT_DATE, ordered_date) > 14
          AND MONTH(ordered_date) = MONTH(CURRENT_DATE())
          AND YEAR(ordered_date) = YEAR(CURRENT_DATE())`
     )
