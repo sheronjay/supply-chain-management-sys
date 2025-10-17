@@ -4,6 +4,7 @@ import dashboardRoutes from './routes/dashboard.routes.js';
 import orderRoutes from './routes/order.routes.js';
 import mainStoresRoutes from './routes/mainStores.routes.js';
 import storeManagerRoutes from './routes/storeManager.routes.js';
+import driverRoutes from './routes/driver.routes.js';
 import errorHandler from '../middleware/errorHandler.js';
 import reportRouter from './routes/report.js';
 
@@ -19,6 +20,7 @@ app.use('/api/main-stores', mainStoresRoutes);
 app.use('/api/report', reportRouter)
 
 app.use('/api/store-manager', storeManagerRoutes);
+app.use('/api/driver', driverRoutes);
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
