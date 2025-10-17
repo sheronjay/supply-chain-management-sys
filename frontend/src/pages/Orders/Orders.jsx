@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { useAuth } from '../../context/AuthContext';
 import RecentOrdersTable from '../../components/orders/RecentOrdersTable/RecentOrdersTable';
 import OrderDetailsModal from '../../components/orders/OrderDetailsModal/OrderDetailsModal';
 import './Orders.css';
 
 const Orders = () => {
+  const { user } = useAuth();
   const [recentOrders, setRecentOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,13 +16,27 @@ const Orders = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/orders');
+      
+      // Prepare headers with user authentication data
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      
+      // Add user data to headers if user is logged in
+      if (user) {
+        headers['x-user-data'] = JSON.stringify(user);
+      }
+      
+      const response = await fetch('http://localhost:5000/api/orders', {
+        headers
+      });
+      
       if (response.ok) {
         const data = await response.json();
         // Map the data to include the 'date' field that the table expects
         const ordersWithDate = data.map(order => ({
           ...order,
-          date: order.deliveryDate ? new Date(order.deliveryDate + 'T00:00:00').toLocaleDateString('en-US', {
+          date: order.deliveryDate ? new Date(order.deliveryDate).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'short',
             day: 'numeric'
@@ -39,10 +55,11 @@ const Orders = () => {
     }
   };
 
-  // Load data on component mount
+  // Load data on component mount and when user changes
   useEffect(() => {
     fetchOrders();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const handleViewOrder = (orderId) => {
     setSelectedOrderId(orderId);

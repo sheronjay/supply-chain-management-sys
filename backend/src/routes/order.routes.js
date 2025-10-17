@@ -1,10 +1,11 @@
 import express from 'express';
 import * as orderController from '../controllers/order.controller.js';
+import { optionalAuth } from '../../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-// List all orders (admin)
-router.get('/', orderController.listOrders);
+// List all orders (with optional authentication for filtering by store)
+router.get('/', optionalAuth, orderController.listOrders);
 
 // Place specific routes BEFORE the dynamic ':id' route to avoid shadowing
 
