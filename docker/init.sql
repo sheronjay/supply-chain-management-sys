@@ -2,6 +2,20 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 SET time_zone = '+00:00';
 
+-- =========================
+-- AUTHENTICATION TEST CREDENTIALS
+-- =========================
+-- CUSTOMER LOGIN:
+--   Email: sunrise.wholesale@shop.lk (or any customer email)
+--   Password: password123
+--
+-- EMPLOYEE LOGIN:
+--   User ID: USR-DRV-01 (Driver)
+--   User ID: USR-MGR-CMB (Store Manager)
+--   User ID: USR-MGR-MAIN (Main Store Manager)
+--   Password: emp123 (for all employees)
+-- =========================
+
 CREATE DATABASE IF NOT EXISTS `supplychain`;
 USE `supplychain`;
 
@@ -89,6 +103,7 @@ CREATE TABLE IF NOT EXISTS products (
 CREATE TABLE IF NOT EXISTS customers (
   customer_id     VARCHAR(255) PRIMARY KEY,
   email           VARCHAR(255),
+  password        VARCHAR(255),
   phone_number    VARCHAR(32),                    -- ERD shows int; using VARCHAR is safer
   city            VARCHAR(255),
   name            VARCHAR(255),
@@ -311,22 +326,23 @@ INSERT INTO products (product_id, product_name, unit_price, space_consumption_ra
 -- =========================
 -- Customers
 -- =========================
-INSERT INTO customers (customer_id, email, phone_number, city, name) VALUES
-('CUST-0001','sunrise.wholesale@shop.lk','+94-11-2345678','Colombo','Sunrise Wholesale'),
-('CUST-0002','pettah.mart@shop.lk','+94-11-2233445','Colombo','Pettah Mart'),
-('CUST-0003','negombo.grocers@shop.lk','+94-31-2228888','Negombo','Negombo Grocers'),
-('CUST-0004','kochchikade.store@shop.lk','+94-31-2288999','Negombo','Kochchikade Store'),
-('CUST-0005','galle.rampart@shop.lk','+94-91-2244556','Galle','Rampart Super'),
-('CUST-0006','unawatuna.mini@shop.lk','+94-91-2255667','Galle','Unawatuna Mini Mart'),
-('CUST-0007','matara.center@shop.lk','+94-41-2233445','Matara','Matara Center'),
-('CUST-0008','weligama.fooda@shop.lk','+94-41-2277889','Matara','Fooda Weligama'),
-('CUST-0009','jaffna.corner@shop.lk','+94-21-2233001','Jaffna','Nallur Corner'),
-('CUST-0010','trinco.breeze@shop.lk','+94-26-2233556','Trincomalee','Breeze Stores'),
-('CUST-0011','thimbiri.mini@shop.lk','+94-11-2555000','Colombo','Thimbiri Mini Mart'),
-('CUST-0012','katana.shop@shop.lk','+94-31-2999000','Negombo','Katana Shop'),
-('CUST-0013','hikka.foodcity@shop.lk','+94-91-2777000','Galle','Hikka Food City'),
-('CUST-0014','hakmana.bargain@shop.lk','+94-41-2455000','Matara','Hakmana Bargain'),
-('CUST-0015','uppuveli.seaside@shop.lk','+94-26-2777333','Trincomalee','Uppuveli Seaside');
+-- Sample customers with passwords (password: 'password123' for all)
+INSERT INTO customers (customer_id, email, password, phone_number, city, name) VALUES
+('CUST-0001','sunrise.wholesale@shop.lk','password123','+94-11-2345678','Colombo','Sunrise Wholesale'),
+('CUST-0002','pettah.mart@shop.lk','password123','+94-11-2233445','Colombo','Pettah Mart'),
+('CUST-0003','negombo.grocers@shop.lk','password123','+94-31-2228888','Negombo','Negombo Grocers'),
+('CUST-0004','kochchikade.store@shop.lk','password123','+94-31-2288999','Negombo','Kochchikade Store'),
+('CUST-0005','galle.rampart@shop.lk','password123','+94-91-2244556','Galle','Rampart Super'),
+('CUST-0006','unawatuna.mini@shop.lk','password123','+94-91-2255667','Galle','Unawatuna Mini Mart'),
+('CUST-0007','matara.center@shop.lk','password123','+94-41-2233445','Matara','Matara Center'),
+('CUST-0008','weligama.fooda@shop.lk','password123','+94-41-2277889','Matara','Fooda Weligama'),
+('CUST-0009','jaffna.corner@shop.lk','password123','+94-21-2233001','Jaffna','Nallur Corner'),
+('CUST-0010','trinco.breeze@shop.lk','password123','+94-26-2233556','Trincomalee','Breeze Stores'),
+('CUST-0011','thimbiri.mini@shop.lk','password123','+94-11-2555000','Colombo','Thimbiri Mini Mart'),
+('CUST-0012','katana.shop@shop.lk','password123','+94-31-2999000','Negombo','Katana Shop'),
+('CUST-0013','hikka.foodcity@shop.lk','password123','+94-91-2777000','Galle','Hikka Food City'),
+('CUST-0014','hakmana.bargain@shop.lk','password123','+94-41-2455000','Matara','Hakmana Bargain'),
+('CUST-0015','uppuveli.seaside@shop.lk','password123','+94-26-2777333','Trincomalee','Uppuveli Seaside');
 
 -- =========================
 -- Orders (40 orders across Q3–Q4 2025)
@@ -497,16 +513,16 @@ INSERT INTO order_items (order_id, product_id, quantity, item_capacity, unit_pri
 
 -- =========================
 -- Users & Roles
--- =========================
+-- Sample users with passwords (password: 'emp123' for all)
 INSERT INTO users (user_id, store_id, name, password, designation, is_employed) VALUES
-('USR-ADM-01',NULL,'System Admin','$2y$dummyhash','Admin',1),
-('USR-MGR-MAIN',NULL,'Anura Perera','$2y$dummyhash','Main Store Manager',1),
-('USR-MGR-CMB','ST-CMB-01','Rashmi De Silva','$2y$dummyhash','Store Manager',1),
-('USR-DRV-01','ST-CMB-01','Kumara Jayasuriya','$2y$dummyhash','Driver',1),
-('USR-DRV-02','ST-CMB-01','Sujeewa Fernando','$2y$dummyhash','Driver',1),
-('USR-DRV-03','ST-CMB-01','Isuru Weerasekara','$2y$dummyhash','Driver',1),
-('USR-ASS-01','ST-CMB-01','Nadeesha Karu','$2y$dummyhash','Assistant',1),
-('USR-ASS-02','ST-CMB-01','Ruwan Perera','$2y$dummyhash','Assistant',1);
+('USR-ADM-01',NULL,'System Admin','emp123','Admin',1),
+('USR-MGR-MAIN',NULL,'Anura Perera','emp123','Main Store Manager',1),
+('USR-MGR-CMB','ST-CMB-01','Rashmi De Silva','emp123','Store Manager',1),
+('USR-DRV-01','ST-CMB-01','Kumara Jayasuriya','emp123','Driver',1),
+('USR-DRV-02','ST-CMB-01','Sujeewa Fernando','emp123','Driver',1),
+('USR-DRV-03','ST-CMB-01','Isuru Weerasekara','emp123','Driver',1),
+('USR-ASS-01','ST-CMB-01','Nadeesha Karu','emp123','Assistant',1),
+('USR-ASS-02','ST-CMB-01','Ruwan Perera','emp123','Assistant',1);
 
 INSERT INTO store_managers (manager_id) VALUES
 ('USR-MGR-MAIN'),
