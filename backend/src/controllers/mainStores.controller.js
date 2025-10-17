@@ -1,7 +1,7 @@
 import pool from '../db/pool.js';
 
 /**
- * Get all pending orders (status = 'PLACED')
+ * Get all pending orders (status = 'PENDING')
  */
 export async function getPendingOrders(req, res, next) {
   try {
@@ -26,7 +26,7 @@ export async function getPendingOrders(req, res, next) {
       LEFT JOIN sub_cities sc ON o.sub_city_id = sc.sub_city_id
       LEFT JOIN order_items oi ON o.order_id = oi.order_id
       LEFT JOIN products p ON oi.product_id = p.product_id
-      WHERE o.status = 'PLACED'
+      WHERE o.status = 'PENDING'
       GROUP BY o.order_id
       ORDER BY o.ordered_date ASC
     `;
