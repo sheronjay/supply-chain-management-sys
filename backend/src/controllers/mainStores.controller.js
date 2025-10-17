@@ -160,10 +160,10 @@ export async function processOrder(req, res, next) {
       WHERE trip_id = ?
     `, [newAvailableCapacity, tripId]);
 
-    // Update order status to SCHEDULED
+    // Update order status to TRAIN
     await connection.query(`
       UPDATE orders
-      SET status = 'SCHEDULED'
+      SET status = 'TRAIN'
       WHERE order_id = ?
     `, [orderId]);
 
