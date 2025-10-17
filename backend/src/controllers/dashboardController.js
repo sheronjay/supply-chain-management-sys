@@ -256,11 +256,11 @@ const getSystemAlerts = async (req, res) => {
       })
     }
 
-    // Alert 3: Pending Orders (orders that are PLACED but not SCHEDULED)
+    // Alert 3: Pending Orders (orders that are PENDING but not SCHEDULED)
     const [pendingOrdersRows] = await pool.query(
       `SELECT COUNT(*) as count
        FROM orders
-       WHERE status = 'PLACED'
+       WHERE status = 'PENDING'
          AND DATEDIFF(CURRENT_DATE(), ordered_date) > 2`
     )
 

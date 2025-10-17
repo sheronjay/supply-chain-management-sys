@@ -54,7 +54,7 @@ export const getReportSummary = async (startDate, endDate, storeId = null) => {
         AVG(o.total_price) as avg_order_value,
         COUNT(DISTINCT CASE WHEN o.status = 'DELIVERED' THEN o.order_id END) as delivered_orders,
         COUNT(DISTINCT CASE WHEN o.status = 'SCHEDULED' THEN o.order_id END) as scheduled_orders,
-        COUNT(DISTINCT CASE WHEN o.status = 'PLACED' THEN o.order_id END) as placed_orders
+        COUNT(DISTINCT CASE WHEN o.status = 'PENDING' THEN o.order_id END) as pending_orders
       FROM orders o
       WHERE o.ordered_date BETWEEN ? AND ?
     `;
