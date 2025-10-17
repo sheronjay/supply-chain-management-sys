@@ -30,13 +30,15 @@ CREATE TABLE IF NOT EXISTS sub_cities (
 
 CREATE TABLE IF NOT EXISTS trains (
   train_id        VARCHAR(255) PRIMARY KEY,
-  train_name      VARCHAR(255)
+  train_name      VARCHAR(255),
+  capacity        DECIMAL(10,2)                  -- cargo capacity in cubic meters or tons
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS trucks (
   truck_id        VARCHAR(255) PRIMARY KEY,
   store_id        VARCHAR(255),
   reg_number      VARCHAR(255),                  -- unique vehicle registration
+  capacity        DECIMAL(10,2),                 -- cargo capacity in cubic meters or tons
   used_hours      DECIMAL(6,2),
   availability    TINYINT(1) NOT NULL DEFAULT 1,
   CONSTRAINT uq_trucks_reg UNIQUE (reg_number),
@@ -250,25 +252,25 @@ INSERT INTO sub_cities (sub_city_id, sub_city_name, store_id) VALUES
 ('SC-TRI-002','Nilaveli','ST-TRI-01'),
 ('SC-TRI-003','Kinniya','ST-TRI-01');
 
-INSERT INTO trains (train_id, train_name) VALUES
-('TRN-UD1','Udarata Cargo 1'),
-('TRN-UD2','Udarata Cargo 2'),
-('TRN-CST','Coastal Cargo'),
-('TRN-CST2','Coastal Express'),
-('TRN-NOR','Northern Cargo'),
-('TRN-EAS','Eastern Cargo');
+INSERT INTO trains (train_id, train_name, capacity) VALUES
+('TRN-UD1','Udarata Cargo 1', 500.00),
+('TRN-UD2','Udarata Cargo 2', 500.00),
+('TRN-CST','Coastal Cargo', 450.00),
+('TRN-CST2','Coastal Express', 450.00),
+('TRN-NOR','Northern Cargo', 400.00),
+('TRN-EAS','Eastern Cargo', 400.00);
 
-INSERT INTO trucks (truck_id, store_id, reg_number, used_hours, availability) VALUES
-('TRK-001','ST-CMB-01','WP-NA-1234', 812.50,1),
-('TRK-002','ST-NGO-01','WP-KK-5678', 420.00,1),
-('TRK-003','ST-GAL-01','SP-PA-2345', 355.75,1),
-('TRK-004','ST-MAT-01','SP-KM-9876', 602.30,1),
-('TRK-005','ST-JAF-01','NP-GH-1122', 190.00,1),
-('TRK-006','ST-TRI-01','EP-TR-3344', 260.50,1),
-('TRK-007','ST-CMB-01','WP-CB-8899', 120.00,1),
-('TRK-008','ST-NGO-01','WP-NG-6611', 205.90,1),
-('TRK-009','ST-GAL-01','SP-GL-7788', 410.25,1),
-('TRK-010','ST-MAT-01','SP-MT-4455', 140.60,1);
+INSERT INTO trucks (truck_id, store_id, reg_number, capacity, used_hours, availability) VALUES
+('TRK-001','ST-CMB-01','WP-NA-1234', 50.00, 812.50,1),
+('TRK-002','ST-NGO-01','WP-KK-5678', 45.00, 420.00,1),
+('TRK-003','ST-GAL-01','SP-PA-2345', 45.00, 355.75,1),
+('TRK-004','ST-MAT-01','SP-KM-9876', 50.00, 602.30,1),
+('TRK-005','ST-JAF-01','NP-GH-1122', 40.00, 190.00,1),
+('TRK-006','ST-TRI-01','EP-TR-3344', 40.00, 260.50,1),
+('TRK-007','ST-CMB-01','WP-CB-8899', 50.00, 120.00,1),
+('TRK-008','ST-NGO-01','WP-NG-6611', 45.00, 205.90,1),
+('TRK-009','ST-GAL-01','SP-GL-7788', 45.00, 410.25,1),
+('TRK-010','ST-MAT-01','SP-MT-4455', 40.00, 140.60,1);
 
 -- =========================
 -- Train operations
