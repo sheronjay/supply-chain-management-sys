@@ -213,20 +213,14 @@ CREATE TABLE IF NOT EXISTS admins (
 -- Core reference data
 -- =========================
 INSERT INTO stores (store_id, city) VALUES
-('ST-KDY-01','Kandy'),
 ('ST-CMB-01','Colombo'),
 ('ST-NGO-01','Negombo'),
 ('ST-GAL-01','Galle'),
 ('ST-MAT-01','Matara'),
 ('ST-JAF-01','Jaffna'),
-('ST-TRI-01','Trincomalee'),
-('ST-KDY-02','Kandy');
+('ST-TRI-01','Trincomalee');
 
 INSERT INTO sub_cities (sub_city_id, sub_city_name, store_id) VALUES
--- Kandy sub-cities
-('SC-KDY-001','Peradeniya','ST-KDY-01'),
-('SC-KDY-002','Katugastota','ST-KDY-01'),
-('SC-KDY-003','Gampola','ST-KDY-01'),
 -- Colombo sub-cities
 ('SC-CMB-001','Pettah','ST-CMB-01'),
 ('SC-CMB-002','Thimbirigasyaya','ST-CMB-01'),
@@ -573,7 +567,6 @@ INSERT INTO delivery_schedules (delivery_id, order_id, truck_id, delivered_date,
 -- =========================
 INSERT INTO users (user_id, store_id, name, password, designation, is_employed) VALUES
 ('USR-ADM-01',NULL,'System Admin','$2y$dummyhash','Admin',1),
-('USR-MGR-KDY','ST-KDY-01','Anura Perera','$2y$dummyhash','Store Manager',1),
 ('USR-MGR-CMB','ST-CMB-01','Rashmi De Silva','$2y$dummyhash','Store Manager',1),
 ('USR-DRV-01','ST-CMB-01','Kumara Jayasuriya','$2y$dummyhash','Driver',1),
 ('USR-DRV-02','ST-CMB-01','Sujeewa Fernando','$2y$dummyhash','Driver',1),
@@ -582,7 +575,6 @@ INSERT INTO users (user_id, store_id, name, password, designation, is_employed) 
 ('USR-ASS-02','ST-CMB-01','Ruwan Perera','$2y$dummyhash','Assistant',1);
 
 INSERT INTO store_managers (manager_id) VALUES
-('USR-MGR-KDY'),
 ('USR-MGR-CMB');
 
 INSERT INTO delivery_employees (user_id, working_hours, availability) VALUES
