@@ -19,6 +19,11 @@ const mainStoreManagerNavItems = [
   { key: 'TrainSchedule', label: 'Train Schedule', icon: 'train' },
 ]
 
+// Navigation items for Drivers and Assistants (restricted access)
+const driverNavItems = [
+  { key: 'Drivers', label: 'Drivers', icon: 'drivers' },
+]
+
 const bottomItems = [
   { key: 'Settings', label: 'Settings', icon: 'settings' },
   { key: 'SignOut', label: 'Sign Out', icon: 'signout' },
@@ -135,9 +140,13 @@ const Icon = ({ type }) => {
 
 const Sidebar = ({ activePage, onNavigate, userDesignation }) => {
   // Determine which navigation items to show based on user designation
-  const navItems = userDesignation === 'Main Store Manager' 
-    ? mainStoreManagerNavItems 
-    : allNavItems;
+  let navItems = allNavItems;
+  
+  if (userDesignation === 'Main Store Manager') {
+    navItems = mainStoreManagerNavItems;
+  } else if (userDesignation === 'Driver' || userDesignation === 'Assistant') {
+    navItems = driverNavItems;
+  }
 
   return (
     <aside className="sidebar">

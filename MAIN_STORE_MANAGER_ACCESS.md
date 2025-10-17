@@ -80,13 +80,13 @@ Updated the Main Store Manager view to show a restricted sidebar with only Main 
 
 ## Access Comparison
 
-| User Type | Main Stores | Train Schedule | Other Pages | Navigation |
-|-----------|-------------|----------------|-------------|------------|
-| Customer | ❌ | ❌ | My Orders only | None (Logout button only) |
-| Main Store Manager | ✅ | ✅ | ❌ Restricted | Restricted Sidebar (2 items) |
-| Store Manager | ✅ | ✅ | ✅ All pages | Full Sidebar (all items) |
-| Driver/Assistant | ✅ | ✅ | ✅ All pages | Full Sidebar (all items) |
-| Admin | ✅ | ✅ | ✅ All pages | Full Sidebar (all items) |
+| User Type | Main Stores | Train Schedule | Drivers Page | Other Pages | Navigation |
+|-----------|-------------|----------------|--------------|-------------|------------|
+| Customer | ❌ | ❌ | ❌ | My Orders only | None (Logout button only) |
+| Main Store Manager | ✅ | ✅ | ❌ | ❌ Restricted | Restricted Sidebar (2 items) |
+| Driver/Assistant | ❌ | ❌ | ✅ | ❌ Restricted | Restricted Sidebar (1 item) |
+| Store Manager | ✅ | ✅ | ✅ | ✅ All pages | Full Sidebar (all items) |
+| Admin | ✅ | ✅ | ✅ | ✅ All pages | Full Sidebar (all items) |
 
 ## Why This Approach?
 
