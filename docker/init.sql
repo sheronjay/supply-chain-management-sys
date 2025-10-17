@@ -423,7 +423,12 @@ INSERT INTO orders (order_id, customer_id, store_id, sub_city_id, ordered_date, 
 ('ORD-0067','CUST-0002','ST-CMB-01','SC-CMB-001','2025-10-25',  21400.00,'PLACED'),
 ('ORD-0068','CUST-0004','ST-NGO-01','SC-NGO-001','2025-10-26',  12700.00,'PLACED'),
 ('ORD-0069','CUST-0006','ST-GAL-01','SC-GAL-001','2025-10-26',  15900.00,'PLACED'),
-('ORD-0070','CUST-0008','ST-MAT-01','SC-MAT-001','2025-10-27',  18300.00,'PLACED');
+('ORD-0070','CUST-0008','ST-MAT-01','SC-MAT-001','2025-10-27',  18300.00,'PLACED'),
+
+-- Sample orders with TRAIN status for Store Manager testing (CMB Store)
+('ORD-0071','CUST-0001','ST-CMB-01','SC-CMB-001','2025-10-15',  24500.00,'TRAIN'),
+('ORD-0072','CUST-0002','ST-CMB-01','SC-CMB-002','2025-10-16',  18900.00,'TRAIN'),
+('ORD-0073','CUST-0011','ST-CMB-01','SC-CMB-001','2025-10-17',  22300.00,'TRAIN');
 
 -- =========================
 -- Order items (mostly 2 items/order to keep it compact)
@@ -499,7 +504,12 @@ INSERT INTO order_items (order_id, product_id, quantity, item_capacity, unit_pri
 ('ORD-0067','PRD-RIC-10',11,13,1500.00),('ORD-0067','PRD-TEA-200',14,4,700.00),
 ('ORD-0068','PRD-BIS-200',28,5,250.00), ('ORD-0068','PRD-CLR-1L',9,4,620.00),
 ('ORD-0069','PRD-SHP-500',10,4,950.00), ('ORD-0069','PRD-MLK-1L',12,5,380.00),
-('ORD-0070','PRD-DET-1KG',13,7,850.00), ('ORD-0070','PRD-OFK-5L',4,4,2200.00);
+('ORD-0070','PRD-DET-1KG',13,7,850.00), ('ORD-0070','PRD-OFK-5L',4,4,2200.00),
+
+-- Order items for TRAIN status orders
+('ORD-0071','PRD-RIC-10',12,15,1500.00),('ORD-0071','PRD-TEA-200',16,5,700.00),
+('ORD-0072','PRD-DET-1KG',14,7,850.00), ('ORD-0072','PRD-SOAP-100',60,6,180.00),
+('ORD-0073','PRD-OFK-5L',5,5,2200.00),  ('ORD-0073','PRD-RIC-10',8,10,1500.00);
 
 -- =========================
 -- Delivery schedules (subset marked delivered)
