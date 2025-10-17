@@ -81,6 +81,19 @@ export async function getAssistants(req, res, next) {
 }
 
 /**
+ * Get delivery employees (drivers and assistants) with working hours
+ */
+export async function getDeliveryEmployees(req, res, next) {
+    try {
+        const storeId = req.params.storeId || 'ST-CMB-01';
+        const employees = await storeManagerService.getDeliveryEmployees(storeId);
+        res.json(employees);
+    } catch (err) {
+        next(err);
+    }
+}
+
+/**
  * Assign an order to a truck with driver and assistant
  */
 export async function assignOrderToTruck(req, res, next) {

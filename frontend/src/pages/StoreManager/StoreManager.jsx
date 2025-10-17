@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react'
-import { fetchStoreOrders, fetchStoreInventory, acceptOrder } from '../../services/storeManagerService'
+import { fetchStoreOrders, fetchStoreInventory, acceptOrder, fetchDeliveryEmployees } from '../../services/storeManagerService'
 import StoreOrdersTable from '../../components/storeManager/StoreOrdersTable/StoreOrdersTable'
 import StoreInventoryTable from '../../components/storeManager/StoreInventoryTable/StoreInventoryTable'
+import DeliveryEmployeesTable from '../../components/storeManager/DeliveryEmployeesTable/DeliveryEmployeesTable'
 import './StoreManager.css'
 
 const StoreManager = () => {
   const [activeTab, setActiveTab] = useState('orders')
   const [orders, setOrders] = useState([])
   const [inventory, setInventory] = useState([])
+  const [employees, setEmployees] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
@@ -20,8 +22,10 @@ const StoreManager = () => {
   useEffect(() => {
     if (activeTab === 'orders') {
       loadStoreOrders()
-    } else {
+    } else if (activeTab === 'inventory') {
       loadStoreInventory()
+    } else if (activeTab === 'employees') {
+      loadDeliveryEmployees()
     }
   }, [activeTab])
 
@@ -44,6 +48,19 @@ const StoreManager = () => {
       setError(null)
       const data = await fetchStoreInventory(storeId)
       setInventory(data)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loadDeliveryEmployees = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await fetchDeliveryEmployees(storeId)
+      setEmployees(data)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -76,13 +93,16 @@ const StoreManager = () => {
   const handleRefresh = () => {
     if (activeTab === 'orders') {
       loadStoreOrders()
-    } else {
+    } else if (activeTab === 'inventory') {
       loadStoreInventory()
+    } else if (activeTab === 'employees') {
+      loadDeliveryEmployees()
     }
   }
 
   const totalOrders = orders.length
   const totalInventory = inventory.length
+  const totalEmployees = employees.length
 
   return (
     <div className="store-manager">
@@ -139,6 +159,28 @@ const StoreManager = () => {
           Inventory
           {totalInventory > 0 && <span className="tab-badge">{totalInventory}</span>}
         </button>
+        <button
+          className={`tab-button ${activeTab === 'employees' ? 'active' : ''}`}
+          onClick={() => setActiveTab('employees')}
+        >
+          <svg viewBox="0 0 24 24" className="tab-icon">
+            <path
+              d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+            <circle cx="9" cy="7" r="4" fill="none" stroke="currentColor" strokeWidth="2" />
+            <path
+              d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+          </svg>
+          Delivery Employees
+          {totalEmployees > 0 && <span className="tab-badge">{totalEmployees}</span>}
+        </button>
       </div>
 
       {/* Success/Error Messages */}
@@ -178,7 +220,7 @@ const StoreManager = () => {
             </div>
             <StoreOrdersTable orders={orders} onAcceptOrder={handleAcceptOrder} loading={loading} />
           </>
-        ) : (
+        ) : activeTab === 'inventory' ? (
           <>
             <div className="section-header">
               <h3>Current Inventory</h3>
@@ -189,6 +231,17 @@ const StoreManager = () => {
               loading={loading} 
               storeId={storeId}
               onRefresh={loadStoreInventory}
+            />
+          </>
+        ) : (
+          <>
+            <div className="section-header">
+              <h3>Delivery Employee Summary</h3>
+              <p>View working hours and performance metrics for all delivery staff at this store</p>
+            </div>
+            <DeliveryEmployeesTable 
+              employees={employees} 
+              loading={loading}
             />
           </>
         )}

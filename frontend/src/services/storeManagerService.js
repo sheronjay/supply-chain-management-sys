@@ -79,6 +79,17 @@ export async function fetchAssistants(storeId) {
 }
 
 /**
+ * Fetch delivery employees with working hours for a specific store
+ */
+export async function fetchDeliveryEmployees(storeId = 'ST-CMB-01') {
+  const response = await fetch(`${API_BASE_URL}/store-manager/delivery-employees/${storeId}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch delivery employees: ${response.statusText}`);
+  }
+  return response.json();
+}
+
+/**
  * Assign an order to a truck with driver and assistant
  */
 export async function assignOrderToTruck(orderId, truckId, driverId, assistantId) {

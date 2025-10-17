@@ -129,6 +129,27 @@ export async function acceptOrder(orderId, managerId) {
 }
 
 /**
+ * Get delivery employees (drivers and assistants) with their working hours for a store
+ */
+export async function getDeliveryEmployees(storeId) {
+    const [rows] = await pool.query(
+        `SELECT 
+            u.user_id,
+            u.name,
+            u.designation,
+            u.store_id,
+            de.working_hours,
+            de.availability
+        FROM users u
+        INNER JOIN delivery_employees de ON u.user_id = de.user_id
+        WHERE u.store_id = ? AND u.designation IN ('Driver', 'Assistant')
+        ORDER BY u.designation, u.name`,
+        [storeId]
+    );
+    return rows;
+}
+
+/**
  * Get all trucks for a specific store
  */
 export async function getTrucks(storeId) {
