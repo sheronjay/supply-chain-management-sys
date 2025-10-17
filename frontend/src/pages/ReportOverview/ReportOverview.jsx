@@ -1,74 +1,141 @@
+import { useState, useEffect } from 'react';
 import ReportHeader from '../../components/reportOverview/ReportHeader/ReportHeader'
 import ReportFilters from '../../components/reportOverview/ReportFilters/ReportFilters'
 import ReportActions from '../../components/reportOverview/ReportActions/ReportActions'
 import ReportTable from '../../components/reportOverview/ReportTable/ReportTable'
+import reportService from '../../services/reportService';
 import './ReportOverview.css'
 
-const filters = [
-  { id: 'type', label: 'Report Type', placeholder: 'Daily Sales' },
-  { id: 'date', label: 'Select Date Range', placeholder: 'Select Date Range' },
-  { id: 'route', label: 'Filter by Route', placeholder: 'Filter by Route' },
-  { id: 'category', label: 'All Categories', placeholder: 'All Categories' },
-]
+const ReportOverview = () => {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [filters, setFilters] = useState({
+    startDate: '',
+    endDate: ''
+  });
+  const [summary, setSummary] = useState(null);
 
-const reports = [
-  {
-    name: 'Daily Sales',
-    date: '2024-03-31',
-    region: 'North Region',
-    category: 'Electronics',
-    revenue: 'Rs. 1,245,000',
-    transactions: 340,
-  },
-  {
-    name: 'Monthly Revenue',
-    date: '2024-03-01',
-    region: 'South Region',
-    category: 'Apparel',
-    revenue: 'Rs. 8,765,500',
-    transactions: 90,
-  },
-  {
-    name: 'Product Performance',
-    date: '2024-03-15',
-    region: 'East Region',
-    category: 'Home Goods',
-    revenue: 'Rs. 3,540,000',
-    transactions: 210,
-  },
-  {
-    name: 'User Activity',
-    date: '2024-03-18',
-    region: 'West Region',
-    category: 'Food & Beverage',
-    revenue: 'Rs. 2,450,900',
-    transactions: 150,
-  },
-  {
-    name: 'Product Performance',
-    date: '2024-03-22',
-    region: 'Central Region',
-    category: 'Apparel',
-    revenue: 'Rs. 1,780,000',
-    transactions: 120,
-  },
-  {
-    name: 'Daily Sales',
-    date: '2024-03-27',
-    region: 'North Region',
-    category: 'Electronics',
-    revenue: 'Rs. 1,125,000',
-    transactions: 290,
-  },
-]
+  // Fetch reports on mount and when filters change
+  useEffect(() => {
+    fetchReports();
+  }, [filters]);
 
-const ReportOverview = () => (
-  <div className="report-overview">
-    <ReportHeader />
-    <ReportFilters filters={filters} />
-    <ReportActions />
-    <ReportTable reports={reports} />
-  </div>
-)
+  const fetchReports = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await reportService.getReports(filters);
+      
+      if (response.success) {
+        setOrders(response.data.orders || []);
+        setSummary(response.data.summary);
+      }
+    } catch (err) {
+      console.error('Error fetching reports:', err);
+      setError('Failed to load reports. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(prev => ({ ...prev, ...newFilters }));
+  };
+
+  const handleExport = () => {
+    if (!orders || orders.length === 0) {
+      alert('No data to export');
+      return;
+    }
+
+    // Prepare CSV data
+    const headers = [
+      'Order ID',
+      'Date',
+      'Customer Name',
+      'Customer Email',
+      'Store',
+      'Delivery Location',
+      'Status',
+      'Total Price',
+      'Products'
+    ];
+
+    // Convert orders to CSV rows
+    const csvRows = [
+      headers.join(','), // Header row
+      ...orders.map(order => [
+        order.order_id,
+        new Date(order.ordered_date).toLocaleDateString(),
+        `"${order.customer_name}"`, // Wrap in quotes to handle commas
+        order.customer_email,
+        order.store,
+        order.delivery_location,
+        order.status,
+        order.total_price,
+        `"${order.products || 'N/A'}"` // Wrap in quotes to handle commas
+      ].join(','))
+    ];
+
+    // Create CSV string
+    const csvContent = csvRows.join('\n');
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    // Generate filename with current date
+    const filename = `orders-report-${new Date().toISOString().split('T')[0]}.csv`;
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  if (loading && orders.length === 0) {
+    return (
+      <div className="report-overview">
+        <ReportHeader />
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <p>Loading reports...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="report-overview">
+        <ReportHeader />
+        <div style={{ padding: '2rem', textAlign: 'center', color: 'red' }}>
+          <p>{error}</p>
+          <button onClick={fetchReports}>Retry</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="report-overview">
+      <ReportHeader />
+      <ReportFilters 
+        filters={filters} 
+        onFilterChange={handleFilterChange} 
+      />
+      <ReportActions onExport={handleExport} />
+      <ReportTable 
+        orders={orders} 
+        loading={loading}
+        summary={summary}
+      />
+    </div>
+  );
+};
 
 export default ReportOverview

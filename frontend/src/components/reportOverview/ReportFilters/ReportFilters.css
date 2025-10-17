@@ -2,14 +2,62 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
 }
 
 .report-overview__filter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+.report-overview__filter label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #475569;
+}
+
+.report-overview__filter input,
+.report-overview__filter select {
   border: 1px solid #cbd5f5;
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 10px 14px;
   background: #f8fafc;
   color: #1e293b;
   font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
+
+.report-overview__filter input:focus,
+.report-overview__filter select:focus {
+  outline: none;
+  border-color: #4f46e5;
+  background: #fff;
+}
+
+.report-overview__apply-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  background: #4f46e5;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: fit-content;
+}
+
+.report-overview__apply-btn:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+
+.report-overview__apply-btn:active {
+  transform: translateY(0);
+}
+
