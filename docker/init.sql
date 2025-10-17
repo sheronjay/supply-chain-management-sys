@@ -10,11 +10,7 @@ USE `supplychain`;
 -- =========================
 CREATE TABLE IF NOT EXISTS stores (
   store_id        VARCHAR(255) PRIMARY KEY,
-  city_id         VARCHAR(255),
-  station_id      VARCHAR(255),
-  address         VARCHAR(255),
-  type            VARCHAR(255),
-  is_open         TINYINT(1) NOT NULL DEFAULT 1
+  city            VARCHAR(255)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS trains (
@@ -235,15 +231,15 @@ CREATE TABLE IF NOT EXISTS admins (
 -- =========================
 -- Core reference data
 -- =========================
-INSERT INTO stores (store_id, city_id, station_id, address, type, is_open) VALUES
-('ST-KDY-01','Kandy','SLR-KDY','No.12 William Gopallawa Mawatha, Kandy','Warehouse',1),
-('ST-CMB-01','Colombo','SLR-CMBF','No.1 Olcott Mawatha, Colombo 11','Regional Store',1),
-('ST-NGO-01','Negombo','SLR-NGO','No.233 Chilaw Rd, Negombo','Regional Store',1),
-('ST-GAL-01','Galle','SLR-GAL','No.45 Rampart Rd, Galle','Regional Store',1),
-('ST-MAT-01','Matara','SLR-MAT','No.88 Beach Rd, Matara','Regional Store',1),
-('ST-JAF-01','Jaffna','SLR-JAF','No.20 KKS Rd, Jaffna','Regional Store',1),
-('ST-TRI-01','Trincomalee','SLR-TRI','No.17 Dockyard Rd, Trincomalee','Regional Store',1),
-('ST-KDY-02','Kandy','SLR-KDY','No.5 Peradeniya Rd, Kandy','Retail',1);
+INSERT INTO stores (store_id, city) VALUES
+('ST-KDY-01','Kandy'),
+('ST-CMB-01','Colombo'),
+('ST-NGO-01','Negombo'),
+('ST-GAL-01','Galle'),
+('ST-MAT-01','Matara'),
+('ST-JAF-01','Jaffna'),
+('ST-TRI-01','Trincomalee'),
+('ST-KDY-02','Kandy');
 
 INSERT INTO trains (train_id, train_name) VALUES
 ('TRN-UD1','Udarata Cargo 1'),
