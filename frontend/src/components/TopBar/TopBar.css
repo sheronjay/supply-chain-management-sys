@@ -123,6 +123,28 @@
   color: #9ca3af;
 }
 
+.topbar__logout {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  margin-left: 12px;
+}
+
+.topbar__logout:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.topbar__logout:active {
+  transform: translateY(0);
+}
+
 @media (max-width: 768px) {
   .topbar {
     flex-direction: column;

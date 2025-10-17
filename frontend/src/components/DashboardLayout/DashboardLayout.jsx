@@ -55,11 +55,24 @@ export default function DashboardLayout({ children, pageName }) {
     return pageConfig[activePage] ?? pageConfig.Dashboard;
   }, [activePage]);
 
+  // Check if user is a customer
+  const isCustomer = user?.userType === 'customer';
+
   return (
     <div className="app-shell">
-      <Sidebar activePage={activePage} onNavigate={handleNavigate} />
+      {/* Only show sidebar for employees */}
+      {!isCustomer && <Sidebar activePage={activePage} onNavigate={handleNavigate} />}
       <main className="app-main">
-        <TopBar title={title} subtitle={subtitle} userName={user?.name} />
+        <TopBar 
+          title={title} 
+          subtitle={subtitle} 
+          userName={user?.name}
+          onLogout={() => {
+            logout();
+            navigate('/');
+          }}
+          isCustomer={isCustomer}
+        />
         <div className="app-content">{children}</div>
       </main>
     </div>
