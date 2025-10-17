@@ -4,34 +4,42 @@ import UserOrdersTable from "../../components/orders/UserOrdersTable/UserOrdersT
 import "./UserOrders.css";
 
 const UserOrders = () => {
-  const [orders, setOrders] = useState([
-    // Default data shown immediately
-    { id: 'ORD001', customer: 'Test User', status: 'Pending', route: 'Colombo', items: [], totalAmount: 2500, deliveryDate: '2025-01-15' },
-    { id: 'ORD002', customer: 'Test User', status: 'Delivered', route: 'Kandy', items: [], totalAmount: 400, deliveryDate: '2025-01-16' },
-  ]);
+  // Hardcoded customer from database (CUST-0001: Sunrise Wholesale)
+  const CUSTOMER_ID = "CUST-0001";
+  const CUSTOMER_NAME = "Sunrise Wholesale";
+  const CUSTOMER_CITY = "Colombo";
+  const STORE_ID = "ST-CMB-01"; // Colombo store
+  const SUB_CITY_ID = "SC-CMB-001"; // Pettah sub-city
+
+  const [orders, setOrders] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const userId = localStorage.getItem("userId") || "test-user-123";
-
-  // Fetch orders silently in background
+  // Fetch orders for the hardcoded customer
   const fetchOrders = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/orders/user/${userId}`);
+      setLoading(true);
+      const response = await fetch(`http://localhost:5000/api/orders/user/${CUSTOMER_ID}`);
       if (response.ok) {
         const data = await response.json();
         setOrders(data);
         setError(null);
+      } else {
+        throw new Error('Failed to fetch orders');
       }
     } catch (err) {
       console.error('Error fetching orders:', err);
-      // Keep showing default data
+      setError('Failed to load orders. Please try again later.');
+      setOrders([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchOrders();
-  }, [userId]);
+  }, []);
 
   const handleCreateOrder = async (newOrder) => {
     try {
@@ -43,12 +51,14 @@ const UserOrders = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          customerName: newOrder.customerName,
-          customerId: userId,
+          customerId: CUSTOMER_ID,
+          customerName: CUSTOMER_NAME,
+          storeId: STORE_ID,
+          subCityId: SUB_CITY_ID,
           items: newOrder.items,
           totalAmount: newOrder.totalAmount,
-          status: 'Pending',
-          route: newOrder.route
+          status: 'PENDING',
+          orderedDate: new Date().toISOString().split('T')[0]
         })
       });
 
@@ -56,40 +66,36 @@ const UserOrders = () => {
         const result = await response.json();
         console.log('Order created successfully:', result);
         
-        // Add new order to the list immediately
-        const newOrderItem = {
-          id: result.orderId,
-          customer: newOrder.customerName,
-          status: 'Pending',
-          route: newOrder.route,
-          items: newOrder.items,
-          totalAmount: newOrder.totalAmount,
-          deliveryDate: new Date().toISOString().split('T')[0]
-        };
-        
-        setOrders(prev => [newOrderItem, ...prev]);
+        // Refresh orders list from server
+        await fetchOrders();
         
         alert('Order created successfully!');
       } else {
-        throw new Error('Failed to create order');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create order');
       }
       
     } catch (error) {
       console.error('Error creating order:', error);
-      alert('Failed to create order. Please try again.');
+      alert(`Failed to create order: ${error.message}`);
     }
   };
 
   const statusTone = {
-    Pending: "pending",
-    Delivered: "completed",
-    Cancelled: "cancelled",
+    PENDING: "pending",
+    SCHEDULED: "scheduled",
+    PLACED: "placed",
+    DELIVERED: "completed",
+    CANCELLED: "cancelled",
   };
 
   return (
     <div className="user-orders-page">
       <div className="header">
-        <h1>My Orders</h1>
+        <div className="customer-info">
+          <h1>My Orders</h1>
+          <p className="customer-name">Customer: {CUSTOMER_NAME} ({CUSTOMER_ID})</p>
+        </div>
         <button
           onClick={() => setIsModalOpen(true)}
           className="add-order-btn"
@@ -98,12 +104,19 @@ const UserOrders = () => {
         </button>
       </div>
 
-      <UserOrdersTable orders={orders} statusTone={statusTone} />
+      {loading ? (
+        <div className="loading-message">Loading orders...</div>
+      ) : error ? (
+        <div className="error-message">{error}</div>
+      ) : (
+        <UserOrdersTable orders={orders} statusTone={statusTone} />
+      )}
 
       <AddOrderModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onCreate={handleCreateOrder}
+        customerName={CUSTOMER_NAME}
       />
     </div>
   );

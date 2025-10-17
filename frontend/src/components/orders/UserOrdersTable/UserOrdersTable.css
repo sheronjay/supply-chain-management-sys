@@ -86,6 +86,16 @@ td {
   color: #92400e;
 }
 
+.status-badge.scheduled {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-badge.placed {
+  background-color: #e0e7ff;
+  color: #4338ca;
+}
+
 .status-badge.completed {
   background-color: #d1fae5;
   color: #065f46;

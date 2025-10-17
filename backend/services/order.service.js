@@ -6,12 +6,12 @@ export async function listOrders() {
         SELECT 
             o.*,
             c.name as customer_name,
-            s.address as store_address,
-            tr.end_location as route_name
+            s.city as store_city,
+            sc.sub_city_name
         FROM orders o
         LEFT JOIN customers c ON o.customer_id = c.customer_id
         LEFT JOIN stores s ON o.store_id = s.store_id
-        LEFT JOIN truck_routes tr ON o.route_id = tr.route_id
+        LEFT JOIN sub_cities sc ON o.sub_city_id = sc.sub_city_id
         ORDER BY o.ordered_date DESC
     `);
     
@@ -35,7 +35,8 @@ export async function listOrders() {
             customer: order.customer_name,
             customerId: order.customer_id,
             storeId: order.store_id,
-            route: order.route_name || 'Unknown',
+            subCityId: order.sub_city_id,
+            route: order.sub_city_name || order.store_city || 'Unknown',
             deliveryDate: order.ordered_date,
             status: order.status,
             totalAmount: order.total_price,
@@ -56,12 +57,12 @@ export async function getOrderById(orderId) {
         SELECT 
             o.*,
             c.name as customer_name,
-            s.address as store_address,
-            tr.end_location as route_name
+            s.city as store_city,
+            sc.sub_city_name
         FROM orders o
         LEFT JOIN customers c ON o.customer_id = c.customer_id
         LEFT JOIN stores s ON o.store_id = s.store_id
-        LEFT JOIN truck_routes tr ON o.route_id = tr.route_id
+        LEFT JOIN sub_cities sc ON o.sub_city_id = sc.sub_city_id
         WHERE o.order_id = ?
     `, [orderId]);
     
@@ -85,7 +86,8 @@ export async function getOrderById(orderId) {
         customer: order.customer_name,
         customerId: order.customer_id,
         storeId: order.store_id,
-        route: order.route_name || 'Unknown',
+        subCityId: order.sub_city_id,
+        route: order.sub_city_name || order.store_city || 'Unknown',
         deliveryDate: order.ordered_date,
         status: order.status,
         totalAmount: order.total_price,
@@ -103,12 +105,12 @@ export async function getOrdersByUser(userId) {
         SELECT 
             o.*,
             c.name as customer_name,
-            s.address as store_address,
-            tr.end_location as route_name
+            s.city as store_city,
+            sc.sub_city_name
         FROM orders o
         LEFT JOIN customers c ON o.customer_id = c.customer_id
         LEFT JOIN stores s ON o.store_id = s.store_id
-        LEFT JOIN truck_routes tr ON o.route_id = tr.route_id
+        LEFT JOIN sub_cities sc ON o.sub_city_id = sc.sub_city_id
         WHERE o.customer_id = ?
         ORDER BY o.ordered_date DESC
     `, [userId]);
@@ -127,7 +129,8 @@ export async function getOrdersByUser(userId) {
             customer: order.customer_name,
             customerId: order.customer_id,
             storeId: order.store_id,
-            route: order.route_name || 'Unknown',
+            subCityId: order.sub_city_id,
+            route: order.sub_city_name || order.store_city || 'Unknown',
             deliveryDate: order.ordered_date,
             status: order.status,
             totalAmount: order.total_price,
@@ -150,53 +153,34 @@ export async function createOrder(payload) {
         
         console.log('Creating order with payload:', payload);
         
-        // First, create or find customer
-        let customerId = payload.customerId;
-        if (!customerId && payload.customerName) {
-            // Check if customer exists
-            const [existingCustomers] = await conn.query(
-                'SELECT customer_id FROM customers WHERE name = ?',
-                [payload.customerName]
-            );
-            
-            if (existingCustomers.length > 0) {
-                customerId = existingCustomers[0].customer_id;
-            } else {
-                // Create new customer
-                customerId = uuidv4();
-                await conn.query(
-                    'INSERT INTO customers (customer_id, name, email, phone_number, city) VALUES (?, ?, ?, ?, ?)',
-                    [customerId, payload.customerName, payload.email || null, payload.phone || null, payload.city || null]
-                );
-            }
+        // Validate customer exists
+        const customerId = payload.customerId;
+        if (!customerId) {
+            throw new Error('Customer ID is required');
         }
+
+        const [customers] = await conn.query(
+            'SELECT customer_id FROM customers WHERE customer_id = ?',
+            [customerId]
+        );
         
-        // Map route name to route ID if provided
-        let routeId = payload.routeId;
-        if (!routeId && payload.route) {
-            const [routes] = await conn.query(
-                'SELECT route_id FROM truck_routes WHERE end_location = ?',
-                [payload.route]
-            );
-            if (routes.length > 0) {
-                routeId = routes[0].route_id;
-            } else {
-                console.log(`Route '${payload.route}' not found in database`);
-            }
+        if (customers.length === 0) {
+            throw new Error(`Customer ${customerId} not found`);
         }
         
         // Create order
-        const orderId = payload.orderId || uuidv4();
-        const orderedDate = payload.orderedDate || new Date();
+        const orderId = 'ORD-' + uuidv4().substring(0, 8).toUpperCase();
+        const orderedDate = payload.orderedDate || new Date().toISOString().split('T')[0];
         const totalPrice = payload.totalAmount || 0;
+        const status = payload.status || 'PENDING';
         
         await conn.query(
-            'INSERT INTO orders (order_id, customer_id, store_id, route_id, ordered_date, total_price, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [orderId, customerId, payload.storeId || null, routeId, orderedDate, totalPrice, payload.status || 'Pending']
+            'INSERT INTO orders (order_id, customer_id, store_id, sub_city_id, ordered_date, total_price, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [orderId, customerId, payload.storeId || null, payload.subCityId || null, orderedDate, totalPrice, status]
         );
 
         // Add order items
-        if (Array.isArray(payload.items)) {
+        if (Array.isArray(payload.items) && payload.items.length > 0) {
             for (const item of payload.items) {
                 // Find product by name
                 const [products] = await conn.query(
@@ -212,6 +196,7 @@ export async function createOrder(payload) {
                     );
                 } else {
                     console.log(`Product '${item.name}' not found in database`);
+                    throw new Error(`Product '${item.name}' not found`);
                 }
             }
         }

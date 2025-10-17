@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import "./AddOrderModal.css";
 
-const AddOrderModal = ({ isOpen, onClose, onCreate }) => {
+const AddOrderModal = ({ isOpen, onClose, onCreate, customerName }) => {
   const [formData, setFormData] = useState({
-    customerName: "",
     route: "",
     items: [{ name: "", qty: 1, price: 0 }],
   });
@@ -73,11 +72,6 @@ const AddOrderModal = ({ isOpen, onClose, onCreate }) => {
     e.preventDefault();
     
     // Validation
-    if (!formData.customerName.trim()) {
-      alert("Please enter customer name");
-      return;
-    }
-
     if (!formData.route.trim()) {
       alert("Please select a route");
       return;
@@ -97,7 +91,6 @@ const AddOrderModal = ({ isOpen, onClose, onCreate }) => {
     try {
       const totalAmount = calculateTotal();
       await onCreate({
-        customerName: formData.customerName,
         route: formData.route,
         items: validItems,
         totalAmount,
@@ -105,7 +98,6 @@ const AddOrderModal = ({ isOpen, onClose, onCreate }) => {
 
       // Reset form
       setFormData({
-        customerName: "",
         route: "",
         items: [{ name: "", qty: 1, price: 0 }],
       });
@@ -131,21 +123,12 @@ const AddOrderModal = ({ isOpen, onClose, onCreate }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="order-form">
-          <div className="form-group">
-            <label htmlFor="customerName">Customer Name *</label>
-            <input
-              type="text"
-              id="customerName"
-              name="customerName"
-              value={formData.customerName}
-              onChange={handleInputChange}
-              placeholder="Enter customer name"
-              required
-            />
+          <div className="customer-info-display">
+            <p><strong>Customer:</strong> {customerName}</p>
           </div>
 
           <div className="form-group">
-            <label htmlFor="route">Delivery Route *</label>
+            <label htmlFor="route">Delivery Sub-City *</label>
             <select
               id="route"
               name="route"
@@ -153,13 +136,40 @@ const AddOrderModal = ({ isOpen, onClose, onCreate }) => {
               onChange={handleInputChange}
               required
             >
-              <option value="">Select a route</option>
-              <option value="Colombo">Colombo</option>
-              <option value="Kandy">Kandy</option>
-              <option value="Gampaha">Gampaha</option>
-              <option value="Galle">Galle</option>
-              <option value="Jaffna">Jaffna</option>
-              <option value="Negombo">Negombo</option>
+              <option value="">Select a sub-city</option>
+              <optgroup label="Colombo">
+                <option value="Pettah">Pettah</option>
+                <option value="Thimbirigasyaya">Thimbirigasyaya</option>
+                <option value="Dehiwala">Dehiwala</option>
+              </optgroup>
+              <optgroup label="Kandy">
+                <option value="Peradeniya">Peradeniya</option>
+                <option value="Katugastota">Katugastota</option>
+                <option value="Gampola">Gampola</option>
+              </optgroup>
+              <optgroup label="Negombo">
+                <option value="Kochchikade">Kochchikade</option>
+                <option value="Katana">Katana</option>
+                <option value="Wattala">Wattala</option>
+              </optgroup>
+              <optgroup label="Galle">
+                <option value="Unawatuna">Unawatuna</option>
+                <option value="Hikkaduwa">Hikkaduwa</option>
+                <option value="Ambalangoda">Ambalangoda</option>
+              </optgroup>
+              <optgroup label="Matara">
+                <option value="Weligama">Weligama</option>
+                <option value="Hakmana">Hakmana</option>
+                <option value="Dikwella">Dikwella</option>
+              </optgroup>
+              <optgroup label="Jaffna">
+                <option value="Nallur">Nallur</option>
+                <option value="Chavakachcheri">Chavakachcheri</option>
+              </optgroup>
+              <optgroup label="Trincomalee">
+                <option value="Uppuveli">Uppuveli</option>
+                <option value="Kinniya">Kinniya</option>
+              </optgroup>
             </select>
           </div>
 
