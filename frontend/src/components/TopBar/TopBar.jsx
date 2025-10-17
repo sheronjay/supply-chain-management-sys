@@ -1,10 +1,10 @@
 import './TopBar.css'
 
-const TopBar = ({ title, subtitle = 'Dashboard', userName, onLogout, isCustomer }) => {
+const TopBar = ({ title, subtitle = 'Dashboard', userName, onLogout, isCustomer, userDesignation }) => {
   // Get first letter for avatar
   const avatarLetter = userName ? userName.charAt(0).toUpperCase() : 'U';
   const displayName = userName || 'User';
-  const userRole = isCustomer ? 'Customer' : 'Employee';
+  const userRole = isCustomer ? 'Customer' : (userDesignation || 'Employee');
 
   return (
     <header className="topbar">

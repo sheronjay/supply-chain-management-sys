@@ -1,6 +1,6 @@
 import './Sidebar.css'
 
-const navItems = [
+const allNavItems = [
   { key: 'Dashboard', label: 'Dashboard', icon: 'dashboard' },
   { key: 'Orders', label: 'Orders', icon: 'orders' },
   { key: 'UserOrders', label: 'My Orders', icon: 'userorders' },
@@ -11,6 +11,12 @@ const navItems = [
   /*{ key: 'VehicleUtilization', label: 'Vehicle Utilization', icon: 'vehicle' },*/
   { key: 'ReportOverview', label: 'Report Overview', icon: 'report' },
   { key: 'UserManagement', label: 'User Management', icon: 'users' },
+]
+
+// Navigation items for Main Store Manager (restricted access)
+const mainStoreManagerNavItems = [
+  { key: 'MainStores', label: 'Main Stores', icon: 'mainstores' },
+  { key: 'TrainSchedule', label: 'Train Schedule', icon: 'train' },
 ]
 
 const bottomItems = [
@@ -127,46 +133,53 @@ const Icon = ({ type }) => {
   }
 }
 
-const Sidebar = ({ activePage, onNavigate }) => (
-  <aside className="sidebar">
-    <div className="sidebar__brand">
-      <div className="sidebar__brand-logo">K</div>
-      <div className="sidebar__brand-text">
-        <h2>Kandypack</h2>
-        <span>Dashboard</span>
+const Sidebar = ({ activePage, onNavigate, userDesignation }) => {
+  // Determine which navigation items to show based on user designation
+  const navItems = userDesignation === 'Main Store Manager' 
+    ? mainStoreManagerNavItems 
+    : allNavItems;
+
+  return (
+    <aside className="sidebar">
+      <div className="sidebar__brand">
+        <div className="sidebar__brand-logo">K</div>
+        <div className="sidebar__brand-text">
+          <h2>Kandypack</h2>
+          <span>Dashboard</span>
+        </div>
       </div>
-    </div>
 
-    <nav className="sidebar__nav">
-      {navItems.map((item) => (
-        <button
-          key={item.key}
-          type="button"
-          className={`sidebar__nav-item ${
-            activePage === item.key ? 'sidebar__nav-item--active' : ''
-          }`}
-          onClick={() => onNavigate(item.key)}
-        >
-          <Icon type={item.icon} />
-          <span>{item.label}</span>
-        </button>
-      ))}
-    </nav>
+      <nav className="sidebar__nav">
+        {navItems.map((item) => (
+          <button
+            key={item.key}
+            type="button"
+            className={`sidebar__nav-item ${
+              activePage === item.key ? 'sidebar__nav-item--active' : ''
+            }`}
+            onClick={() => onNavigate(item.key)}
+          >
+            <Icon type={item.icon} />
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </nav>
 
-    <div className="sidebar__bottom">
-      {bottomItems.map((item) => (
-        <button
-          key={item.key}
-          type="button"
-          className="sidebar__nav-item sidebar__nav-item--secondary"
-          onClick={() => onNavigate(item.key)}
-        >
-          <Icon type={item.icon} />
-          <span>{item.label}</span>
-        </button>
-      ))}
-    </div>
-  </aside>
-)
+      <div className="sidebar__bottom">
+        {bottomItems.map((item) => (
+          <button
+            key={item.key}
+            type="button"
+            className="sidebar__nav-item sidebar__nav-item--secondary"
+            onClick={() => onNavigate(item.key)}
+          >
+            <Icon type={item.icon} />
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </div>
+    </aside>
+  );
+};
 
 export default Sidebar
