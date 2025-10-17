@@ -21,6 +21,9 @@ router.get('/drivers/:storeId', storeManagerController.getDrivers);
 // Get assistants for a store
 router.get('/assistants/:storeId', storeManagerController.getAssistants);
 
+// Get delivery employees with working hours
+router.get('/delivery-employees/:storeId?', storeManagerController.getDeliveryEmployees);
+
 // Assign order to truck with driver and assistant
 router.post('/orders/:orderId/assign-truck', storeManagerController.assignOrderToTruck);
 
