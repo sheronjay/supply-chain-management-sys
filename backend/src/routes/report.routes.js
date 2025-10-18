@@ -9,4 +9,6 @@ router.get('/', reportController.getReports);
 // Get report summary
 router.get('/summary', reportController.getReportSummary);
 
+router.get('/export/pdf', reportController.exportPDFReport);
+
 export default router;

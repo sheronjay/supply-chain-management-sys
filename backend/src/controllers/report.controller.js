@@ -73,3 +73,58 @@ export const getReportSummary = async (req, res) => {
     });
   }
 };
+
+import PDFDocument from 'pdfkit';
+
+export const exportPDFReport = async (req, res) => {
+  try {
+    const { startDate, endDate, storeId } = req.query;
+
+    const end = endDate || new Date().toISOString().split('T')[0];
+    const start = startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const filterStoreId = storeId || null;
+
+    // Get data
+    const reports = await reportService.getOrdersReport(start, end, filterStoreId);
+    const summary = await reportService.getReportSummary(start, end, filterStoreId);
+
+    // Create PDF
+    const doc = new PDFDocument();
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="orders-report.pdf"');
+    doc.pipe(res);
+
+    doc.fontSize(18).text('Orders Report', { align: 'center' });
+    doc.moveDown();
+    doc.fontSize(12).text(`Date Range: ${start} to ${end}`);
+    if (filterStoreId) doc.text(`Store ID: ${filterStoreId}`);
+    doc.moveDown();
+
+    doc.fontSize(14).text('Summary', { underline: true });
+    doc.fontSize(12).text(JSON.stringify(summary, null, 2));
+    doc.moveDown();
+
+    doc.fontSize(14).text('Orders', { underline: true });
+    doc.moveDown(0.5);
+
+    reports.forEach(order => {
+      doc.fontSize(12).text(`Order ID: ${order.order_id}`);
+      doc.text(`Customer: ${order.customer_name}`);
+      doc.text(`Email: ${order.customer_email}`);
+      doc.text(`Store: ${order.store}`);
+      doc.text(`Total Price: ${order.total_price}`);
+      doc.text(`Status: ${order.status}`);
+      doc.moveDown();
+    });
+
+    doc.end();
+  } catch (error) {
+    console.error('Error generating PDF report:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to generate PDF report',
+      error: error.message,
+    });
+  }
+};
+
