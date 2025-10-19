@@ -518,6 +518,11 @@ INSERT INTO users (user_id, store_id, name, password, designation, is_employed) 
 ('USR-ADM-01',NULL,'System Admin','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Admin',1),
 ('USR-MGR-MAIN',NULL,'Anura Perera','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Main Store Manager',1),
 ('USR-MGR-CMB','ST-CMB-01','Rashmi De Silva','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
+('USR-MGR-NGO','ST-NGO-01','Chaminda Silva','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
+('USR-MGR-GAL','ST-GAL-01','Nimal Rajapaksa','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
+('USR-MGR-MAT','ST-MAT-01','Priyantha Fernando','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
+('USR-MGR-JAF','ST-JAF-01','Sivakumar Nadesan','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
+('USR-MGR-TRI','ST-TRI-01','Rohan Wickramasinghe','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
 ('USR-DRV-01','ST-CMB-01','Kumara Jayasuriya','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
 ('USR-DRV-02','ST-CMB-01','Sujeewa Fernando','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
 ('USR-DRV-03','ST-CMB-01','Isuru Weerasekara','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
@@ -526,7 +531,12 @@ INSERT INTO users (user_id, store_id, name, password, designation, is_employed) 
 
 INSERT INTO store_managers (manager_id) VALUES
 ('USR-MGR-MAIN'),
-('USR-MGR-CMB');
+('USR-MGR-CMB'),
+('USR-MGR-NGO'),
+('USR-MGR-GAL'),
+('USR-MGR-MAT'),
+('USR-MGR-JAF'),
+('USR-MGR-TRI');
 
 INSERT INTO delivery_employees (user_id, working_hours, availability) VALUES
 ('USR-DRV-01',25.50,1),
