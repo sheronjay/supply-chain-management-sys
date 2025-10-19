@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AddOrderModal from "../../components/orders/AddOrderModal/AddOrderModal";
 import UserOrdersTable from "../../components/orders/UserOrdersTable/UserOrdersTable";
+import api from "../../services/api";
 import "./UserOrders.css";
 
 const UserOrders = () => {
@@ -20,14 +21,9 @@ const UserOrders = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/orders/user/${CUSTOMER_ID}`);
-      if (response.ok) {
-        const data = await response.json();
-        setOrders(data);
-        setError(null);
-      } else {
-        throw new Error('Failed to fetch orders');
-      }
+      const response = await api.get(`/orders/user/${CUSTOMER_ID}`);
+      setOrders(response.data);
+      setError(null);
     } catch (err) {
       console.error('Error fetching orders:', err);
       setError('Failed to load orders. Please try again later.');
@@ -45,39 +41,28 @@ const UserOrders = () => {
     try {
       console.log('Creating order:', newOrder);
       
-      const response = await fetch('http://localhost:5000/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          customerId: CUSTOMER_ID,
-          customerName: CUSTOMER_NAME,
-          storeId: STORE_ID,
-          subCityId: SUB_CITY_ID,
-          items: newOrder.items,
-          totalAmount: newOrder.totalAmount,
-          status: 'PENDING',
-          orderedDate: new Date().toISOString().split('T')[0]
-        })
+      const response = await api.post('/orders', {
+        customerId: CUSTOMER_ID,
+        customerName: CUSTOMER_NAME,
+        storeId: STORE_ID,
+        subCityId: SUB_CITY_ID,
+        items: newOrder.items,
+        totalAmount: newOrder.totalAmount,
+        status: 'PENDING',
+        orderedDate: new Date().toISOString().split('T')[0]
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Order created successfully:', result);
-        
-        // Refresh orders list from server
-        await fetchOrders();
-        
-        alert('Order created successfully!');
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create order');
-      }
+      console.log('Order created successfully:', response.data);
+      
+      // Refresh orders list from server
+      await fetchOrders();
+      
+      alert('Order created successfully!');
       
     } catch (error) {
       console.error('Error creating order:', error);
-      alert(`Failed to create order: ${error.message}`);
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to create order';
+      alert(`Failed to create order: ${errorMessage}`);
     }
   };
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import api from "../../../services/api";
 import "./AddOrderModal.css";
 
 const AddOrderModal = ({ isOpen, onClose, onCreate, customerName }) => {
@@ -13,11 +14,8 @@ const AddOrderModal = ({ isOpen, onClose, onCreate, customerName }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/orders/products/list');
-        if (response.ok) {
-          const data = await response.json();
-          setProducts(data);
-        }
+        const response = await api.get('/orders/products/list');
+        setProducts(response.data);
       } catch (err) {
         console.error('Error fetching products:', err);
       }
