@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { authenticateUser, authorizeStoreManager } from '../../middleware/auth.middleware.js';
 import { 
   getMonthlyRevenue,
   getNewOrdersCount,
@@ -10,11 +11,12 @@ import {
 
 const router = Router();
 
-router.get('/revenue', getMonthlyRevenue);
-router.get('/new-orders-count', getNewOrdersCount);
-router.get('/completed-deliveries', getCompletedDeliveries);
-router.get('/order-history', getOrderHistory);
-router.get('/late-deliveries', getLateDeliveries);
-router.get('/alerts', getSystemAlerts);
+// Protect all dashboard routes – user must be logged in
+router.get('/revenue', authenticateUser, getMonthlyRevenue);
+router.get('/new-orders-count', authenticateUser, getNewOrdersCount);
+router.get('/completed-deliveries', authenticateUser, getCompletedDeliveries);
+router.get('/order-history', authenticateUser, getOrderHistory);
+router.get('/late-deliveries', authenticateUser, getLateDeliveries);
+router.get('/alerts', authenticateUser, getSystemAlerts);
 
 export default router;

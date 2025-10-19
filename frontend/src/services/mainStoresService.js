@@ -1,48 +1,50 @@
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/$/, '')
+// src/services/mainStoresService.js
+import api from './api';
 
+/**
+ * Get all pending orders
+ */
 export const fetchPendingOrders = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/main-stores/pending-orders`)
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch pending orders')
+  try {
+    const response = await api.get('/main-stores/pending-orders');
+    return response.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.error || 'Failed to fetch pending orders');
   }
+};
 
-  return response.json()
-}
-
+/**
+ * Get all train schedules with capacity
+ */
 export const fetchTrainSchedules = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/main-stores/train-schedules`)
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch train schedules')
+  try {
+    const response = await api.get('/main-stores/train-schedules');
+    return response.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.error || 'Failed to fetch train schedules');
   }
+};
 
-  return response.json()
-}
-
+/**
+ * Process an order (assign to train schedule)
+ */
 export const processOrder = async (orderId, tripId) => {
-  const response = await fetch(`${API_BASE_URL}/api/main-stores/process-order`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ orderId, tripId }),
-  })
-
-  if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.message || 'Failed to process order')
+  try {
+    const response = await api.post('/main-stores/process-order', { orderId, tripId });
+    return response.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.error || 'Failed to process order');
   }
+};
 
-  return response.json()
-}
-
+/**
+ * Get orders for a specific train schedule
+ */
 export const fetchScheduleOrders = async (tripId) => {
-  const response = await fetch(`${API_BASE_URL}/api/main-stores/train-schedules/${tripId}/orders`)
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch schedule orders')
+  try {
+    const response = await api.get(`/main-stores/train-schedules/${tripId}/orders`);
+    return response.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.error || 'Failed to fetch schedule orders');
   }
-
-  return response.json()
-}
+};
