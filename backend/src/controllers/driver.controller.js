@@ -32,13 +32,7 @@ export async function getDriverDetails(req, res, next) {
 export async function markOrderAsDelivered(req, res, next) {
     try {
         const { orderId } = req.params;
-        const { driverId } = req.body;
-        
-        if (!driverId) {
-            return res.status(400).json({ 
-                error: 'Missing required field: driverId' 
-            });
-        }
+        const driverId = req.user.id; // Get driver ID from authenticated user
         
         const result = await driverService.markOrderAsDelivered(orderId, driverId);
         res.json(result);
