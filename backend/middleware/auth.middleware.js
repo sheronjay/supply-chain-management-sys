@@ -22,9 +22,31 @@ export function authenticateUser(req, res, next) {
 }
 
 export function authorizeStoreManager(req, res, next) {
-  if (!req.user || !req.user.userType || !req.user.store_id) {
+  if (!req.user || !req.user.userType) {
     return res.status(403).json({ error: 'Access denied. Store managers only.' });
   }
+  
+  // Allow both Store Managers (with store_id) and Main Store Managers (without store_id)
+  const isStoreManager = req.user.store_id && req.user.designation === 'Store Manager';
+  const isMainStoreManager = req.user.designation === 'Main Store Manager';
+  
+  if (!isStoreManager && !isMainStoreManager) {
+    return res.status(403).json({ error: 'Access denied. Store managers only.' });
+  }
+  
+  next();
+}
+
+export function authorizeMainStoreManager(req, res, next) {
+  if (!req.user || !req.user.userType) {
+    return res.status(403).json({ error: 'Access denied. Main store managers only.' });
+  }
+  
+  // Only allow Main Store Managers
+  if (req.user.designation !== 'Main Store Manager') {
+    return res.status(403).json({ error: 'Access denied. Main store managers only.' });
+  }
+  
   next();
 }
 export function optionalAuth(req, res, next) {

@@ -1,6 +1,6 @@
 import express from 'express';
 import * as mainStoresController from '../controllers/mainStores.controller.js';
-import { authenticateUser, authorizeStoreManager } from '../../middleware/auth.middleware.js';
+import { authenticateUser, authorizeMainStoreManager } from '../../middleware/auth.middleware.js';
 
 const router = express.Router();
 
@@ -10,8 +10,8 @@ router.get('/pending-orders', authenticateUser, mainStoresController.getPendingO
 // Get all train schedules with capacity (any logged-in user)
 router.get('/train-schedules', authenticateUser, mainStoresController.getTrainSchedules);
 
-// Process an order (only store managers)
-router.post('/process-order', authenticateUser, authorizeStoreManager, mainStoresController.processOrder);
+// Process an order (only main store managers)
+router.post('/process-order', authenticateUser, authorizeMainStoreManager, mainStoresController.processOrder);
 
 // Get orders for a specific train schedule (any logged-in user)
 router.get('/train-schedules/:tripId/orders', authenticateUser, mainStoresController.getScheduleOrders);
