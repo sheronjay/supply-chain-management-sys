@@ -517,17 +517,44 @@ INSERT INTO order_items (order_id, product_id, quantity, item_capacity, unit_pri
 INSERT INTO users (user_id, store_id, name, password, designation, is_employed) VALUES
 ('USR-ADM-01',NULL,'System Admin','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Admin',1),
 ('USR-MGR-MAIN',NULL,'Anura Perera','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Main Store Manager',1),
+-- Store Managers
 ('USR-MGR-CMB','ST-CMB-01','Rashmi De Silva','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
 ('USR-MGR-NGO','ST-NGO-01','Chaminda Silva','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
 ('USR-MGR-GAL','ST-GAL-01','Nimal Rajapaksa','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
 ('USR-MGR-MAT','ST-MAT-01','Priyantha Fernando','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
 ('USR-MGR-JAF','ST-JAF-01','Sivakumar Nadesan','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
 ('USR-MGR-TRI','ST-TRI-01','Rohan Wickramasinghe','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
-('USR-DRV-01','ST-CMB-01','Kumara Jayasuriya','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
-('USR-DRV-02','ST-CMB-01','Sujeewa Fernando','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
-('USR-DRV-03','ST-CMB-01','Isuru Weerasekara','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
-('USR-ASS-01','ST-CMB-01','Nadeesha Karu','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
-('USR-ASS-02','ST-CMB-01','Ruwan Perera','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1);
+-- Colombo Store (ST-CMB-01) - Drivers and Assistants
+('USR-DRV-CMB-01','ST-CMB-01','Kumara Jayasuriya','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-DRV-CMB-02','ST-CMB-01','Sujeewa Fernando','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-DRV-CMB-03','ST-CMB-01','Isuru Weerasekara','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-ASS-CMB-01','ST-CMB-01','Nadeesha Karu','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+('USR-ASS-CMB-02','ST-CMB-01','Ruwan Perera','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+-- Negombo Store (ST-NGO-01) - Drivers and Assistants
+('USR-DRV-NGO-01','ST-NGO-01','Anil Wijesinghe','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-DRV-NGO-02','ST-NGO-01','Janaka Bandara','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-ASS-NGO-01','ST-NGO-01','Sarath Perera','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+('USR-ASS-NGO-02','ST-NGO-01','Dilshan Fernando','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+-- Galle Store (ST-GAL-01) - Drivers and Assistants
+('USR-DRV-GAL-01','ST-GAL-01','Sampath Rathnayake','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-DRV-GAL-02','ST-GAL-01','Pradeep Silva','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-ASS-GAL-01','ST-GAL-01','Kasun Wickramasinghe','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+('USR-ASS-GAL-02','ST-GAL-01','Nuwan Jayawardena','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+-- Matara Store (ST-MAT-01) - Drivers and Assistants
+('USR-DRV-MAT-01','ST-MAT-01','Mahesh Gamage','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-DRV-MAT-02','ST-MAT-01','Aruna Dissanayake','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-ASS-MAT-01','ST-MAT-01','Chathura Perera','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+('USR-ASS-MAT-02','ST-MAT-01','Hasitha Silva','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+-- Jaffna Store (ST-JAF-01) - Drivers and Assistants
+('USR-DRV-JAF-01','ST-JAF-01','Karthik Murugesan','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-DRV-JAF-02','ST-JAF-01','Ravi Shankar','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-ASS-JAF-01','ST-JAF-01','Arun Kumar','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+('USR-ASS-JAF-02','ST-JAF-01','Suresh Balakrishnan','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+-- Trincomalee Store (ST-TRI-01) - Drivers and Assistants
+('USR-DRV-TRI-01','ST-TRI-01','Ananda Gunawardena','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-DRV-TRI-02','ST-TRI-01','Dinesh Rodrigo','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-ASS-TRI-01','ST-TRI-01','Tharindu Jayasundara','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+('USR-ASS-TRI-02','ST-TRI-01','Lakshan Fernando','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1);
 
 INSERT INTO store_managers (manager_id) VALUES
 ('USR-MGR-MAIN'),
@@ -539,11 +566,37 @@ INSERT INTO store_managers (manager_id) VALUES
 ('USR-MGR-TRI');
 
 INSERT INTO delivery_employees (user_id, working_hours, availability) VALUES
-('USR-DRV-01',25.50,1),
-('USR-DRV-02',18.75,1),
-('USR-DRV-03',32.25,1),
-('USR-ASS-01',16.00,1),
-('USR-ASS-02',23.50,1);
+-- Colombo Store
+('USR-DRV-CMB-01',25.50,1),
+('USR-DRV-CMB-02',18.75,1),
+('USR-DRV-CMB-03',32.25,1),
+('USR-ASS-CMB-01',16.00,1),
+('USR-ASS-CMB-02',23.50,1),
+-- Negombo Store
+('USR-DRV-NGO-01',20.00,1),
+('USR-DRV-NGO-02',28.30,1),
+('USR-ASS-NGO-01',19.50,1),
+('USR-ASS-NGO-02',22.00,1),
+-- Galle Store
+('USR-DRV-GAL-01',24.75,1),
+('USR-DRV-GAL-02',21.50,1),
+('USR-ASS-GAL-01',18.25,1),
+('USR-ASS-GAL-02',20.75,1),
+-- Matara Store
+('USR-DRV-MAT-01',26.00,1),
+('USR-DRV-MAT-02',19.50,1),
+('USR-ASS-MAT-01',21.00,1),
+('USR-ASS-MAT-02',17.50,1),
+-- Jaffna Store
+('USR-DRV-JAF-01',22.25,1),
+('USR-DRV-JAF-02',27.50,1),
+('USR-ASS-JAF-01',15.75,1),
+('USR-ASS-JAF-02',19.00,1),
+-- Trincomalee Store
+('USR-DRV-TRI-01',23.50,1),
+('USR-DRV-TRI-02',25.75,1),
+('USR-ASS-TRI-01',20.25,1),
+('USR-ASS-TRI-02',18.50,1);
 
 INSERT INTO admins (admin_id, username, email, password) VALUES
 ('ADM-ROOT','root','root@kandypack.lk','$2y$dummyhash');
