@@ -30,6 +30,47 @@
   font-weight: 500;
 }
 
+.user-orders-page .customer-city {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 4px 0 0 0;
+  font-weight: 400;
+}
+
+.user-orders-page .sub-city-selector {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-orders-page .sub-city-selector label {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.user-orders-page .sub-city-selector select {
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1f2937;
+  background-color: white;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.user-orders-page .sub-city-selector select:hover {
+  border-color: #9ca3af;
+}
+
+.user-orders-page .sub-city-selector select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
 .loading-message,
 .error-message {
   text-align: center;
