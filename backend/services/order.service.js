@@ -253,3 +253,35 @@ export async function getProducts() {
     const [rows] = await pool.query('SELECT * FROM products ORDER BY product_name');
     return rows;
 }
+
+export async function getQuarterlySalesReport(startDate, endDate, storeId = null) {
+  try {
+    let query = `
+      SELECT 
+        QUARTER(o.ordered_date) AS quarter,
+        YEAR(o.ordered_date) AS year,
+        SUM(oi.quantity * oi.unit_price) AS total_sales_value,
+        SUM(oi.quantity) AS total_sales_volume
+      FROM orders o
+      LEFT JOIN order_items oi ON o.order_id = oi.order_id
+      WHERE o.ordered_date BETWEEN ? AND ?
+    `;
+
+    const params = [startDate, endDate];
+
+    if (storeId) {
+      query += ' AND o.store_id = ?';
+      params.push(storeId);
+    }
+
+    query += `
+      GROUP BY YEAR(o.ordered_date), QUARTER(o.ordered_date)
+      ORDER BY YEAR(o.ordered_date), QUARTER(o.ordered_date);
+    `;
+
+    const [rows] = await pool.query(query, params);
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+}
