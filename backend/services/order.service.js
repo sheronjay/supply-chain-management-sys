@@ -1,5 +1,4 @@
 import pool from '../src/db/pool.js';
-import { v4 as uuidv4 } from 'uuid';
 
 export async function listOrders(storeId = null) {
     // Build query with optional store filter
@@ -181,7 +180,7 @@ export async function createOrder(payload) {
         }
         
         // Create order
-        const orderId = 'ORD-' + uuidv4().substring(0, 8).toUpperCase();
+        const orderId = 'ORD-';
         const orderedDate = payload.orderedDate || new Date().toISOString().split('T')[0];
         const totalPrice = payload.totalAmount || 0;
         const status = payload.status || 'PENDING';

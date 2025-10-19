@@ -4,5 +4,8 @@
   },
   "scripts": {
     "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\""
+  },
+  "dependencies": {
+    "react-icons": "^5.5.0"
   }
 }
