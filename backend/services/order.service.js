@@ -202,9 +202,11 @@ export async function createOrder(payload) {
                 
                 if (products.length > 0) {
                     const product = products[0];
+                    // Ensure quantity is properly converted to integer
+                    const quantity = parseInt(item.qty, 10);
                     await conn.query(
                         'INSERT INTO order_items (order_id, product_id, quantity, item_capacity, unit_price) VALUES (?, ?, ?, ?, ?)',
-                        [orderId, product.product_id, item.qty, null, product.unit_price]
+                        [orderId, product.product_id, quantity, null, product.unit_price]
                     );
                 } else {
                     console.log(`Product '${item.name}' not found in database`);

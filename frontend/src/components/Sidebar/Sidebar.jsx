@@ -16,6 +16,7 @@ const allNavItems = [
 // Navigation items for Main Store Manager (restricted access)
 const mainStoreManagerNavItems = [
   { key: 'MainStores', label: 'Main Stores', icon: 'mainstores' },
+  { key: 'ProductManagement', label: 'Product Management', icon: 'products' },
   { key: 'TrainSchedule', label: 'Train Schedule', icon: 'train' },
   { key: 'UserManagement', label: 'User Management', icon: 'users' },
 ]
@@ -116,6 +117,14 @@ const Icon = ({ type }) => {
         <svg viewBox="0 0 24 24" className="sidebar__icon" aria-hidden>
           <circle cx="12" cy="12" r="8" />
           <path d="M12 12V4a8 8 0 0 1 8 8h-8" />
+        </svg>
+      )
+    case 'products':
+      return (
+        <svg viewBox="0 0 24 24" className="sidebar__icon" aria-hidden>
+          <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+          <path d="M3 9h18M9 3v18" stroke="currentColor" strokeWidth="2" />
+          <circle cx="12" cy="12" r="2" fill="currentColor" />
         </svg>
       )
     case 'users':

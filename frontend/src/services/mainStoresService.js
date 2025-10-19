@@ -46,3 +46,48 @@ export const fetchScheduleOrders = async (tripId) => {
 
   return response.json()
 }
+
+// Product management functions
+export const fetchAllProducts = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/main-stores/products`)
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch products')
+  }
+
+  return response.json()
+}
+
+export const addNewProduct = async (productData) => {
+  const response = await fetch(`${API_BASE_URL}/api/main-stores/products`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(productData),
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to add product')
+  }
+
+  return response.json()
+}
+
+export const updateProduct = async (productData) => {
+  const response = await fetch(`${API_BASE_URL}/api/main-stores/products`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(productData),
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || 'Failed to update product')
+  }
+
+  return response.json()
+}

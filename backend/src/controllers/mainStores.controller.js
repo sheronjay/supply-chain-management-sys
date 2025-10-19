@@ -220,3 +220,338 @@ export async function getScheduleOrders(req, res, next) {
     next(error);
   }
 }
+
+/**
+ * Get all products
+ */
+export async function getAllProducts(req, res, next) {
+  try {
+    const query = `
+      SELECT 
+        product_id,
+        product_name,
+        unit_price,
+        space_consumption_rate,
+        stock_quantity,
+        order_per_quarter
+      FROM products
+      ORDER BY product_name ASC
+    `;
+    
+    const [rows] = await pool.query(query);
+    res.json(rows);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    next(error);
+  }
+}
+
+/**
+ * Add a new product
+ */
+export async function addProduct(req, res, next) {
+  const connection = await pool.getConnection();
+  
+  try {
+    const { productName, unitPrice, spaceConsumptionRate, stockQuantity, orderPerQuarter } = req.body;
+    
+    // Validate required fields
+    if (!productName || !unitPrice || !spaceConsumptionRate || stockQuantity === undefined || orderPerQuarter === undefined) {
+      return res.status(400).json({ 
+        error: 'All fields are required: productName, unitPrice, spaceConsumptionRate, stockQuantity, orderPerQuarter' 
+      });
+    }
+    
+    // Validate numeric fields
+    const price = parseFloat(unitPrice);
+    const spaceRate = parseFloat(spaceConsumptionRate);
+    const stock = parseInt(stockQuantity, 10);
+    const orderPerQ = parseInt(orderPerQuarter, 10);
+    
+    if (isNaN(price) || price <= 0) {
+      return res.status(400).json({ error: 'Unit price must be a positive number' });
+    }
+    
+    if (isNaN(spaceRate) || spaceRate <= 0) {
+      return res.status(400).json({ error: 'Space consumption rate must be a positive number' });
+    }
+    
+    if (isNaN(stock) || stock < 0) {
+      return res.status(400).json({ error: 'Stock quantity must be a non-negative integer' });
+    }
+    
+    if (isNaN(orderPerQ) || orderPerQ < 0) {
+      return res.status(400).json({ error: 'Order per quarter must be a non-negative integer' });
+    }
+    
+    // Force order per quarter to 0 for new products
+    const finalOrderPerQ = 0;
+    
+    await connection.beginTransaction();
+    
+    // Check if product already exists
+    const [existingProducts] = await connection.query(
+      'SELECT product_id FROM products WHERE product_name = ?',
+      [productName]
+    );
+    
+    if (existingProducts.length > 0) {
+      await connection.rollback();
+      return res.status(400).json({ 
+        error: 'Product with this name already exists' 
+      });
+    }
+    
+    // Generate product ID using timestamp to ensure uniqueness
+    const timestamp = Date.now();
+    const productId = `PRD-${timestamp}`;
+    
+    // Insert new product
+    await connection.query(
+      `INSERT INTO products (product_id, product_name, unit_price, space_consumption_rate, stock_quantity, order_per_quarter)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [productId, productName, price, spaceRate, stock, finalOrderPerQ]
+    );
+    
+    await connection.commit();
+    
+    res.status(201).json({
+      success: true,
+      message: 'Product added successfully',
+      product: {
+        product_id: productId,
+        product_name: productName,
+        unit_price: price,
+        space_consumption_rate: spaceRate,
+        stock_quantity: stock,
+        order_per_quarter: finalOrderPerQ
+      }
+    });
+    
+  } catch (error) {
+    await connection.rollback();
+    console.error('Error adding product:', error);
+    next(error);
+  } finally {
+    connection.release();
+  }
+}
+
+/**
+ * Delete a product by name
+ */
+export async function deleteProduct(req, res, next) {
+  const connection = await pool.getConnection();
+  
+  try {
+    const { productName } = req.body;
+    
+    if (!productName) {
+      return res.status(400).json({ 
+        error: 'Product name is required' 
+      });
+    }
+    
+    await connection.beginTransaction();
+    
+    // Check if product exists
+    const [existingProducts] = await connection.query(
+      'SELECT product_id FROM products WHERE product_name = ?',
+      [productName]
+    );
+    
+    if (existingProducts.length === 0) {
+      await connection.rollback();
+      return res.status(404).json({ 
+        error: 'Product not found' 
+      });
+    }
+    
+    // Delete the product
+    await connection.query(
+      'DELETE FROM products WHERE product_name = ?',
+      [productName]
+    );
+    
+    await connection.commit();
+    
+    res.json({
+      success: true,
+      message: 'Product deleted successfully'
+    });
+    
+  } catch (error) {
+    await connection.rollback();
+    console.error('Error deleting product:', error);
+    next(error);
+  } finally {
+    connection.release();
+  }
+}
+
+/**
+ * Update a product's stock quantity
+ */
+export async function updateProductStock(req, res, next) {
+  const connection = await pool.getConnection();
+  
+  try {
+    const { productName, stockQuantity } = req.body;
+    
+    if (!productName || stockQuantity === undefined) {
+      return res.status(400).json({ 
+        error: 'Product name and stock quantity are required' 
+      });
+    }
+    
+    const stock = parseInt(stockQuantity, 10);
+    
+    if (isNaN(stock) || stock < 0) {
+      return res.status(400).json({ error: 'Stock quantity must be a non-negative integer' });
+    }
+    
+    await connection.beginTransaction();
+    
+    // Check if product exists
+    const [existingProducts] = await connection.query(
+      'SELECT product_id FROM products WHERE product_name = ?',
+      [productName]
+    );
+    
+    if (existingProducts.length === 0) {
+      await connection.rollback();
+      return res.status(404).json({ 
+        error: 'Product not found' 
+      });
+    }
+    
+    // Update the product stock quantity
+    await connection.query(
+      'UPDATE products SET stock_quantity = ? WHERE product_name = ?',
+      [stock, productName]
+    );
+    
+    await connection.commit();
+    
+    res.json({
+      success: true,
+      message: 'Product stock updated successfully'
+    });
+    
+  } catch (error) {
+    await connection.rollback();
+    console.error('Error updating product stock:', error);
+    next(error);
+  } finally {
+    connection.release();
+  }
+}
+
+
+/**
+ * Update a product
+ */
+export async function updateProduct(req, res, next) {
+  const connection = await pool.getConnection();
+  
+  try {
+    const { productId, productName, unitPrice, spaceConsumptionRate, stockQuantity, orderPerQuarter } = req.body;
+    
+    // Validate required fields
+    if (!productId || !productName || !unitPrice || !spaceConsumptionRate || stockQuantity === undefined || orderPerQuarter === undefined) {
+      return res.status(400).json({ 
+        error: 'All fields are required: productId, productName, unitPrice, spaceConsumptionRate, stockQuantity, orderPerQuarter' 
+      });
+    }
+    
+    // Validate numeric fields
+    const price = parseFloat(unitPrice);
+    const spaceRate = parseFloat(spaceConsumptionRate);
+    const stock = parseInt(stockQuantity, 10);
+    const orderPerQ = parseInt(orderPerQuarter, 10);
+    
+    if (isNaN(price) || price <= 0) {
+      return res.status(400).json({ error: 'Unit price must be a positive number' });
+    }
+    
+    if (isNaN(spaceRate) || spaceRate <= 0) {
+      return res.status(400).json({ error: 'Space consumption rate must be a positive number' });
+    }
+    
+    if (isNaN(stock) || stock < 0) {
+      return res.status(400).json({ error: 'Stock quantity must be a non-negative integer' });
+    }
+    
+    if (isNaN(orderPerQ) || orderPerQ < 0) {
+      return res.status(400).json({ error: 'Order per quarter must be a non-negative integer' });
+    }
+    
+    await connection.beginTransaction();
+    
+    // Check if product exists and get current stock
+    const [existingProducts] = await connection.query(
+      'SELECT product_id, stock_quantity FROM products WHERE product_id = ?',
+      [productId]
+    );
+    
+    if (existingProducts.length === 0) {
+      await connection.rollback();
+      return res.status(404).json({ 
+        error: 'Product not found' 
+      });
+    }
+    
+    const currentStock = existingProducts[0].stock_quantity;
+    
+    // Check if stock quantity is being reduced
+    if (stock < currentStock) {
+      await connection.rollback();
+      return res.status(400).json({ 
+        error: `Cannot reduce stock quantity. Current stock is ${currentStock}. You can only increase the quantity.` 
+      });
+    }
+    
+    // Check if product name already exists (excluding current product)
+    const [duplicateProducts] = await connection.query(
+      'SELECT product_id FROM products WHERE product_name = ? AND product_id != ?',
+      [productName, productId]
+    );
+    
+    if (duplicateProducts.length > 0) {
+      await connection.rollback();
+      return res.status(400).json({ 
+        error: 'Product with this name already exists' 
+      });
+    }
+    
+    // Update the product
+    await connection.query(
+      `UPDATE products 
+       SET product_name = ?, unit_price = ?, space_consumption_rate = ?, stock_quantity = ?, order_per_quarter = ?
+       WHERE product_id = ?`,
+      [productName, price, spaceRate, stock, orderPerQ, productId]
+    );
+    
+    await connection.commit();
+    
+    res.json({
+      success: true,
+      message: 'Product updated successfully',
+      product: {
+        product_id: productId,
+        product_name: productName,
+        unit_price: price,
+        space_consumption_rate: spaceRate,
+        stock_quantity: stock,
+        order_per_quarter: orderPerQ
+      }
+    });
+    
+  } catch (error) {
+    await connection.rollback();
+    console.error('Error updating product:', error);
+    next(error);
+  } finally {
+    connection.release();
+  }
+}
