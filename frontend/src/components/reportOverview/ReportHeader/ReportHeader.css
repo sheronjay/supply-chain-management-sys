@@ -1,16 +1,20 @@
-.report-overview__header {
+.report-header {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  color: var(--color-text-primary);
 }
 
-.report-overview__header h2 {
+.report-header h2 {
   margin: 0;
-  font-size: 28px;
-  color: #0f172a;
+  font-size: 26px;
+  color: var(--color-text-primary);
 }
 
-.report-overview__header p {
-  margin: 0;
-  color: #64748b;
+.report-header p {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
 }

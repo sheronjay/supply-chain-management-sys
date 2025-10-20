@@ -2,7 +2,7 @@
   display: flex;
   gap: 16px;
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--color-text-muted);
 }
 
 .legend-dot {
@@ -14,11 +14,11 @@
 }
 
 .legend-dot--primary {
-  background: #6759ff;
+  background: var(--color-accent-strong);
 }
 
 .legend-dot--muted {
-  background: #d1d5db;
+  background: rgba(148, 163, 184, 0.5);
 }
 
 .satisfaction__chart {
@@ -27,14 +27,14 @@
 }
 
 .satisfaction__line {
-  stroke: #6759ff;
+  stroke: var(--color-accent-strong);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .satisfaction__line--muted {
-  stroke: #d1d5db;
+  stroke: rgba(148, 163, 184, 0.5);
   stroke-width: 2;
 }
 
@@ -42,6 +42,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--color-text-subtle);
   text-align: center;
 }

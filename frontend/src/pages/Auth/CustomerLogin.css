@@ -3,17 +3,33 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+  background: var(--color-bg);
+  padding: 32px 20px;
+  position: relative;
+}
+
+.customer-login-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 45%),
+    radial-gradient(circle at 80% 10%, rgba(138, 99, 255, 0.22) 0%, rgba(138, 99, 255, 0) 45%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .customer-login-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
   width: 100%;
-  max-width: 450px;
-  padding: 40px;
+  max-width: 480px;
+  padding: 44px 40px;
+  border-radius: 32px;
+  background: var(--color-surface-strong);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
 .customer-login-header {
@@ -22,15 +38,16 @@
 }
 
 .customer-login-header h1 {
-  color: #1a202c;
-  font-size: 28px;
+  color: var(--color-text-primary);
+  font-size: 30px;
   font-weight: 600;
   margin-bottom: 8px;
 }
 
 .customer-login-header p {
-  color: #718096;
-  font-size: 14px;
+  color: var(--color-text-muted);
+  font-size: 15px;
+  margin: 0;
 }
 
 .customer-login-form {
@@ -46,98 +63,121 @@
 }
 
 .form-group label {
-  color: #2d3748;
+  color: var(--color-text-subtle);
   font-size: 14px;
   font-weight: 500;
 }
 
 .form-group input {
-  padding: 12px 16px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: border-color 0.2s;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  font-size: 15px;
+  background: rgba(255, 255, 255, 0.48);
+  color: var(--color-text-primary);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+[data-theme='dark'] .form-group input {
+  background: rgba(29, 38, 58, 0.65);
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(90, 123, 255, 0.18);
+  background: rgba(255, 255, 255, 0.62);
+}
+
+[data-theme='dark'] .form-group input:focus {
+  background: rgba(38, 47, 74, 0.85);
+  box-shadow: 0 0 0 4px rgba(123, 149, 255, 0.22);
 }
 
 .error-message {
-  background-color: #fed7d7;
-  color: #c53030;
+  background: var(--status-danger-bg);
+  color: var(--status-danger-text);
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 14px;
   text-align: center;
+  border: 1px solid rgba(255, 152, 152, 0.35);
 }
 
 .submit-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 14px;
+  background: var(--gradient-accent);
+  color: var(--color-text-strong);
+  padding: 16px;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
+  border-radius: 16px;
+  font-size: 17px;
+  font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
   margin-top: 8px;
+  box-shadow: 0 18px 40px rgba(90, 123, 255, 0.28);
 }
 
 .submit-button:hover:not(:disabled) {
-  opacity: 0.9;
+  transform: translateY(-1px);
+  opacity: 0.95;
 }
 
 .submit-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .toggle-mode {
   text-align: center;
-  margin-top: 24px;
+  margin-top: 28px;
   padding-top: 24px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border-divider);
 }
 
 .toggle-mode p {
-  color: #718096;
+  color: var(--color-text-muted);
   font-size: 14px;
+  margin: 0;
 }
 
 .toggle-button {
   background: none;
   border: none;
-  color: #667eea;
-  font-weight: 500;
+  color: var(--color-accent);
+  font-weight: 600;
   cursor: pointer;
   margin-left: 4px;
-  text-decoration: underline;
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
 .toggle-button:hover {
-  color: #764ba2;
+  color: var(--color-accent-strong);
 }
 
 .employee-link {
   text-align: center;
-  margin-top: 16px;
+  margin-top: 18px;
 }
 
 .employee-link p {
-  color: #718096;
+  color: var(--color-text-subtle);
   font-size: 13px;
 }
 
 .employee-link a {
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 500;
+  color: var(--color-accent);
+  font-weight: 600;
 }
 
 .employee-link a:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .customer-login-card {
+    padding: 32px 24px;
+  }
 }

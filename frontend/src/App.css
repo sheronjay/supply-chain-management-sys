@@ -1,13 +1,22 @@
 .placeholder {
-  background: #ffffff;
+  background: var(--color-surface-solid);
   border-radius: 24px;
   padding: 48px;
   text-align: center;
-  color: #64748b;
-  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.05);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
 .placeholder h2 {
   margin-top: 0;
-  color: #334155;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.placeholder p {
+  margin-bottom: 0;
+  color: var(--color-text-subtle);
 }

@@ -8,7 +8,7 @@
 }
 
 .order-chart__grid {
-  stroke: #edf1f9;
+  stroke: rgba(143, 153, 196, 0.18);
   stroke-width: 1;
 }
 
@@ -17,31 +17,32 @@
 }
 
 .order-chart__line {
-  stroke: #6759ff;
+  stroke: var(--color-accent-strong);
   stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .order-chart__dot {
-  fill: #ffffff;
-  stroke: #6759ff;
+  fill: var(--color-surface-solid);
+  stroke: var(--color-accent-strong);
   stroke-width: 3;
 }
 
 .order-chart__dot--active {
-  fill: #6759ff;
+  fill: var(--color-accent-strong);
 }
 
 .order-chart__tooltip {
   position: absolute;
   transform: translate(-50%, -120%);
-  background: #111827;
-  color: #ffffff;
+  background: var(--color-surface-solid);
+  color: var(--color-text-primary);
   padding: 10px 14px;
-  border-radius: 12px;
+  border-radius: 14px;
   text-align: center;
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
 }
 
 .order-chart__tooltip-value {
@@ -51,15 +52,15 @@
 
 .order-chart__tooltip-label {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-muted);
 }
 
 .order-chart__axis {
   display: flex;
   justify-content: space-between;
   font-size: 0.85rem;
-  color: #9ca3af;
-  padding: 0 0;
+  color: var(--color-text-subtle);
+  padding: 0;
 }
 
 .order-chart__axis span {

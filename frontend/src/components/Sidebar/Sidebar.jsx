@@ -160,7 +160,7 @@ const Sidebar = ({ activePage, onNavigate, userDesignation }) => {
   }
 
   return (
-    <aside className="sidebar">
+    <aside className="sidebar glass-panel">
       <div className="sidebar__brand">
         <div className="sidebar__brand-logo">K</div>
         <div className="sidebar__brand-text">

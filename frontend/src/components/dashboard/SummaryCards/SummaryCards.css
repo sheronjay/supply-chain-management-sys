@@ -1,71 +1,89 @@
 .dashboard__cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+  gap: 22px;
 }
 
 .summary-card {
-  background: #ffffff;
-  border-radius: 24px;
+  border-radius: 26px;
   padding: 24px;
   display: flex;
-  gap: 16px;
+  gap: 18px;
   align-items: center;
-  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.04);
+  background: var(--color-surface-solid);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  color: var(--color-text-primary);
 }
 
 .summary-card__title {
   margin: 0;
   font-size: 0.95rem;
-  color: #6b7280;
+  color: var(--color-text-muted);
   padding: 8px 16px;
   border-radius: 12px;
   display: inline-block;
   width: fit-content;
+  font-weight: 600;
 }
 
 .summary-card__value {
-  margin: 10px 0 4px;
-  font-size: 1.6rem;
+  margin: 12px 0 4px;
+  font-size: 1.7rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-text-primary);
 }
 
 .summary-card__change {
   display: block;
   font-size: 0.9rem;
-  color: #34d399;
+  color: var(--color-success);
   font-weight: 600;
 }
 
 .summary-card__hint {
   display: block;
-  font-size: 0.82rem;
-  color: #9ca3af;
+  font-size: 0.83rem;
+  color: var(--color-text-subtle);
 }
 
 .summary-card__title--peach {
-  background: linear-gradient(135deg, rgba(249, 115, 22, 0.18), rgba(249, 115, 22, 0.36));
+  background: var(--gradient-warm);
+  color: var(--color-text-strong);
 }
 
 .summary-card__title--lavender {
-  background: linear-gradient(135deg, rgba(129, 140, 248, 0.18), rgba(99, 102, 241, 0.32));
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
 }
 
 .summary-card__title--mint {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.32));
+  background: rgba(34, 197, 151, 0.16);
+  color: #0f766e;
+}
+
+[data-theme='dark'] .summary-card__title--mint {
+  color: #6ef7d8;
 }
 
 .summary-card__title--sky {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(37, 99, 235, 0.32));
+  background: rgba(56, 189, 248, 0.16);
+  color: #0ea5e9;
+}
+
+[data-theme='dark'] .summary-card__title--sky {
+  color: #7dd3fc;
 }
 
 .summary-card__title--red {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(220, 38, 38, 0.36));
+  background: rgba(248, 113, 113, 0.16);
+  color: var(--status-danger-text);
 }
 
 .summary-card--red .summary-card__change {
-  color: #ef4444;
+  color: var(--color-danger);
 }
 
 @media (max-width: 768px) {
