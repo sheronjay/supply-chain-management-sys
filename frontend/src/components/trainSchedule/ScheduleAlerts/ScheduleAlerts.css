@@ -1,55 +1,49 @@
-.train-schedule__alerts {
-  display: grid;
-  gap: 16px;
-}
-
-.train-schedule__alert {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 18px 22px;
+.schedule-alerts {
+  border-radius: 26px;
+  background: var(--color-surface-solid);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  padding: 22px;
   display: flex;
+  flex-direction: column;
   gap: 16px;
-  align-items: flex-start;
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.05);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
-.train-schedule__alert-indicator {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-top: 6px;
+.schedule-alerts__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-radius: 18px;
+  padding: 14px 18px;
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--color-text-primary);
 }
 
-.train-schedule__alert h3 {
-  margin: 0 0 6px;
-  font-size: 16px;
-  color: #0f172a;
-}
-
-.train-schedule__alert p {
+.schedule-alerts__item h4 {
   margin: 0;
-  color: #475569;
-  font-size: 14px;
+  font-size: 1rem;
 }
 
-.train-schedule__alert--warning .train-schedule__alert-indicator {
-  background: #f59e0b;
+.schedule-alerts__item span {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
 }
 
-.train-schedule__alert--error .train-schedule__alert-indicator {
-  background: #ef4444;
+.schedule-alerts__pill {
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--color-text-strong);
 }
 
-.train-schedule__alert--warning {
-  border-left: 6px solid rgba(245, 158, 11, 0.4);
+.schedule-alerts__pill--warning {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(245, 158, 11, 0.12));
 }
 
-.train-schedule__alert--error {
-  border-left: 6px solid rgba(239, 68, 68, 0.4);
-}
-
-@media (max-width: 640px) {
-  .train-schedule__alert {
-    flex-direction: column;
-  }
+.schedule-alerts__pill--danger {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(239, 68, 68, 0.12));
 }

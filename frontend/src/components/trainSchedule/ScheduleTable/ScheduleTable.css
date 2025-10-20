@@ -1,138 +1,81 @@
-.train-schedule__card {
-  background: #ffffff;
-  border-radius: 24px;
-  padding: 24px;
-  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.06);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.schedule-table {
+  border-radius: 26px;
+  background: var(--color-surface-solid);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
-.train-schedule__tabs {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.train-schedule__tab {
-  border: none;
-  padding: 10px 16px;
-  border-radius: 12px;
-  background: #e2e8f0;
-  color: #1e293b;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.train-schedule__tab--active {
-  background: #2563eb;
-  color: #ffffff;
-  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
-}
-
-.train-schedule__table {
+.schedule-table table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.train-schedule__table thead {
-  background: #f1f5f9;
+.schedule-table thead {
+  background: rgba(148, 163, 184, 0.12);
 }
 
-.train-schedule__table th,
-.train-schedule__table td {
-  padding: 14px 16px;
+.schedule-table th,
+.schedule-table td {
   text-align: left;
-  font-size: 14px;
-  color: #1f2937;
+  padding: 14px 18px;
+  font-size: 0.92rem;
+  color: var(--color-text-primary);
 }
 
-.train-schedule__table .train-id {
-  font-family: 'Courier New', monospace;
-  font-weight: 600;
-  color: #2563eb;
+.schedule-table th {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: var(--color-text-subtle);
 }
 
-.train-schedule__table .capacity-used {
-  font-weight: 600;
-  color: #dc2626;
+.schedule-table tbody tr + tr {
+  border-top: 1px solid var(--color-border-divider);
 }
 
-.train-schedule__table .capacity-available {
-  font-weight: 600;
-  color: #16a34a;
-}
-
-.train-schedule__table .capacity-total {
-  font-weight: 600;
-  color: #0f172a;
-}
-
-.train-schedule__table tbody tr + tr {
-  border-top: 1px solid #e2e8f0;
-}
-
-.train-schedule__status {
+.schedule-status {
   display: inline-flex;
   align-items: center;
   padding: 6px 12px;
   border-radius: 999px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 0.78rem;
 }
 
-.train-schedule__status--success {
-  background: rgba(34, 197, 94, 0.15);
-  color: #16a34a;
+.schedule-status--ontime {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(34, 197, 94, 0.08));
+  color: #15803d;
+  border: 1px solid rgba(34, 197, 94, 0.28);
 }
 
-.train-schedule__status--warning {
-  background: rgba(250, 204, 21, 0.2);
-  color: #a16207;
+[data-theme='dark'] .schedule-status--ontime {
+  color: #4ade80;
 }
 
-.train-schedule__status--danger {
-  background: rgba(248, 113, 113, 0.2);
-  color: #b91c1c;
+.schedule-status--delayed {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.18), rgba(251, 191, 36, 0.08));
+  color: #b45309;
+  border: 1px solid rgba(251, 191, 36, 0.28);
 }
 
-.train-schedule__status--neutral {
-  background: rgba(59, 130, 246, 0.15);
-  color: #1d4ed8;
+[data-theme='dark'] .schedule-status--delayed {
+  color: #facc15;
 }
 
-.train-schedule__footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  color: #64748b;
+.schedule-status--critical {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(239, 68, 68, 0.08));
+  color: var(--status-danger-text);
+  border: 1px solid rgba(239, 68, 68, 0.28);
 }
 
-.train-schedule__pagination {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.train-schedule__pagination button {
-  border: none;
-  background: #e2e8f0;
-  padding: 8px 14px;
-  border-radius: 12px;
-  cursor: pointer;
+.schedule-link {
+  color: var(--color-accent);
   font-weight: 600;
 }
 
-.train-schedule__pagination .is-active {
-  background: #2563eb;
-  color: #ffffff;
-  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
-}
-
-@media (max-width: 640px) {
-  .train-schedule__card {
-    padding: 18px;
-  }
+.schedule-link:hover {
+  text-decoration: underline;
 }

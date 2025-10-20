@@ -18,13 +18,17 @@
 }
 
 .card {
-  background: #ffffff;
   border-radius: 28px;
   padding: 28px;
-  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.07);
+  box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
   gap: 24px;
+  background: var(--color-surface-solid);
+  border: 1px solid var(--color-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  color: var(--color-text-primary);
 }
 
 .card--wide {
@@ -42,26 +46,31 @@
   margin: 0;
   font-size: 1.3rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-text-primary);
 }
 
 .card__subtitle {
   margin: 4px 0 0;
   font-size: 0.9rem;
-  color: #9ca3af;
+  color: var(--color-text-muted);
 }
 
 .card__filter {
   border: none;
-  background: #f4f6fc;
+  background: rgba(148, 163, 184, 0.16);
   border-radius: 16px;
   padding: 10px 16px;
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--color-text-primary);
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.card__filter:hover {
+  background: rgba(148, 163, 184, 0.26);
 }
 
 .card__filter svg {
