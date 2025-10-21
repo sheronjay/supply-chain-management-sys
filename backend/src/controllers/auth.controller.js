@@ -1,4 +1,5 @@
 import * as authService from '../../services/auth.service.js';
+import { validatePassword } from '../../utils/passwordValidator.js';
 
 /**
  * Customer Login
@@ -28,6 +29,15 @@ async function customerSignup(req, res, next) {
     if (!email || !password || !name) {
       return res.status(400).json({ 
         error: 'Email, password, and name are required' 
+      });
+    }
+
+    // Validate password strength
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      return res.status(400).json({
+        error: 'Password does not meet security requirements',
+        details: passwordValidation.errors
       });
     }
 
