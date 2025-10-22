@@ -1,0 +1,68 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build & Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            frontend/package-lock.json
+            backend/package-lock.json
+
+      - name: Install backend deps
+        working-directory: backend
+        run: npm ci
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      # Optional: make sure Dockerfiles/compose still build
+      - name: Docker build (sanity check)
+        run: docker compose build
+
+  deploy:
+    name: Deploy to EC2
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into EC2 and deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            # go to app folder (clone once if missing)
+            if [ ! -d ~/supply-chain-management-sys ]; then
+              git clone git@github.com:sheronjay/supply-chain-management-sys.git ~/supply-chain-management-sys
+            fi
+            cd ~/supply-chain-management-sys
+            # get latest code
+            git fetch --all
+            git reset --hard origin/main
+            # rebuild & restart
+            docker compose down
+            docker compose up -d --build
+            # optional cleanup
+            docker image prune -f
