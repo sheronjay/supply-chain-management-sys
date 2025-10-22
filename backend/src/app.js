@@ -24,6 +24,8 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/main-stores', mainStoresRoutes);
 
 app.use('/api/report', reportRouter)
+// Also mount the newer reports router here so endpoints under `report.routes.js` are reachable
+app.use('/api/report', reportRoutes);
 
 app.use('/api/store-manager', storeManagerRoutes);
 app.use('/api/driver', driverRoutes);
