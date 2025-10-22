@@ -88,6 +88,10 @@ export const getQuarterlySalesReport = async (req, res) => {
 /**
  * Most Ordered Items in a Given Quarter
  */
+/**
+ * Get most ordered items in a quarter
+ * @route GET /api/reports/top-ordered-items
+ */
 export const getTopOrderedItems = async (req, res) => {
   try {
     const { quarter, year } = req.query;
@@ -105,6 +109,7 @@ export const getTopOrderedItems = async (req, res) => {
 
 /**
  * Get city-wise and route-wise sales breakdown
+ * @route GET /api/reports/city-route-sales
  */
 export const getCityRouteSales = async (req, res) => {
   try {
@@ -123,6 +128,7 @@ export const getCityRouteSales = async (req, res) => {
 
 /**
  * Get driver working hours report
+ * @route GET /api/reports/driver-hours
  */
 export const getDriverWorkingHours = async (req, res) => {
   try {
@@ -141,6 +147,7 @@ export const getDriverWorkingHours = async (req, res) => {
 
 /**
  * Get truck usage analysis
+ * @route GET /api/reports/truck-usage
  */
 export const getTruckUsageAnalysis = async (req, res) => {
   try {
@@ -159,6 +166,7 @@ export const getTruckUsageAnalysis = async (req, res) => {
 
 /**
  * Get customer order history with delivery details
+ * @route GET /api/reports/customer-history/:customerId
  */
 export const getCustomerOrderHistory = async (req, res) => {
   try {

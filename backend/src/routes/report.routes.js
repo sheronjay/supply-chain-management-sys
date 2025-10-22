@@ -3,14 +3,6 @@ import * as reportController from '../controllers/report.controller.js';
 
 const router = express.Router();
 
-// All 6 required reports
-router.get('/quarterly-sales', reportController.getQuarterlySales);
-router.get('/top-ordered-items', reportController.getTopOrderedItems);
-router.get('/city-route-sales', reportController.getCityRouteSales);
-router.get('/driver-hours', reportController.getDriverWorkingHours);
-router.get('/truck-usage', reportController.getTruckUsageAnalysis);
-router.get('/customer-history/:customerId', reportController.getCustomerOrderHistory);
-
 /** =======================
  *  MAIN REPORT ROUTES
  *  ======================= */
@@ -24,23 +16,26 @@ router.get('/summary', reportController.getReportSummary);
 // Export all reports as PDF
 router.get('/export/pdf', reportController.exportPDFReport);
 
+/** =======================
+ *  SPECIALIZED REPORTS
+ *  ======================= */
 
-//  Quarterly Sales Report (value + volume)
-router.get('/quarterly-sales', reportController.getQuarterlySalesReport);
+// 1. Quarterly Sales Report (value + volume)
+router.get('/quarterly-sales', reportController.getQuarterlySales);
 
-//  Most Ordered Items in a Given Quarter
-router.get('/top-items', reportController.getTopOrderedItems);
+// 2. Most Ordered Items in a Given Quarter
+router.get('/top-ordered-items', reportController.getTopOrderedItems);
 
-//  City-wise & Route-wise Sales Breakdown
+// 3. City-wise & Route-wise Sales Breakdown
 router.get('/city-route-sales', reportController.getCityRouteSales);
 
-//  Driver & Assistant Working Hours
-router.get('/driver-hours', reportController.getDriverAssistantHours);
+// 4. Driver Working Hours Report
+router.get('/driver-hours', reportController.getDriverWorkingHours);
 
-//  Truck Usage Analysis per Month
-router.get('/truck-usage', reportController.getTruckUsageReport);
+// 5. Truck Usage Analysis per Month
+router.get('/truck-usage', reportController.getTruckUsageAnalysis);
 
-//  Customer Order History with Delivery Details
-router.get('/customer-history', reportController.getCustomerOrderHistory);
+// 6. Customer Order History with Delivery Details
+router.get('/customer-history/:customerId', reportController.getCustomerOrderHistory);
 
 export default router;
