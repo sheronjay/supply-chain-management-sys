@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import * as authService from '../services/authService';
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext(null);
 
@@ -7,21 +8,35 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+ // Load user from localStorage on initial render
   useEffect(() => {
-    // Check if user is already logged in
-    const currentUser = authService.getCurrentUser();
-    setUser(currentUser);
+    const token = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+    
+    if (token && storedUser) {
+      try {
+        // Use the full user object from localStorage instead of just JWT payload
+        const userData = JSON.parse(storedUser);
+        setUser(userData);
+      } catch (err) {
+        console.error('Error loading user:', err);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+    }
     setLoading(false);
   }, []);
 
   const customerLogin = async (email, password) => {
     const data = await authService.customerLogin(email, password);
+    localStorage.setItem('token', data.token);
     setUser(data.user);
     return data;
   };
 
   const customerSignup = async (customerData) => {
     const data = await authService.customerSignup(customerData);
+    localStorage.setItem('token', data.token);
     setUser(data.user);
     return data;
   };
@@ -29,13 +44,16 @@ export function AuthProvider({ children }) {
   const employeeLogin = async (userId, password) => {
     const data = await authService.employeeLogin(userId, password);
     setUser(data.user);
+    localStorage.setItem('token', data.token);
     return data;
   };
 
   const logout = () => {
-    authService.logout();
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
   };
+
 
   const value = {
     user,

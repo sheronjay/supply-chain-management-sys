@@ -1,33 +1,68 @@
 import React, { useState, useEffect } from "react";
 import AddOrderModal from "../../components/orders/AddOrderModal/AddOrderModal";
 import UserOrdersTable from "../../components/orders/UserOrdersTable/UserOrdersTable";
+import { useAuth } from "../../context/AuthContext";
+import api from "../../services/api";
 import "./UserOrders.css";
 
 const UserOrders = () => {
-  // Hardcoded customer from database (CUST-0001: Sunrise Wholesale)
-  const CUSTOMER_ID = "CUST-0001";
-  const CUSTOMER_NAME = "Sunrise Wholesale";
-  const CUSTOMER_CITY = "Colombo";
-  const STORE_ID = "ST-CMB-01"; // Colombo store
-  const SUB_CITY_ID = "SC-CMB-001"; // Pettah sub-city
+  const { user } = useAuth();
 
   const [orders, setOrders] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [storeId, setStoreId] = useState(null);
+  const [subCities, setSubCities] = useState([]);
+  const [selectedSubCity, setSelectedSubCity] = useState(null);
+  const [loadingLocation, setLoadingLocation] = useState(false);
 
-  // Fetch orders for the hardcoded customer
+  // Fetch store and sub-cities based on customer's city from the database
+  useEffect(() => {
+    const fetchLocationData = async () => {
+      if (!user?.city) return;
+
+      try {
+        setLoadingLocation(true);
+        
+        // Fetch store for customer's city
+        const storeResponse = await api.get(`/location/stores/city/${encodeURIComponent(user.city)}`);
+        
+        if (storeResponse.data && storeResponse.data.store_id) {
+          const customerStoreId = storeResponse.data.store_id;
+          setStoreId(customerStoreId);
+          
+          // Fetch sub-cities for the store
+          const subCityResponse = await api.get(`/location/sub-cities/store/${customerStoreId}`);
+          const availableSubCities = subCityResponse.data || [];
+          
+          setSubCities(availableSubCities);
+          
+          // Set first sub-city as default
+          if (availableSubCities.length > 0) {
+            setSelectedSubCity(availableSubCities[0].sub_city_id);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching location data:', err);
+        setError('Failed to load store information for your city.');
+      } finally {
+        setLoadingLocation(false);
+      }
+    };
+
+    fetchLocationData();
+  }, [user?.city]);
+
+  // Fetch orders for the authenticated customer
   const fetchOrders = async () => {
+    if (!user?.customer_id) return;
+
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/orders/user/${CUSTOMER_ID}`);
-      if (response.ok) {
-        const data = await response.json();
-        setOrders(data);
-        setError(null);
-      } else {
-        throw new Error('Failed to fetch orders');
-      }
+      const response = await api.get(`/orders/user/${user.customer_id}`);
+      setOrders(response.data);
+      setError(null);
     } catch (err) {
       console.error('Error fetching orders:', err);
       setError('Failed to load orders. Please try again later.');
@@ -39,45 +74,40 @@ const UserOrders = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.customer_id]);
 
   const handleCreateOrder = async (newOrder) => {
+    if (!user?.customer_id || !storeId || !selectedSubCity) {
+      alert('Missing required customer or location information. Please refresh the page.');
+      return;
+    }
+
     try {
       console.log('Creating order:', newOrder);
       
-      const response = await fetch('http://localhost:5000/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          customerId: CUSTOMER_ID,
-          customerName: CUSTOMER_NAME,
-          storeId: STORE_ID,
-          subCityId: SUB_CITY_ID,
-          items: newOrder.items,
-          totalAmount: newOrder.totalAmount,
-          status: 'PENDING',
-          orderedDate: new Date().toISOString().split('T')[0]
-        })
+      const response = await api.post('/orders', {
+        customerId: user.customer_id,
+        customerName: user.name,
+        storeId: storeId,
+        subCityId: selectedSubCity,
+        items: newOrder.items,
+        totalAmount: newOrder.totalAmount,
+        status: 'PENDING',
+        orderedDate: new Date().toISOString().split('T')[0]
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Order created successfully:', result);
-        
-        // Refresh orders list from server
-        await fetchOrders();
-        
-        alert('Order created successfully!');
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create order');
-      }
+      console.log('Order created successfully:', response.data);
+      
+      // Refresh orders list from server
+      await fetchOrders();
+      
+      alert('Order created successfully!');
       
     } catch (error) {
       console.error('Error creating order:', error);
-      alert(`Failed to create order: ${error.message}`);
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to create order';
+      alert(`Failed to create order: ${errorMessage}`);
     }
   };
 
@@ -89,16 +119,28 @@ const UserOrders = () => {
     CANCELLED: "cancelled",
   };
 
+  // Show loading or error states for unauthenticated users
+  if (!user) {
+    return (
+      <div className="user-orders-page">
+        <div className="error-message">Please log in to view your orders.</div>
+      </div>
+    );
+  }
+
   return (
     <div className="user-orders-page">
       <div className="header">
         <div className="customer-info">
           <h1>My Orders</h1>
-          <p className="customer-name">Customer: {CUSTOMER_NAME} ({CUSTOMER_ID})</p>
+          <p className="customer-name">Customer: {user.name} ({user.customer_id})</p>
+          {user.city && <p className="customer-city">City: {user.city}</p>}
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
           className="add-order-btn"
+          disabled={!storeId || !selectedSubCity || loadingLocation}
+          title={!storeId || !selectedSubCity ? 'Loading location data...' : 'Create a new order'}
         >
           Add New Order
         </button>
@@ -116,7 +158,7 @@ const UserOrders = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onCreate={handleCreateOrder}
-        customerName={CUSTOMER_NAME}
+        customerName={user.name}
       />
     </div>
   );

@@ -1,89 +1,72 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+// src/services/authService.js
+import api from './api';
 
 /**
  * Customer Login
  */
 export async function customerLogin(email, password) {
-  const response = await fetch(`${API_BASE_URL}/auth/customer/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email, password }),
-  });
+  try {
+    const response = await api.post('/auth/customer/login', { email, password });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Login failed');
+    // Store token and user
+    localStorage.setItem('token', response.data.token);
+    localStorage.setItem('user', JSON.stringify(response.data.user));
+
+    return response.data;
+  } catch (error) {
+    // Handle backend or network errors
+    const message =
+      error.response?.data?.error || error.message || 'Login failed. Please try again.';
+    throw new Error(message);
   }
-
-  const data = await response.json();
-  
-  // Store user data in localStorage
-  localStorage.setItem('user', JSON.stringify(data.user));
-  
-  return data;
 }
 
 /**
  * Customer Signup
  */
-export async function customerSignup(customerData) {
-  const response = await fetch(`${API_BASE_URL}/auth/customer/signup`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(customerData),
-  });
+export async function customerSignup(data) {
+  try {
+    const response = await api.post('/auth/customer/signup', data);
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Signup failed');
+    localStorage.setItem('token', response.data.token);
+    localStorage.setItem('user', JSON.stringify(response.data.user));
+
+    return response.data;
+  } catch (error) {
+    const message =
+      error.response?.data?.error || error.message || 'Signup failed. Please try again.';
+    throw new Error(message);
   }
-
-  const data = await response.json();
-  
-  // Store user data in localStorage
-  localStorage.setItem('user', JSON.stringify(data.user));
-  
-  return data;
 }
 
 /**
  * Employee Login
  */
 export async function employeeLogin(userId, password) {
-  const response = await fetch(`${API_BASE_URL}/auth/employee/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ userId, password }),
-  });
+  try {
+    const response = await api.post('/auth/employee/login', { userId, password });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Login failed');
+    localStorage.setItem('token', response.data.token);
+    localStorage.setItem('user', JSON.stringify(response.data.user));
+
+    return response.data;
+  } catch (error) {
+    const message =
+      error.response?.data?.error || error.message || 'Login failed. Please try again.';
+    throw new Error(message);
   }
-
-  const data = await response.json();
-  
-  // Store user data in localStorage
-  localStorage.setItem('user', JSON.stringify(data.user));
-  
-  return data;
 }
 
 /**
  * Logout
  */
 export function logout() {
+  localStorage.removeItem('token');
   localStorage.removeItem('user');
 }
 
 /**
- * Get current user from localStorage
+ * Get Current User
  */
 export function getCurrentUser() {
   const userStr = localStorage.getItem('user');

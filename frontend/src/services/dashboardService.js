@@ -1,66 +1,89 @@
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/$/, '')
+import api from './api';
 
+/**
+ * Fetch Monthly Revenue
+ */
 export const fetchMonthlyRevenue = async (monthKey) => {
-  const query = monthKey ? `?month=${encodeURIComponent(monthKey)}` : ''
-  const response = await fetch(`${API_BASE_URL}/api/dashboard/revenue${query}`)
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch monthly revenue')
+  try {
+    const query = monthKey ? `?month=${encodeURIComponent(monthKey)}` : '';
+    const response = await api.get(`/dashboard/revenue${query}`);
+    return response.data;
+  } catch (error) {
+    const message =
+      error.response?.data?.error || 'Failed to fetch monthly revenue. Please try again.';
+    throw new Error(message);
   }
+};
 
-  return response.json()
-}
-
+/**
+ * Fetch New Orders Count
+ */
 export const fetchNewOrdersCount = async (monthKey) => {
-  const query = monthKey ? `?month=${encodeURIComponent(monthKey)}` : ''
-  const response = await fetch(`${API_BASE_URL}/api/dashboard/new-orders-count${query}`)
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch new orders count')
+  try {
+    const query = monthKey ? `?month=${encodeURIComponent(monthKey)}` : '';
+    const response = await api.get(`/dashboard/new-orders-count${query}`);
+    return response.data;
+  } catch (error) {
+    const message =
+      error.response?.data?.error || 'Failed to fetch new orders count. Please try again.';
+    throw new Error(message);
   }
+};
 
-  return response.json()
-}
-
+/**
+ * Fetch Completed Deliveries
+ */
 export const fetchCompletedDeliveries = async (monthKey) => {
-  const query = monthKey ? `?month=${encodeURIComponent(monthKey)}` : ''
-  const response = await fetch(`${API_BASE_URL}/api/dashboard/completed-deliveries${query}`)
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch completed deliveries')
+  try {
+    const query = monthKey ? `?month=${encodeURIComponent(monthKey)}` : '';
+    const response = await api.get(`/dashboard/completed-deliveries${query}`);
+    return response.data;
+  } catch (error) {
+    const message =
+      error.response?.data?.error || 'Failed to fetch completed deliveries. Please try again.';
+    throw new Error(message);
   }
+};
 
-  return response.json()
-}
-
+/**
+ * Fetch Order History
+ */
 export const fetchOrderHistory = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/dashboard/order-history`)
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch order history')
+  try {
+    const response = await api.get('/dashboard/order-history');
+    return response.data;
+  } catch (error) {
+    const message =
+      error.response?.data?.error || 'Failed to fetch order history. Please try again.';
+    throw new Error(message);
   }
+};
 
-  return response.json()
-}
-
+/**
+ * Fetch Late Deliveries
+ */
 export const fetchLateDeliveries = async (monthKey) => {
-  const query = monthKey ? `?month=${encodeURIComponent(monthKey)}` : ''
-  const response = await fetch(`${API_BASE_URL}/api/dashboard/late-deliveries${query}`)
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch late deliveries')
+  try {
+    const query = monthKey ? `?month=${encodeURIComponent(monthKey)}` : '';
+    const response = await api.get(`/dashboard/late-deliveries${query}`);
+    return response.data;
+  } catch (error) {
+    const message =
+      error.response?.data?.error || 'Failed to fetch late deliveries. Please try again.';
+    throw new Error(message);
   }
+};
 
-  return response.json()
-}
-
+/**
+ * Fetch System Alerts
+ */
 export const fetchSystemAlerts = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/dashboard/alerts`)
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch system alerts')
+  try {
+    const response = await api.get('/dashboard/alerts');
+    return response.data;
+  } catch (error) {
+    const message =
+      error.response?.data?.error || 'Failed to fetch system alerts. Please try again.';
+    throw new Error(message);
   }
-
-  return response.json()
-}
-  
+};
