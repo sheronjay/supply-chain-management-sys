@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { fetchStoreOrders, fetchStoreInventory, acceptOrder, fetchDeliveryEmployees } from '../../services/storeManagerService'
+import { fetchStoreOrders, fetchStoreInventory, acceptOrder, fetchDeliveryEmployees, fetchStoreAlerts, markAlertAsRead, deleteAlert } from '../../services/storeManagerService'
 import StoreOrdersTable from '../../components/storeManager/StoreOrdersTable/StoreOrdersTable'
 import StoreInventoryTable from '../../components/storeManager/StoreInventoryTable/StoreInventoryTable'
 import DeliveryEmployeesTable from '../../components/storeManager/DeliveryEmployeesTable/DeliveryEmployeesTable'
@@ -10,6 +10,8 @@ const StoreManager = () => {
   const [orders, setOrders] = useState([])
   const [inventory, setInventory] = useState([])
   const [employees, setEmployees] = useState([])
+  const [alerts, setAlerts] = useState([])
+  const [unreadAlertCount, setUnreadAlertCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
@@ -26,6 +28,8 @@ const StoreManager = () => {
       loadStoreInventory()
     } else if (activeTab === 'employees') {
       loadDeliveryEmployees()
+    } else if (activeTab === 'alerts') {
+      loadAlerts()
     }
   }, [activeTab])
 
@@ -68,6 +72,21 @@ const StoreManager = () => {
     }
   }
 
+  const loadAlerts = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await fetchStoreAlerts(storeId, 'all')
+      setAlerts(data)
+      // Count unread alerts
+      setUnreadAlertCount(data.filter(alert => alert.status === 'unread').length)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleAcceptOrder = async (orderId) => {
     try {
       setError(null)
@@ -97,12 +116,44 @@ const StoreManager = () => {
       loadStoreInventory()
     } else if (activeTab === 'employees') {
       loadDeliveryEmployees()
+    } else if (activeTab === 'alerts') {
+      loadAlerts()
+    }
+  }
+
+  const handleMarkAsRead = async (alertId) => {
+    try {
+      await markAlertAsRead(storeId, alertId)
+      // Update local state
+      setAlerts(prevAlerts =>
+        prevAlerts.map(alert =>
+          alert.alert_id === alertId ? { ...alert, status: 'read' } : alert
+        )
+      )
+      setUnreadAlertCount(prev => Math.max(0, prev - 1))
+    } catch (err) {
+      setError(err.message)
+      setTimeout(() => setError(null), 3000)
+    }
+  }
+
+  const handleDeleteAlert = async (alertId) => {
+    try {
+      await deleteAlert(storeId, alertId)
+      // Remove from local state
+      setAlerts(prevAlerts => prevAlerts.filter(alert => alert.alert_id !== alertId))
+      setSuccessMessage('Alert deleted successfully')
+      setTimeout(() => setSuccessMessage(null), 3000)
+    } catch (err) {
+      setError(err.message)
+      setTimeout(() => setError(null), 3000)
     }
   }
 
   const totalOrders = orders.length
   const totalInventory = inventory.length
   const totalEmployees = employees.length
+  const totalAlerts = alerts.length
 
   return (
     <div className="store-manager">
@@ -181,6 +232,21 @@ const StoreManager = () => {
           Delivery Employees
           {totalEmployees > 0 && <span className="tab-badge">{totalEmployees}</span>}
         </button>
+        <button
+          className={`tab-button ${activeTab === 'alerts' ? 'active' : ''}`}
+          onClick={() => setActiveTab('alerts')}
+        >
+          <svg viewBox="0 0 24 24" className="tab-icon">
+            <path
+              d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+          </svg>
+          Alerts
+          {unreadAlertCount > 0 && <span className="tab-badge tab-badge-danger">{unreadAlertCount}</span>}
+        </button>
       </div>
 
       {/* Success/Error Messages */}
@@ -233,7 +299,7 @@ const StoreManager = () => {
               onRefresh={loadStoreInventory}
             />
           </>
-        ) : (
+        ) : activeTab === 'employees' ? (
           <>
             <div className="section-header">
               <h3>Delivery Employee Summary</h3>
@@ -243,6 +309,77 @@ const StoreManager = () => {
               employees={employees} 
               loading={loading}
             />
+          </>
+        ) : (
+          <>
+            <div className="section-header">
+              <h3>Store Alerts & Notifications</h3>
+              <p>Delivery confirmations and important store updates</p>
+            </div>
+            {loading ? (
+              <div className="loading-spinner">Loading alerts...</div>
+            ) : alerts.length === 0 ? (
+              <div className="empty-state">
+                <svg viewBox="0 0 24 24" className="empty-icon">
+                  <path
+                    d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                </svg>
+                <p>No alerts yet</p>
+                <span className="empty-subtext">Delivery notifications will appear here</span>
+              </div>
+            ) : (
+              <div className="alerts-list">
+                {alerts.map((alert) => (
+                  <div 
+                    key={alert.alert_id} 
+                    className={`alert-item ${alert.status === 'unread' ? 'alert-unread' : 'alert-read'}`}
+                  >
+                    <div className="alert-header">
+                      <div className="alert-title-row">
+                        <svg viewBox="0 0 24 24" className="alert-item-icon">
+                          <path
+                            d="M22 11.08V12a10 10 0 1 1-5.93-9.14"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                          <polyline points="22 4 12 14.01 9 11.01" fill="none" stroke="currentColor" strokeWidth="2" />
+                        </svg>
+                        <h4>{alert.title}</h4>
+                        {alert.status === 'unread' && <span className="unread-badge">NEW</span>}
+                      </div>
+                      <span className="alert-date">
+                        {new Date(alert.created_at).toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="alert-message">{alert.message}</p>
+                    {alert.order_id && (
+                      <p className="alert-order-id">Order ID: <strong>{alert.order_id}</strong></p>
+                    )}
+                    <div className="alert-actions">
+                      {alert.status === 'unread' && (
+                        <button 
+                          className="btn-mark-read" 
+                          onClick={() => handleMarkAsRead(alert.alert_id)}
+                        >
+                          Mark as Read
+                        </button>
+                      )}
+                      <button 
+                        className="btn-delete-alert" 
+                        onClick={() => handleDeleteAlert(alert.alert_id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </>
         )}
       </div>
