@@ -137,6 +137,7 @@ async function employeeLogin(userId, password) {
   const token = generateToken({
     id: user.user_id,
     designation: user.designation,
+    store_id: user.store_id,
     userType: 'employee'
   });
 

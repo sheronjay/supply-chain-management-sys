@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
 import RecentOrdersTable from '../../components/orders/RecentOrdersTable/RecentOrdersTable';
 import OrderDetailsModal from '../../components/orders/OrderDetailsModal/OrderDetailsModal';
 import './Orders.css';
@@ -18,35 +19,26 @@ const Orders = () => {
       setLoading(true);
       
       // Prepare headers with user authentication data
-      const headers = {
-        'Content-Type': 'application/json'
-      };
+      const headers = {};
       
       // Add user data to headers if user is logged in
       if (user) {
         headers['x-user-data'] = JSON.stringify(user);
       }
       
-      const response = await fetch('http://localhost:5000/api/orders', {
-        headers
-      });
+      const response = await api.get('/orders', { headers });
       
-      if (response.ok) {
-        const data = await response.json();
-        // Map the data to include the 'date' field that the table expects
-        const ordersWithDate = data.map(order => ({
-          ...order,
-          date: order.deliveryDate ? new Date(order.deliveryDate).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-          }) : 'N/A'
-        }));
-        setRecentOrders(ordersWithDate);
-        setError(null);
-      } else {
-        throw new Error('Failed to fetch orders');
-      }
+      // Map the data to include the 'date' field that the table expects
+      const ordersWithDate = response.data.map(order => ({
+        ...order,
+        date: order.deliveryDate ? new Date(order.deliveryDate).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        }) : 'N/A'
+      }));
+      setRecentOrders(ordersWithDate);
+      setError(null);
     } catch (err) {
       console.error('Error fetching orders:', err);
       setError('Failed to load orders. Please try again.');

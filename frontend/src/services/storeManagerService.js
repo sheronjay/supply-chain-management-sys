@@ -100,3 +100,65 @@ export async function assignOrderToTruck(orderId, truckId, driverId, assistantId
     throw new Error(error.response?.data?.error || error.message || 'Failed to assign order');
   }
 }
+
+/**
+ * Fetch alerts for a specific store
+ */
+export async function fetchStoreAlerts(storeId, status = 'all') {
+  try {
+    const response = await api.get(`/alerts/${storeId}`, {
+      params: { status }
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.error || error.message || 'Failed to fetch alerts');
+  }
+}
+
+/**
+ * Fetch unread alert count for a specific store
+ */
+export async function fetchUnreadAlertCount(storeId) {
+  try {
+    const response = await api.get(`/alerts/${storeId}/count`);
+    return response.data.count;
+  } catch (error) {
+    throw new Error(error.response?.data?.error || error.message || 'Failed to fetch unread alert count');
+  }
+}
+
+/**
+ * Mark a specific alert as read
+ */
+export async function markAlertAsRead(storeId, alertId) {
+  try {
+    const response = await api.patch(`/alerts/${storeId}/${alertId}/read`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.error || error.message || 'Failed to mark alert as read');
+  }
+}
+
+/**
+ * Mark all alerts as read for a store
+ */
+export async function markAllAlertsAsRead(storeId) {
+  try {
+    const response = await api.patch(`/alerts/${storeId}/read-all`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.error || error.message || 'Failed to mark all alerts as read');
+  }
+}
+
+/**
+ * Delete an alert
+ */
+export async function deleteAlert(storeId, alertId) {
+  try {
+    const response = await api.delete(`/alerts/${storeId}/${alertId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.error || error.message || 'Failed to delete alert');
+  }
+}

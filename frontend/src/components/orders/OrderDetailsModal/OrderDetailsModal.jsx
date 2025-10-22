@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import api from "../../../services/api";
 import "./OrderDetailsModal.css";
 
 const OrderDetailsModal = ({ isOpen, onClose, orderId }) => {
@@ -16,14 +17,8 @@ const OrderDetailsModal = ({ isOpen, onClose, orderId }) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`http://localhost:5000/api/orders/${orderId}`);
-      
-      if (response.ok) {
-        const data = await response.json();
-        setOrderDetails(data);
-      } else {
-        throw new Error('Failed to fetch order details');
-      }
+      const response = await api.get(`/orders/${orderId}`);
+      setOrderDetails(response.data);
     } catch (err) {
       console.error('Error fetching order details:', err);
       setError('Failed to load order details. Please try again.');

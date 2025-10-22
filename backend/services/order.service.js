@@ -1,4 +1,5 @@
 import pool from '../src/db/pool.js';
+import { v4 as uuidv4 } from 'uuid';
 
 export async function listOrders(storeId = null) {
     // Build query with optional store filter
@@ -180,7 +181,7 @@ export async function createOrder(payload) {
         }
         
         // Create order
-        const orderId = 'ORD-';
+        const orderId = 'ORD-' + uuidv4().substring(0, 8).toUpperCase();
         const orderedDate = payload.orderedDate || new Date().toISOString().split('T')[0];
         const totalPrice = payload.totalAmount || 0;
         const status = payload.status || 'PENDING';
@@ -201,9 +202,11 @@ export async function createOrder(payload) {
                 
                 if (products.length > 0) {
                     const product = products[0];
+                    // Ensure quantity is properly converted to integer
+                    const quantity = parseInt(item.qty, 10);
                     await conn.query(
                         'INSERT INTO order_items (order_id, product_id, quantity, item_capacity, unit_price) VALUES (?, ?, ?, ?, ?)',
-                        [orderId, product.product_id, item.qty, null, product.unit_price]
+                        [orderId, product.product_id, quantity, null, product.unit_price]
                     );
                 } else {
                     console.log(`Product '${item.name}' not found in database`);

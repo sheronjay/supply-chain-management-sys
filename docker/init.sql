@@ -200,12 +200,27 @@ CREATE TABLE IF NOT EXISTS store_managers (
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS delivery_employees (
-  user_id         VARCHAR(255) PRIMARY KEY,       -- ERD “Delivery employee (PK User_ID)”
+  user_id         VARCHAR(255) PRIMARY KEY,       -- ERD "Delivery employee (PK User_ID)"
   working_hours   VARCHAR(255),
   availability    TINYINT(1) NOT NULL DEFAULT 1,
   CONSTRAINT fk_delivery_employees_user
     FOREIGN KEY (user_id) REFERENCES users(user_id)
     ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Table to track weekly working hours for drivers
+CREATE TABLE IF NOT EXISTS driver_working_hours (
+  id              INT AUTO_INCREMENT PRIMARY KEY,
+  driver_id       VARCHAR(255) NOT NULL,
+  week_start_date DATE NOT NULL,                  -- Monday of the week
+  hours_worked    DECIMAL(5,2) NOT NULL DEFAULT 0,
+  added_date      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  added_by        VARCHAR(255) DEFAULT 'DRIVER',  -- 'DRIVER' or 'ADMIN'
+  notes           TEXT,
+  CONSTRAINT fk_dwh_driver
+    FOREIGN KEY (driver_id) REFERENCES delivery_employees(user_id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  UNIQUE KEY unique_driver_week (driver_id, week_start_date)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS admins (
@@ -216,6 +231,66 @@ CREATE TABLE IF NOT EXISTS admins (
   CONSTRAINT uq_admins_username UNIQUE (username),
   CONSTRAINT uq_admins_email UNIQUE (email)
 ) ENGINE=InnoDB;
+
+-- =========================
+-- Alerts System
+-- =========================
+CREATE TABLE IF NOT EXISTS store_manager_alerts (
+  alert_id        INT AUTO_INCREMENT PRIMARY KEY,
+  store_id        VARCHAR(255) NOT NULL,
+  order_id        VARCHAR(255),
+  alert_type      VARCHAR(50) NOT NULL,           -- 'ORDER_DELIVERED', 'LOW_STOCK', etc.
+  title           VARCHAR(255) NOT NULL,
+  message         TEXT NOT NULL,
+  status          VARCHAR(20) DEFAULT 'unread',    -- 'unread' or 'read'
+  created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_alerts_store
+    FOREIGN KEY (store_id) REFERENCES stores(store_id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_alerts_order
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  KEY idx_alerts_store (store_id),
+  KEY idx_alerts_status (status),
+  KEY idx_alerts_created (created_at)
+) ENGINE=InnoDB;
+
+-- =========================
+-- Triggers
+-- =========================
+DELIMITER $$
+
+CREATE TRIGGER after_order_delivered
+AFTER UPDATE ON orders
+FOR EACH ROW
+BEGIN
+  -- Only trigger when status changes TO 'DELIVERED'
+  -- AND the order has a valid store_id
+  -- AND the store is NOT the main store (store_id should not be NULL and should exist in stores table)
+  IF NEW.status = 'DELIVERED' AND OLD.status != 'DELIVERED' AND NEW.store_id IS NOT NULL THEN
+    -- Create an alert for the store manager (excluding main store manager)
+    -- Main store manager has user_id 'USR-MGR-MAIN' and store_id = NULL
+    -- Store managers have store_id set to their respective stores
+    INSERT INTO store_manager_alerts (
+      store_id,
+      order_id,
+      alert_type,
+      title,
+      message,
+      status
+    )
+    VALUES (
+      NEW.store_id,
+      NEW.order_id,
+      'ORDER_DELIVERED',
+      'Order Delivered Successfully',
+      CONCAT('Order ', NEW.order_id, ' has been successfully delivered to the customer.'),
+      'unread'
+    );
+  END IF;
+END$$
+
+DELIMITER ;
 
 -- =========================
 -- Core reference data
@@ -312,16 +387,16 @@ INSERT INTO train_schedules (trip_id, day_date, start_time, arrival_time, train_
 -- Products
 -- =========================
 INSERT INTO products (product_id, product_name, unit_price, space_consumption_rate, stock_quantity, order_per_quarter) VALUES
-('PRD-DET-1KG','Detergent 1kg', 850.00,0.50, 1200, 900),
-('PRD-SHP-500','Shampoo 500ml', 950.00,0.30, 1500, 1100),
-('PRD-SOAP-100','Bath Soap 100g', 180.00,0.10, 5000, 4200),
-('PRD-TP-120','Toothpaste 120g', 320.00,0.12, 3000, 2100),
-('PRD-TEA-200','Ceylon Tea 200g', 700.00,0.25, 2200, 1600),
-('PRD-MLK-1L','UHT Milk 1L', 380.00,0.40, 2400, 1800),
-('PRD-BIS-200','Biscuits 200g', 250.00,0.15, 4000, 3000),
-('PRD-CLR-1L','Floor Cleaner 1L', 620.00,0.35, 1300, 900),
-('PRD-OFK-5L','Cooking Oil 5L', 2200.00,0.80, 800, 500),
-('PRD-RIC-10','Rice 10kg', 1500.00,1.20, 900, 600);
+('PRD-DET-1KG','Detergent 1kg', 850.00,0.50, 1200, 0),
+('PRD-SHP-500','Shampoo 500ml', 950.00,0.30, 1500, 0),
+('PRD-SOAP-100','Bath Soap 100g', 180.00,0.10, 5000, 0),
+('PRD-TP-120','Toothpaste 120g', 320.00,0.12, 3000, 0),
+('PRD-TEA-200','Ceylon Tea 200g', 700.00,0.25, 2200, 0),
+('PRD-MLK-1L','UHT Milk 1L', 380.00,0.40, 2400, 0),
+('PRD-BIS-200','Biscuits 200g', 250.00,0.15, 4000, 0),
+('PRD-CLR-1L','Floor Cleaner 1L', 620.00,0.35, 1300, 0),
+('PRD-OFK-5L','Cooking Oil 5L', 2200.00,0.80, 800, 0),
+('PRD-RIC-10','Rice 10kg', 1500.00,1.20, 900, 0);
 
 -- =========================
 -- Customers
@@ -517,23 +592,92 @@ INSERT INTO order_items (order_id, product_id, quantity, item_capacity, unit_pri
 INSERT INTO users (user_id, store_id, name, password, designation, is_employed) VALUES
 ('USR-ADM-01',NULL,'System Admin','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Admin',1),
 ('USR-MGR-MAIN',NULL,'Anura Perera','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Main Store Manager',1),
+-- Store Managers
 ('USR-MGR-CMB','ST-CMB-01','Rashmi De Silva','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
-('USR-DRV-01','ST-CMB-01','Kumara Jayasuriya','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
-('USR-DRV-02','ST-CMB-01','Sujeewa Fernando','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
-('USR-DRV-03','ST-CMB-01','Isuru Weerasekara','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
-('USR-ASS-01','ST-CMB-01','Nadeesha Karu','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
-('USR-ASS-02','ST-CMB-01','Ruwan Perera','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1);
+('USR-MGR-NGO','ST-NGO-01','Chaminda Silva','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
+('USR-MGR-GAL','ST-GAL-01','Nimal Rajapaksa','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
+('USR-MGR-MAT','ST-MAT-01','Priyantha Fernando','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
+('USR-MGR-JAF','ST-JAF-01','Sivakumar Nadesan','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
+('USR-MGR-TRI','ST-TRI-01','Rohan Wickramasinghe','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Store Manager',1),
+-- Colombo Store (ST-CMB-01) - Drivers and Assistants
+('USR-DRV-CMB-01','ST-CMB-01','Kumara Jayasuriya','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-DRV-CMB-02','ST-CMB-01','Sujeewa Fernando','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-DRV-CMB-03','ST-CMB-01','Isuru Weerasekara','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-ASS-CMB-01','ST-CMB-01','Nadeesha Karu','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+('USR-ASS-CMB-02','ST-CMB-01','Ruwan Perera','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+-- Negombo Store (ST-NGO-01) - Drivers and Assistants
+('USR-DRV-NGO-01','ST-NGO-01','Anil Wijesinghe','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-DRV-NGO-02','ST-NGO-01','Janaka Bandara','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-ASS-NGO-01','ST-NGO-01','Sarath Perera','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+('USR-ASS-NGO-02','ST-NGO-01','Dilshan Fernando','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+-- Galle Store (ST-GAL-01) - Drivers and Assistants
+('USR-DRV-GAL-01','ST-GAL-01','Sampath Rathnayake','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-DRV-GAL-02','ST-GAL-01','Pradeep Silva','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-ASS-GAL-01','ST-GAL-01','Kasun Wickramasinghe','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+('USR-ASS-GAL-02','ST-GAL-01','Nuwan Jayawardena','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+-- Matara Store (ST-MAT-01) - Drivers and Assistants
+('USR-DRV-MAT-01','ST-MAT-01','Mahesh Gamage','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-DRV-MAT-02','ST-MAT-01','Aruna Dissanayake','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-ASS-MAT-01','ST-MAT-01','Chathura Perera','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+('USR-ASS-MAT-02','ST-MAT-01','Hasitha Silva','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+-- Jaffna Store (ST-JAF-01) - Drivers and Assistants
+('USR-DRV-JAF-01','ST-JAF-01','Karthik Murugesan','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-DRV-JAF-02','ST-JAF-01','Ravi Shankar','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-ASS-JAF-01','ST-JAF-01','Arun Kumar','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+('USR-ASS-JAF-02','ST-JAF-01','Suresh Balakrishnan','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+-- Trincomalee Store (ST-TRI-01) - Drivers and Assistants
+('USR-DRV-TRI-01','ST-TRI-01','Ananda Gunawardena','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-DRV-TRI-02','ST-TRI-01','Dinesh Rodrigo','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Driver',1),
+('USR-ASS-TRI-01','ST-TRI-01','Tharindu Jayasundara','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1),
+('USR-ASS-TRI-02','ST-TRI-01','Lakshan Fernando','$2a$12$GxpaQ89IzTZDk0.jZTqcKOWmG12AFDMI1Cb5alrLWvzxwRhwgssLS','Assistant',1);
 
 INSERT INTO store_managers (manager_id) VALUES
 ('USR-MGR-MAIN'),
-('USR-MGR-CMB');
+('USR-MGR-CMB'),
+('USR-MGR-NGO'),
+('USR-MGR-GAL'),
+('USR-MGR-MAT'),
+('USR-MGR-JAF'),
+('USR-MGR-TRI');
 
 INSERT INTO delivery_employees (user_id, working_hours, availability) VALUES
-('USR-DRV-01',25.50,1),
-('USR-DRV-02',18.75,1),
-('USR-DRV-03',32.25,1),
-('USR-ASS-01',16.00,1),
-('USR-ASS-02',23.50,1);
+-- Colombo Store
+('USR-DRV-CMB-01',25.50,1),
+('USR-DRV-CMB-02',18.75,1),
+('USR-DRV-CMB-03',32.25,1),
+('USR-ASS-CMB-01',16.00,1),
+('USR-ASS-CMB-02',23.50,1),
+-- Negombo Store
+('USR-DRV-NGO-01',20.00,1),
+('USR-DRV-NGO-02',28.30,1),
+('USR-ASS-NGO-01',19.50,1),
+('USR-ASS-NGO-02',22.00,1),
+-- Galle Store
+('USR-DRV-GAL-01',24.75,1),
+('USR-DRV-GAL-02',21.50,1),
+('USR-ASS-GAL-01',18.25,1),
+('USR-ASS-GAL-02',20.75,1),
+-- Matara Store
+('USR-DRV-MAT-01',26.00,1),
+('USR-DRV-MAT-02',19.50,1),
+('USR-ASS-MAT-01',21.00,1),
+('USR-ASS-MAT-02',17.50,1),
+-- Jaffna Store
+('USR-DRV-JAF-01',22.25,1),
+('USR-DRV-JAF-02',27.50,1),
+('USR-ASS-JAF-01',15.75,1),
+('USR-ASS-JAF-02',19.00,1),
+-- Trincomalee Store
+('USR-DRV-TRI-01',23.50,1),
+('USR-DRV-TRI-02',25.75,1),
+('USR-ASS-TRI-01',20.25,1),
+('USR-ASS-TRI-02',18.50,1);
+
+-- Sample working hours data for current week (assuming current week starts 2025-10-20)
+INSERT INTO driver_working_hours (driver_id, week_start_date, hours_worked, added_by, notes) VALUES
+('USR-DRV-CMB-01', '2025-10-20', 25.50, 'DRIVER', 'Initial hours for current week'),
+('USR-DRV-CMB-02', '2025-10-20', 18.75, 'DRIVER', 'Initial hours for current week'),
+('USR-DRV-CMB-03', '2025-10-20', 32.25, 'DRIVER', 'Initial hours for current week');
 
 INSERT INTO admins (admin_id, username, email, password) VALUES
 ('ADM-ROOT','root','root@kandypack.lk','$2y$dummyhash');

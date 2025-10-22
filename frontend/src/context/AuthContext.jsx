@@ -8,18 +8,20 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
- // Load user from JWT on initial render
+ // Load user from localStorage on initial render
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
+    const storedUser = localStorage.getItem('user');
+    
+    if (token && storedUser) {
       try {
-        const decoded = jwtDecode(token);
-        setUser({
-          ...decoded
-        });
+        // Use the full user object from localStorage instead of just JWT payload
+        const userData = JSON.parse(storedUser);
+        setUser(userData);
       } catch (err) {
-        console.error('Invalid token:', err);
+        console.error('Error loading user:', err);
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
       }
     }
     setLoading(false);
@@ -48,6 +50,7 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
   };
 

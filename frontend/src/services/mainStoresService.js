@@ -47,4 +47,34 @@ export const fetchScheduleOrders = async (tripId) => {
   } catch (err) {
     throw new Error(err.response?.data?.error || 'Failed to fetch schedule orders');
   }
+
+  return response.json()
+}
+
+// Product management functions
+export const fetchAllProducts = async () => {
+  try {
+    const response = await api.get('/main-stores/products');
+    return response.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.error || 'Failed to fetch products');
+  }
+};
+
+export const addNewProduct = async (productData) => {
+  try {
+    const response = await api.post('/main-stores/products', productData);
+    return response.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.error || 'Failed to add product');
+  }
+};
+
+export const updateProduct = async (productData) => {
+  try {
+    const response = await api.put('/main-stores/products', productData);
+    return response.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.error || 'Failed to update product');
+  }
 };
