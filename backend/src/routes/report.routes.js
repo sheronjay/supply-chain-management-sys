@@ -3,6 +3,14 @@ import * as reportController from '../controllers/report.controller.js';
 
 const router = express.Router();
 
+// All 6 required reports
+router.get('/quarterly-sales', reportController.getQuarterlySales);
+router.get('/top-ordered-items', reportController.getTopOrderedItems);
+router.get('/city-route-sales', reportController.getCityRouteSales);
+router.get('/driver-hours', reportController.getDriverWorkingHours);
+router.get('/truck-usage', reportController.getTruckUsageAnalysis);
+router.get('/customer-history/:customerId', reportController.getCustomerOrderHistory);
+
 /** =======================
  *  MAIN REPORT ROUTES
  *  ======================= */

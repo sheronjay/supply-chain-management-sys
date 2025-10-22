@@ -104,6 +104,79 @@ export const getTopOrderedItems = async (req, res) => {
 };
 
 /**
+ * Get city-wise and route-wise sales breakdown
+ */
+export const getCityRouteSales = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const data = await reportService.getCityRouteSales(startDate, endDate);
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('Error fetching city-route sales:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch city-route sales',
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Get driver working hours report
+ */
+export const getDriverWorkingHours = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const data = await reportService.getDriverWorkingHours(startDate, endDate);
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('Error fetching driver working hours:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch driver working hours',
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Get truck usage analysis
+ */
+export const getTruckUsageAnalysis = async (req, res) => {
+  try {
+    const { month, year } = req.query;
+    const data = await reportService.getTruckUsageAnalysis(month, year);
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('Error fetching truck usage analysis:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch truck usage analysis',
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Get customer order history with delivery details
+ */
+export const getCustomerOrderHistory = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+    const { startDate, endDate } = req.query;
+    const data = await reportService.getCustomerOrderHistory(customerId, startDate, endDate);
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('Error fetching customer order history:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch customer order history',
+      error: error.message,
+    });
+  }
+};
+
+/**
  * City-wise and Route-wise Sales Breakdown
  */
 export const getCityRouteSales = async (req, res) => {

@@ -95,8 +95,133 @@ export const getQuarterlySales = async () => {
  */
 export const getTopOrderedItems = async (quarter, year) => {
   try {
-    const [rows] = await pool.query(
-      `
+    const [rows] = await pool.query(`
+      SELECT 
+        p.product_name,
+        SUM(oi.quantity) as total_quantity,
+        SUM(oi.quantity * oi.unit_price) as total_value
+      FROM orders o
+      JOIN order_items oi ON o.order_id = oi.order_id
+      JOIN products p ON oi.product_id = p.product_id
+      WHERE QUARTER(o.ordered_date) = ? AND YEAR(o.ordered_date) = ?
+      GROUP BY p.product_id
+      ORDER BY total_quantity DESC
+      LIMIT 10
+    `, [quarter, year]);
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * City-wise and route-wise sales breakdown
+ */
+export const getCityRouteSales = async (startDate, endDate) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT 
+        s.city,
+        sc.sub_city_name as route,
+        COUNT(DISTINCT o.order_id) as total_orders,
+        SUM(o.total_price) as total_sales,
+        COUNT(DISTINCT o.customer_id) as unique_customers
+      FROM orders o
+      JOIN stores s ON o.store_id = s.store_id
+      JOIN sub_cities sc ON o.sub_city_id = sc.sub_city_id
+      WHERE o.ordered_date BETWEEN ? AND ?
+      GROUP BY s.city, sc.sub_city_name
+      ORDER BY s.city, total_sales DESC
+    `, [startDate, endDate]);
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * Driver and assistant working hours report
+ */
+export const getDriverWorkingHours = async (startDate, endDate) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT 
+        d.driver_id,
+        d.name as driver_name,
+        COUNT(DISTINCT o.order_id) as total_deliveries,
+        SUM(TIMESTAMPDIFF(HOUR, o.delivery_start_time, o.delivery_end_time)) as total_hours,
+        COUNT(DISTINCT DATE(o.ordered_date)) as days_worked
+      FROM orders o
+      JOIN drivers d ON o.driver_id = d.driver_id
+      WHERE o.ordered_date BETWEEN ? AND ?
+      GROUP BY d.driver_id
+      ORDER BY total_hours DESC
+    `, [startDate, endDate]);
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * Truck usage analysis per month
+ */
+export const getTruckUsageAnalysis = async (month, year) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT 
+        t.truck_id,
+        t.vehicle_number,
+        COUNT(DISTINCT o.order_id) as total_orders,
+        COUNT(DISTINCT DATE(o.ordered_date)) as days_used,
+        SUM(o.total_price) as total_revenue_generated,
+        AVG(TIMESTAMPDIFF(HOUR, o.delivery_start_time, o.delivery_end_time)) as avg_delivery_time
+      FROM orders o
+      JOIN trucks t ON o.truck_id = t.truck_id
+      WHERE MONTH(o.ordered_date) = ? AND YEAR(o.ordered_date) = ?
+      GROUP BY t.truck_id
+      ORDER BY total_orders DESC
+    `, [month, year]);
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * Customer order history with delivery details
+ */
+export const getCustomerOrderHistory = async (customerId, startDate, endDate) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT 
+        o.order_id,
+        o.ordered_date,
+        o.delivery_start_time,
+        o.delivery_end_time,
+        o.status,
+        o.total_price,
+        s.city as store_city,
+        sc.sub_city_name as delivery_location,
+        d.name as driver_name,
+        t.vehicle_number,
+        GROUP_CONCAT(CONCAT(p.product_name, ' (', oi.quantity, ')') SEPARATOR ', ') as products
+      FROM orders o
+      JOIN stores s ON o.store_id = s.store_id
+      JOIN sub_cities sc ON o.sub_city_id = sc.sub_city_id
+      LEFT JOIN drivers d ON o.driver_id = d.driver_id
+      LEFT JOIN trucks t ON o.truck_id = t.truck_id
+      JOIN order_items oi ON o.order_id = oi.order_id
+      JOIN products p ON oi.product_id = p.product_id
+      WHERE o.customer_id = ? AND o.ordered_date BETWEEN ? AND ?
+      GROUP BY o.order_id
+      ORDER BY o.ordered_date DESC
+    `, [customerId, startDate, endDate]);
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+};
       SELECT 
         p.product_name,
         SUM(oi.quantity) AS total_quantity,
