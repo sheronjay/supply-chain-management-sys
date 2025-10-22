@@ -200,12 +200,27 @@ CREATE TABLE IF NOT EXISTS store_managers (
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS delivery_employees (
-  user_id         VARCHAR(255) PRIMARY KEY,       -- ERD “Delivery employee (PK User_ID)”
+  user_id         VARCHAR(255) PRIMARY KEY,       -- ERD "Delivery employee (PK User_ID)"
   working_hours   VARCHAR(255),
   availability    TINYINT(1) NOT NULL DEFAULT 1,
   CONSTRAINT fk_delivery_employees_user
     FOREIGN KEY (user_id) REFERENCES users(user_id)
     ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Table to track weekly working hours for drivers
+CREATE TABLE IF NOT EXISTS driver_working_hours (
+  id              INT AUTO_INCREMENT PRIMARY KEY,
+  driver_id       VARCHAR(255) NOT NULL,
+  week_start_date DATE NOT NULL,                  -- Monday of the week
+  hours_worked    DECIMAL(5,2) NOT NULL DEFAULT 0,
+  added_date      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  added_by        VARCHAR(255) DEFAULT 'DRIVER',  -- 'DRIVER' or 'ADMIN'
+  notes           TEXT,
+  CONSTRAINT fk_dwh_driver
+    FOREIGN KEY (driver_id) REFERENCES delivery_employees(user_id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  UNIQUE KEY unique_driver_week (driver_id, week_start_date)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS admins (
@@ -312,16 +327,16 @@ INSERT INTO train_schedules (trip_id, day_date, start_time, arrival_time, train_
 -- Products
 -- =========================
 INSERT INTO products (product_id, product_name, unit_price, space_consumption_rate, stock_quantity, order_per_quarter) VALUES
-('PRD-DET-1KG','Detergent 1kg', 850.00,0.50, 1200, 900),
-('PRD-SHP-500','Shampoo 500ml', 950.00,0.30, 1500, 1100),
-('PRD-SOAP-100','Bath Soap 100g', 180.00,0.10, 5000, 4200),
-('PRD-TP-120','Toothpaste 120g', 320.00,0.12, 3000, 2100),
-('PRD-TEA-200','Ceylon Tea 200g', 700.00,0.25, 2200, 1600),
-('PRD-MLK-1L','UHT Milk 1L', 380.00,0.40, 2400, 1800),
-('PRD-BIS-200','Biscuits 200g', 250.00,0.15, 4000, 3000),
-('PRD-CLR-1L','Floor Cleaner 1L', 620.00,0.35, 1300, 900),
-('PRD-OFK-5L','Cooking Oil 5L', 2200.00,0.80, 800, 500),
-('PRD-RIC-10','Rice 10kg', 1500.00,1.20, 900, 600);
+('PRD-DET-1KG','Detergent 1kg', 850.00,0.50, 1200, 0),
+('PRD-SHP-500','Shampoo 500ml', 950.00,0.30, 1500, 0),
+('PRD-SOAP-100','Bath Soap 100g', 180.00,0.10, 5000, 0),
+('PRD-TP-120','Toothpaste 120g', 320.00,0.12, 3000, 0),
+('PRD-TEA-200','Ceylon Tea 200g', 700.00,0.25, 2200, 0),
+('PRD-MLK-1L','UHT Milk 1L', 380.00,0.40, 2400, 0),
+('PRD-BIS-200','Biscuits 200g', 250.00,0.15, 4000, 0),
+('PRD-CLR-1L','Floor Cleaner 1L', 620.00,0.35, 1300, 0),
+('PRD-OFK-5L','Cooking Oil 5L', 2200.00,0.80, 800, 0),
+('PRD-RIC-10','Rice 10kg', 1500.00,1.20, 900, 0);
 
 -- =========================
 -- Customers
@@ -597,6 +612,12 @@ INSERT INTO delivery_employees (user_id, working_hours, availability) VALUES
 ('USR-DRV-TRI-02',25.75,1),
 ('USR-ASS-TRI-01',20.25,1),
 ('USR-ASS-TRI-02',18.50,1);
+
+-- Sample working hours data for current week (assuming current week starts 2025-10-20)
+INSERT INTO driver_working_hours (driver_id, week_start_date, hours_worked, added_by, notes) VALUES
+('USR-DRV-01', '2025-10-20', 25.50, 'DRIVER', 'Initial hours for current week'),
+('USR-DRV-02', '2025-10-20', 18.75, 'DRIVER', 'Initial hours for current week'),
+('USR-DRV-03', '2025-10-20', 32.25, 'DRIVER', 'Initial hours for current week');
 
 INSERT INTO admins (admin_id, username, email, password) VALUES
 ('ADM-ROOT','root','root@kandypack.lk','$2y$dummyhash');

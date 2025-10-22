@@ -16,4 +16,11 @@ router.post('/process-order', authenticateUser, authorizeMainStoreManager, mainS
 // Get orders for a specific train schedule (any logged-in user)
 router.get('/train-schedules/:tripId/orders', authenticateUser, mainStoresController.getScheduleOrders);
 
+// Product management routes
+router.get('/products', mainStoresController.getAllProducts);
+router.post('/products', mainStoresController.addProduct);
+router.put('/products', mainStoresController.updateProduct);
+router.delete('/products', mainStoresController.deleteProduct);
+router.put('/products/stock', mainStoresController.updateProductStock);
+
 export default router;

@@ -69,7 +69,7 @@ const Drivers = () => {
       await driverService.updateWorkingHours(driverId, hours)
       
       // Show success message
-      setSuccessMessage(`Working hours updated to ${hours} hours successfully!`)
+      setSuccessMessage(`Working hours updated successfully!`)
       
       // Reload driver details to get updated hours
       const detailsData = await driverService.getDriverDetails(driverId)
@@ -110,12 +110,12 @@ const Drivers = () => {
             <button 
               className="btn-working-hours"
               onClick={() => setIsHoursModalOpen(true)}
+              disabled={isOverLimit}
             >
               <svg viewBox="0 0 24 24" className="hours-icon">
-                <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" />
-                <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" />
+                <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" strokeWidth="2" />
               </svg>
-              Update Hours
+              {isOverLimit ? 'Weekly Limit Reached' : 'Add Hours'}
             </button>
             <button className="btn-refresh" onClick={handleRefresh}>
               <svg viewBox="0 0 24 24" className="refresh-icon">

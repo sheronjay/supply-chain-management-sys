@@ -33,7 +33,13 @@ const AddOrderModal = ({ isOpen, onClose, onCreate, customerName }) => {
 
   const handleItemChange = (index, field, value) => {
     const updatedItems = [...formData.items];
-    updatedItems[index][field] = value;
+    
+    // Convert quantity to integer if it's the qty field
+    if (field === 'qty') {
+      updatedItems[index][field] = parseInt(value, 10) || 0;
+    } else {
+      updatedItems[index][field] = value;
+    }
 
     // If product name changes, update the price from products list
     if (field === 'name' && products.length > 0) {
@@ -88,9 +94,15 @@ const AddOrderModal = ({ isOpen, onClose, onCreate, customerName }) => {
     
     try {
       const totalAmount = calculateTotal();
+      // Ensure quantities are properly converted to integers
+      const processedItems = validItems.map(item => ({
+        ...item,
+        qty: parseInt(item.qty, 10) || 0
+      }));
+      
       await onCreate({
         route: formData.route,
-        items: validItems,
+        items: processedItems,
         totalAmount,
       });
 
