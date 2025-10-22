@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { driverService } from '../../services/driverService'
 import AssignedOrdersTable from '../../components/driver/AssignedOrdersTable/AssignedOrdersTable'
 import WorkingHoursModal from '../../components/driver/WorkingHoursModal/WorkingHoursModal'
+import { useAuth } from '../../context/AuthContext'
 import './Drivers.css'
 
 const Drivers = () => {
@@ -12,14 +13,23 @@ const Drivers = () => {
   const [successMessage, setSuccessMessage] = useState(null)
   const [isHoursModalOpen, setIsHoursModalOpen] = useState(false)
 
-  // For now, hardcode a driver ID - in production this would come from auth context
-  const driverId = 'USR-DRV-01'
+  // Get driver ID from authenticated user
+  const { user } = useAuth()
+  const driverId = user?.user_id
 
   useEffect(() => {
-    loadDriverData()
-  }, [])
+    if (driverId) {
+      loadDriverData()
+    }
+  }, [driverId])
 
   const loadDriverData = async () => {
+    if (!driverId) {
+      setError('Driver ID not found. Please log in again.')
+      setLoading(false)
+      return
+    }
+
     try {
       setLoading(true)
       setError(null)

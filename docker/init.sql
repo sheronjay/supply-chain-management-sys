@@ -675,9 +675,9 @@ INSERT INTO delivery_employees (user_id, working_hours, availability) VALUES
 
 -- Sample working hours data for current week (assuming current week starts 2025-10-20)
 INSERT INTO driver_working_hours (driver_id, week_start_date, hours_worked, added_by, notes) VALUES
-('USR-DRV-01', '2025-10-20', 25.50, 'DRIVER', 'Initial hours for current week'),
-('USR-DRV-02', '2025-10-20', 18.75, 'DRIVER', 'Initial hours for current week'),
-('USR-DRV-03', '2025-10-20', 32.25, 'DRIVER', 'Initial hours for current week');
+('USR-DRV-CMB-01', '2025-10-20', 25.50, 'DRIVER', 'Initial hours for current week'),
+('USR-DRV-CMB-02', '2025-10-20', 18.75, 'DRIVER', 'Initial hours for current week'),
+('USR-DRV-CMB-03', '2025-10-20', 32.25, 'DRIVER', 'Initial hours for current week');
 
 INSERT INTO admins (admin_id, username, email, password) VALUES
 ('ADM-ROOT','root','root@kandypack.lk','$2y$dummyhash');
