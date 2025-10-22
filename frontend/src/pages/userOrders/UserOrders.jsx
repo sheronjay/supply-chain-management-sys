@@ -20,7 +20,38 @@ const UserOrders = () => {
   // Fetch store and sub-cities based on customer's city from the database
   useEffect(() => {
     const fetchLocationData = async () => {
-      if (!user?.city) return;
+      if (!user?.city) {
+        // For new users who might not have a city set
+        try {
+          setLoadingLocation(true);
+          // Get all available stores
+          const storesResponse = await api.get('/location/stores');
+          const stores = storesResponse.data || [];
+          
+          if (stores.length > 0) {
+            // Use the first store as default for new customers
+            const defaultStore = stores[0];
+            setStoreId(defaultStore.store_id);
+            
+            // Fetch sub-cities for the default store
+            const subCityResponse = await api.get(`/location/sub-cities/store/${defaultStore.store_id}`);
+            const availableSubCities = subCityResponse.data || [];
+            
+            setSubCities(availableSubCities);
+            
+            // Set first sub-city as default
+            if (availableSubCities.length > 0) {
+              setSelectedSubCity(availableSubCities[0].sub_city_id);
+            }
+          }
+        } catch (err) {
+          console.error('Error fetching default store data:', err);
+          setError('Failed to load store information. Please try again.');
+        } finally {
+          setLoadingLocation(false);
+        }
+        return;
+      }
 
       try {
         setLoadingLocation(true);
@@ -134,13 +165,17 @@ const UserOrders = () => {
         <div className="customer-info">
           <h1>My Orders</h1>
           <p className="customer-name">Customer: {user.name} ({user.customer_id})</p>
-          {user.city && <p className="customer-city">City: {user.city}</p>}
+          {user.city ? (
+            <p className="customer-city">City: {user.city}</p>
+          ) : (
+            <p className="customer-city new-customer">Welcome! You can start placing orders right away.</p>
+          )}
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
           className="add-order-btn"
-          disabled={!storeId || !selectedSubCity || loadingLocation}
-          title={!storeId || !selectedSubCity ? 'Loading location data...' : 'Create a new order'}
+          disabled={loadingLocation} // Only disable while loading location data
+          title={loadingLocation ? 'Loading location data...' : 'Create a new order'}
         >
           Add New Order
         </button>
@@ -159,6 +194,7 @@ const UserOrders = () => {
         onClose={() => setIsModalOpen(false)}
         onCreate={handleCreateOrder}
         customerName={user.name}
+        subCities={subCities}
       />
     </div>
   );

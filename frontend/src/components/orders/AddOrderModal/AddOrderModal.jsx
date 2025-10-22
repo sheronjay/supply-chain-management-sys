@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import api from "../../../services/api";
 import "./AddOrderModal.css";
 
-const AddOrderModal = ({ isOpen, onClose, onCreate, customerName }) => {
+const AddOrderModal = ({ isOpen, onClose, onCreate, customerName, subCities = [] }) => {
   const [formData, setFormData] = useState({
     route: "",
     items: [{ name: "", qty: 1, price: 0 }],
@@ -147,39 +147,11 @@ const AddOrderModal = ({ isOpen, onClose, onCreate, customerName }) => {
               required
             >
               <option value="">Select a sub-city</option>
-              <optgroup label="Colombo">
-                <option value="Pettah">Pettah</option>
-                <option value="Thimbirigasyaya">Thimbirigasyaya</option>
-                <option value="Dehiwala">Dehiwala</option>
-              </optgroup>
-              <optgroup label="Kandy">
-                <option value="Peradeniya">Peradeniya</option>
-                <option value="Katugastota">Katugastota</option>
-                <option value="Gampola">Gampola</option>
-              </optgroup>
-              <optgroup label="Negombo">
-                <option value="Kochchikade">Kochchikade</option>
-                <option value="Katana">Katana</option>
-                <option value="Wattala">Wattala</option>
-              </optgroup>
-              <optgroup label="Galle">
-                <option value="Unawatuna">Unawatuna</option>
-                <option value="Hikkaduwa">Hikkaduwa</option>
-                <option value="Ambalangoda">Ambalangoda</option>
-              </optgroup>
-              <optgroup label="Matara">
-                <option value="Weligama">Weligama</option>
-                <option value="Hakmana">Hakmana</option>
-                <option value="Dikwella">Dikwella</option>
-              </optgroup>
-              <optgroup label="Jaffna">
-                <option value="Nallur">Nallur</option>
-                <option value="Chavakachcheri">Chavakachcheri</option>
-              </optgroup>
-              <optgroup label="Trincomalee">
-                <option value="Uppuveli">Uppuveli</option>
-                <option value="Kinniya">Kinniya</option>
-              </optgroup>
+              {subCities.map((subCity) => (
+                <option key={subCity.sub_city_id} value={subCity.sub_city_name}>
+                  {subCity.sub_city_name}
+                </option>
+              ))}
             </select>
           </div>
 
