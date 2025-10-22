@@ -10,6 +10,7 @@ import storeManagerRoutes from './routes/storeManager.routes.js';
 import driverRoutes from './routes/driver.routes.js';
 import reportRoutes from './routes/report.routes.js';
 import locationRoutes from './routes/location.routes.js';
+import alertRoutes from './routes/alert.routes.js';
 import errorHandler from '../middleware/errorHandler.js';
 
 const app = express();
@@ -26,6 +27,7 @@ app.use('/api/store-manager', storeManagerRoutes);
 app.use('/api/driver', driverRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/location', locationRoutes);
+app.use('/api/alerts', alertRoutes);
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });

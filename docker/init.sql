@@ -233,6 +233,66 @@ CREATE TABLE IF NOT EXISTS admins (
 ) ENGINE=InnoDB;
 
 -- =========================
+-- Alerts System
+-- =========================
+CREATE TABLE IF NOT EXISTS store_manager_alerts (
+  alert_id        INT AUTO_INCREMENT PRIMARY KEY,
+  store_id        VARCHAR(255) NOT NULL,
+  order_id        VARCHAR(255),
+  alert_type      VARCHAR(50) NOT NULL,           -- 'ORDER_DELIVERED', 'LOW_STOCK', etc.
+  title           VARCHAR(255) NOT NULL,
+  message         TEXT NOT NULL,
+  status          VARCHAR(20) DEFAULT 'unread',    -- 'unread' or 'read'
+  created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_alerts_store
+    FOREIGN KEY (store_id) REFERENCES stores(store_id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_alerts_order
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  KEY idx_alerts_store (store_id),
+  KEY idx_alerts_status (status),
+  KEY idx_alerts_created (created_at)
+) ENGINE=InnoDB;
+
+-- =========================
+-- Triggers
+-- =========================
+DELIMITER $$
+
+CREATE TRIGGER after_order_delivered
+AFTER UPDATE ON orders
+FOR EACH ROW
+BEGIN
+  -- Only trigger when status changes TO 'DELIVERED'
+  -- AND the order has a valid store_id
+  -- AND the store is NOT the main store (store_id should not be NULL and should exist in stores table)
+  IF NEW.status = 'DELIVERED' AND OLD.status != 'DELIVERED' AND NEW.store_id IS NOT NULL THEN
+    -- Create an alert for the store manager (excluding main store manager)
+    -- Main store manager has user_id 'USR-MGR-MAIN' and store_id = NULL
+    -- Store managers have store_id set to their respective stores
+    INSERT INTO store_manager_alerts (
+      store_id,
+      order_id,
+      alert_type,
+      title,
+      message,
+      status
+    )
+    VALUES (
+      NEW.store_id,
+      NEW.order_id,
+      'ORDER_DELIVERED',
+      'Order Delivered Successfully',
+      CONCAT('Order ', NEW.order_id, ' has been successfully delivered to the customer.'),
+      'unread'
+    );
+  END IF;
+END$$
+
+DELIMITER ;
+
+-- =========================
 -- Core reference data
 -- =========================
 INSERT INTO stores (store_id, city) VALUES
