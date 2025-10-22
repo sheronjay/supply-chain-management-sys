@@ -1,14 +1,15 @@
 import * as reportService from '../../services/report.service.js';
 import PDFDocument from 'pdfkit';
 
-/**
- * Get orders report with filters
- * @route GET /api/reports
- */
+// Centralized error handler
+const handleError = (res, error, message = 'Internal Server Error') => {
+  console.error(message, error);
+  return res.status(500).json({ success: false, message, error: error.message });
+};
+
 export const getReports = async (req, res) => {
   try {
     const { startDate, endDate, storeId } = req.query;
-
     const end = endDate || new Date().toISOString().split('T')[0];
     const start =
       startDate ||
@@ -17,36 +18,21 @@ export const getReports = async (req, res) => {
         .split('T')[0];
 
     const filterStoreId = storeId || null;
-
     const reports = await reportService.getOrdersReport(start, end, filterStoreId);
     const summary = await reportService.getReportSummary(start, end, filterStoreId);
 
-    res.json({
+    return res.json({
       success: true,
-      data: {
-        orders: reports,
-        summary,
-        filters: { startDate: start, endDate: end, storeId: filterStoreId },
-      },
+      data: { orders: reports, summary, filters: { startDate: start, endDate: end, storeId: filterStoreId } },
     });
   } catch (error) {
-    console.error('Error fetching reports:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch reports',
-      error: error.message,
-    });
+    return handleError(res, error, 'Failed to fetch reports');
   }
 };
 
-/**
- * Get report summary
- * @route GET /api/reports/summary
- */
 export const getReportSummary = async (req, res) => {
   try {
     const { startDate, endDate, storeId } = req.query;
-
     const end = endDate || new Date().toISOString().split('T')[0];
     const start =
       startDate ||
@@ -55,228 +41,96 @@ export const getReportSummary = async (req, res) => {
         .split('T')[0];
 
     const filterStoreId = storeId || null;
-
     const summary = await reportService.getReportSummary(start, end, filterStoreId);
-    res.json({ success: true, data: summary });
+    return res.json({ success: true, data: summary });
   } catch (error) {
-    console.error('Error fetching report summary:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch report summary',
-      error: error.message,
-    });
+    return handleError(res, error, 'Failed to fetch report summary');
   }
 };
 
-/**
- * Generate Quarterly Sales Report (Value and Volume)
- */
-export const getQuarterlySalesReport = async (req, res) => {
+export const getQuarterlySales = async (req, res) => {
   try {
     const data = await reportService.getQuarterlySales();
-    res.json({ success: true, data });
+    return res.json({ success: true, data });
   } catch (error) {
-    console.error('Error generating quarterly sales report:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to generate quarterly sales report',
-      error: error.message,
-    });
+    return handleError(res, error, 'Failed to generate quarterly sales report');
   }
 };
 
-/**
- * Most Ordered Items in a Given Quarter
- */
-/**
- * Get most ordered items in a quarter
- * @route GET /api/reports/top-ordered-items
- */
 export const getTopOrderedItems = async (req, res) => {
   try {
     const { quarter, year } = req.query;
+    if (!quarter || !year) return res.status(400).json({ success: false, message: 'quarter and year are required' });
     const data = await reportService.getTopOrderedItems(quarter, year);
-    res.json({ success: true, data });
+    return res.json({ success: true, data });
   } catch (error) {
-    console.error('Error fetching top ordered items:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch top ordered items',
-      error: error.message,
-    });
+    return handleError(res, error, 'Failed to fetch top ordered items');
   }
 };
 
-/**
- * Get city-wise and route-wise sales breakdown
- * @route GET /api/reports/city-route-sales
- */
 export const getCityRouteSales = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
+    if (!startDate || !endDate) return res.status(400).json({ success: false, message: 'startDate and endDate are required' });
     const data = await reportService.getCityRouteSales(startDate, endDate);
-    res.json({ success: true, data });
+    return res.json({ success: true, data });
   } catch (error) {
-    console.error('Error fetching city-route sales:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch city-route sales',
-      error: error.message,
-    });
+    return handleError(res, error, 'Failed to fetch city/route sales');
   }
 };
 
-/**
- * Get driver working hours report
- * @route GET /api/reports/driver-hours
- */
 export const getDriverWorkingHours = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
+    if (!startDate || !endDate) return res.status(400).json({ success: false, message: 'startDate and endDate are required' });
     const data = await reportService.getDriverWorkingHours(startDate, endDate);
-    res.json({ success: true, data });
+    return res.json({ success: true, data });
   } catch (error) {
-    console.error('Error fetching driver working hours:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch driver working hours',
-      error: error.message,
-    });
+    return handleError(res, error, 'Failed to fetch driver working hours');
   }
 };
 
-/**
- * Get truck usage analysis
- * @route GET /api/reports/truck-usage
- */
 export const getTruckUsageAnalysis = async (req, res) => {
   try {
     const { month, year } = req.query;
+    if (!month || !year) return res.status(400).json({ success: false, message: 'month and year are required' });
     const data = await reportService.getTruckUsageAnalysis(month, year);
-    res.json({ success: true, data });
+    return res.json({ success: true, data });
   } catch (error) {
-    console.error('Error fetching truck usage analysis:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch truck usage analysis',
-      error: error.message,
-    });
+    return handleError(res, error, 'Failed to fetch truck usage analysis');
   }
 };
 
-/**
- * Get customer order history with delivery details
- * @route GET /api/reports/customer-history/:customerId
- */
 export const getCustomerOrderHistory = async (req, res) => {
   try {
     const { customerId } = req.params;
     const { startDate, endDate } = req.query;
+    if (!customerId) return res.status(400).json({ success: false, message: 'customerId is required' });
+    if (!startDate || !endDate) return res.status(400).json({ success: false, message: 'startDate and endDate are required' });
     const data = await reportService.getCustomerOrderHistory(customerId, startDate, endDate);
-    res.json({ success: true, data });
+    return res.json({ success: true, data });
   } catch (error) {
-    console.error('Error fetching customer order history:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch customer order history',
-      error: error.message,
-    });
+    return handleError(res, error, 'Failed to fetch customer order history');
   }
 };
 
-/**
- * City-wise and Route-wise Sales Breakdown
- */
-export const getCityRouteSales = async (req, res) => {
-  try {
-    const data = await reportService.getCityRouteSales();
-    res.json({ success: true, data });
-  } catch (error) {
-    console.error('Error fetching city/route sales breakdown:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch city/route sales breakdown',
-      error: error.message,
-    });
-  }
-};
-
-/**
- * Driver and Assistant Working Hours Report
- */
-export const getDriverAssistantHours = async (req, res) => {
-  try {
-    const data = await reportService.getDriverAssistantHours();
-    res.json({ success: true, data });
-  } catch (error) {
-    console.error('Error fetching driver/assistant hours:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch driver/assistant hours',
-      error: error.message,
-    });
-  }
-};
-
-/**
- * Truck Usage Analysis per Month
- */
-export const getTruckUsageReport = async (req, res) => {
-  try {
-    const data = await reportService.getTruckUsagePerMonth();
-    res.json({ success: true, data });
-  } catch (error) {
-    console.error('Error fetching truck usage report:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch truck usage report',
-      error: error.message,
-    });
-  }
-};
-
-/**
- * Customer Order History with Delivery Details
- */
-export const getCustomerOrderHistory = async (req, res) => {
-  try {
-    const { customerId } = req.query;
-    const data = await reportService.getCustomerOrderHistory(customerId);
-    res.json({ success: true, data });
-  } catch (error) {
-    console.error('Error fetching customer order history:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch customer order history',
-      error: error.message,
-    });
-  }
-};
-
-/**
- * Export PDF Report
- */
 export const exportPDFReport = async (req, res) => {
   try {
     const { startDate, endDate, storeId } = req.query;
-
     const end = endDate || new Date().toISOString().split('T')[0];
     const start =
       startDate ||
       new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
         .toISOString()
         .split('T')[0];
-    const filterStoreId = storeId || null;
 
+    const filterStoreId = storeId || null;
     const reports = await reportService.getOrdersReport(start, end, filterStoreId);
     const summary = await reportService.getReportSummary(start, end, filterStoreId);
 
     const doc = new PDFDocument();
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader(
-      'Content-Disposition',
-      'attachment; filename="orders-report.pdf"'
-    );
+    res.setHeader('Content-Disposition', 'attachment; filename="orders-report.pdf"');
     doc.pipe(res);
 
     doc.fontSize(18).text('Orders Report', { align: 'center' });
@@ -304,11 +158,18 @@ export const exportPDFReport = async (req, res) => {
 
     doc.end();
   } catch (error) {
-    console.error('Error generating PDF report:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to generate PDF report',
-      error: error.message,
-    });
+    return handleError(res, error, 'Failed to generate PDF report');
   }
 };
+export default {
+  getReports,
+  getReportSummary,
+  getQuarterlySales,
+  getTopOrderedItems,
+  getCityRouteSales,
+  getDriverWorkingHours,
+  getTruckUsageAnalysis,
+  getCustomerOrderHistory,
+  exportPDFReport,
+};
+
