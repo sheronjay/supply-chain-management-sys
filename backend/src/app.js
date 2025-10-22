@@ -8,6 +8,8 @@ import storeManagerRoutes from './routes/storeManager.routes.js';
 import driverRoutes from './routes/driver.routes.js';
 import reportRoutes from './routes/report.routes.js';
 import locationRoutes from './routes/location.routes.js';
+import trainScheduleRoutes from './routes/trainSchedule.routes.js';
+import usersRoutes from './routes/users.routes.js';
 import errorHandler from '../middleware/errorHandler.js';
 
 const app = express();
@@ -23,6 +25,8 @@ app.use('/api/store-manager', storeManagerRoutes);
 app.use('/api/driver', driverRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/location', locationRoutes);
+app.use('/api/train-schedules', trainScheduleRoutes);
+app.use('/api/users', usersRoutes);
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
