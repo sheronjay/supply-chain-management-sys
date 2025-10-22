@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet'; // ✅ added Helmet import
+
 import authRoutes from './routes/auth.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import orderRoutes from './routes/order.routes.js';
@@ -13,6 +15,7 @@ import errorHandler from '../middleware/errorHandler.js';
 const app = express();
 
 app.use(cors());
+app.use(helmet()); // ✅ added Helmet middleware
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
