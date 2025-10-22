@@ -2,7 +2,7 @@ import 'dotenv/config';
 import app from './app.js'; // Helmet is already used inside app.js
 import pool from './db/pool.js';
 
-const port = Number(5000);
+const port = Number(process.env.PORT || 5000);
 
 const startServer = async () => {
   try {
