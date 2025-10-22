@@ -3,7 +3,7 @@ import { body, param } from 'express-validator';
 import * as mainStoresController from '../controllers/mainStores.controller.js';
 import { authenticateUser, authorizeStoreManager } from '../../middleware/auth.middleware.js';
 import { validateRequest } from '../../middleware/validation.middleware.js'; 
-import { authenticateUser, authorizeMainStoreManager } from '../../middleware/auth.middleware.js';
+import { authorizeMainStoreManager } from '../../middleware/auth.middleware.js';
 
 const router = express.Router();
 

@@ -741,6 +741,7 @@ CREATE PROCEDURE update_order_status_safe(
 BEGIN
     DECLARE v_can_transition BOOLEAN;
     DECLARE v_current_status VARCHAR(50);
+    DECLARE v_error_message VARCHAR(255);
     
     -- Check if transition is valid
     SET v_can_transition = can_transition_order_status(p_order_id, p_new_status);
@@ -750,18 +751,17 @@ BEGIN
         SELECT status INTO v_current_status FROM orders WHERE order_id = p_order_id;
         
         IF v_current_status IS NULL THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Order not found';
+            SET v_error_message = 'Order not found';
         ELSEIF v_current_status = 'IN-STORE' AND p_new_status = 'TRUCK' THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Cannot dispatch order: No truck assigned';
+            SET v_error_message = 'Cannot dispatch order: No truck assigned';
         ELSEIF v_current_status = 'PENDING' AND p_new_status = 'TRAIN' THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Cannot move to train: Order not assigned to train schedule';
+            SET v_error_message = 'Cannot move to train: Order not assigned to train schedule';
         ELSE
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = CONCAT('Invalid status transition from ', v_current_status, ' to ', p_new_status);
+            SET v_error_message = CONCAT('Invalid status transition from ', v_current_status, ' to ', p_new_status);
         END IF;
+        
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = v_error_message;
     END IF;
     
     -- Update the order status
