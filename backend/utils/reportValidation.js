@@ -1,7 +1,7 @@
 /**
  * Helper function to validate date parameters
  */
-const validateDates = (startDate, endDate) => {
+export const validateDates = (startDate, endDate) => {
   if (!startDate || !endDate) {
     throw new Error('Start date and end date are required');
   }
@@ -23,7 +23,7 @@ const validateDates = (startDate, endDate) => {
 /**
  * Helper function to validate quarter and year
  */
-const validateQuarterYear = (quarter, year) => {
+export const validateQuarterYear = (quarter, year) => {
   const quarterNum = parseInt(quarter);
   const yearNum = parseInt(year);
   
@@ -41,6 +41,8 @@ const validateQuarterYear = (quarter, year) => {
 /**
  * Helper function to format date for SQL
  */
-const formatDate = (date) => {
+export const formatDate = (date) => {
   return date.toISOString().split('T')[0];
 };
+
+// Note: functions are exported above as named exports to be imported by services
