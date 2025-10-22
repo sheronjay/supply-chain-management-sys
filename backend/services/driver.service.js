@@ -83,6 +83,7 @@ export async function getDriverDetails(driverId) {
 
 /**
  * Mark an order as delivered
+ * Uses database stored procedure for safe status transition validation
  */
 export async function markOrderAsDelivered(orderId, driverId) {
     const connection = await pool.getConnection();
@@ -90,7 +91,7 @@ export async function markOrderAsDelivered(orderId, driverId) {
     try {
         await connection.beginTransaction();
         
-        // Verify the order belongs to this driver and has status 'TRUCK'
+        // Verify the order belongs to this driver
         const [orders] = await connection.query(
             'SELECT order_id, status, driver_id FROM orders WHERE order_id = ?',
             [orderId]
@@ -104,15 +105,20 @@ export async function markOrderAsDelivered(orderId, driverId) {
             throw new Error('This order is not assigned to you');
         }
         
-        if (orders[0].status !== 'TRUCK') {
-            throw new Error(`Order cannot be marked as delivered. Current status: ${orders[0].status}`);
+        // Use stored procedure for safe status transition
+        // This validates that the order is in 'TRUCK' status
+        try {
+            await connection.query(
+                'CALL update_order_status_safe(?, ?, ?)',
+                [orderId, 'DELIVERED', driverId]
+            );
+        } catch (dbError) {
+            // Handle validation errors from stored procedure
+            if (dbError.sqlState === '45000') {
+                throw new Error(dbError.sqlMessage || 'Invalid order status transition');
+            }
+            throw dbError;
         }
-        
-        // Update order status to 'DELIVERED'
-        await connection.query(
-            'UPDATE orders SET status = ? WHERE order_id = ?',
-            ['DELIVERED', orderId]
-        );
         
         await connection.commit();
         

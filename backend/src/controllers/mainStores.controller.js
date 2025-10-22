@@ -160,12 +160,19 @@ export async function processOrder(req, res, next) {
       WHERE trip_id = ?
     `, [newAvailableCapacity, tripId]);
 
-    // Update order status to TRAIN
-    await connection.query(`
-      UPDATE orders
-      SET status = 'TRAIN'
-      WHERE order_id = ?
-    `, [orderId]);
+    // Update order status to TRAIN using stored procedure for validation
+    try {
+      await connection.query(
+        'CALL update_order_status_safe(?, ?, ?)',
+        [orderId, 'TRAIN', req.user?.user_id || 'SYSTEM']
+      );
+    } catch (dbError) {
+      // Handle validation errors from stored procedure
+      if (dbError.sqlState === '45000') {
+        throw new Error(dbError.sqlMessage || 'Invalid order status transition');
+      }
+      throw dbError;
+    }
 
     await connection.commit();
 

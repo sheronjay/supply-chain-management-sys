@@ -682,5 +682,98 @@ INSERT INTO driver_working_hours (driver_id, week_start_date, hours_worked, adde
 INSERT INTO admins (admin_id, username, email, password) VALUES
 ('ADM-ROOT','root','root@kandypack.lk','$2y$dummyhash');
 
+-- =========================
+-- Business Logic Functions
+-- =========================
+DELIMITER $$
+
+-- Function to validate order status transitions
+CREATE FUNCTION can_transition_order_status(
+    p_order_id VARCHAR(255),
+    p_new_status VARCHAR(50)
+) RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    DECLARE v_current_status VARCHAR(50);
+    DECLARE v_has_truck BOOLEAN;
+    DECLARE v_has_train BOOLEAN;
+    
+    -- Get current order state
+    SELECT 
+        o.status,
+        (o.truck_id IS NOT NULL),
+        (tso.trip_id IS NOT NULL)
+    INTO v_current_status, v_has_truck, v_has_train
+    FROM orders o
+    LEFT JOIN train_schedule_orders tso ON o.order_id = tso.order_id
+    WHERE o.order_id = p_order_id;
+    
+    -- If order not found, return FALSE
+    IF v_current_status IS NULL THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Business rules for valid transitions
+    -- PENDING -> TRAIN: Must be assigned to a train
+    IF v_current_status = 'PENDING' AND p_new_status = 'TRAIN' AND v_has_train THEN
+        RETURN TRUE;
+    -- TRAIN -> IN-STORE: Store manager accepts arrival
+    ELSEIF v_current_status = 'TRAIN' AND p_new_status = 'IN-STORE' THEN
+        RETURN TRUE;
+    -- IN-STORE -> TRUCK: Must have truck assigned
+    ELSEIF v_current_status = 'IN-STORE' AND p_new_status = 'TRUCK' AND v_has_truck THEN
+        RETURN TRUE;
+    -- TRUCK -> DELIVERED: Driver confirms delivery
+    ELSEIF v_current_status = 'TRUCK' AND p_new_status = 'DELIVERED' THEN
+        RETURN TRUE;
+    END IF;
+    
+    -- All other transitions are invalid
+    RETURN FALSE;
+END$$
+
+-- Stored procedure to safely update order status with validation
+CREATE PROCEDURE update_order_status_safe(
+    IN p_order_id VARCHAR(255),
+    IN p_new_status VARCHAR(50),
+    IN p_changed_by VARCHAR(255)
+)
+BEGIN
+    DECLARE v_can_transition BOOLEAN;
+    DECLARE v_current_status VARCHAR(50);
+    
+    -- Check if transition is valid
+    SET v_can_transition = can_transition_order_status(p_order_id, p_new_status);
+    
+    IF NOT v_can_transition THEN
+        -- Get current status for better error message
+        SELECT status INTO v_current_status FROM orders WHERE order_id = p_order_id;
+        
+        IF v_current_status IS NULL THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Order not found';
+        ELSEIF v_current_status = 'IN-STORE' AND p_new_status = 'TRUCK' THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Cannot dispatch order: No truck assigned';
+        ELSEIF v_current_status = 'PENDING' AND p_new_status = 'TRAIN' THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Cannot move to train: Order not assigned to train schedule';
+        ELSE
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = CONCAT('Invalid status transition from ', v_current_status, ' to ', p_new_status);
+        END IF;
+    END IF;
+    
+    -- Update the order status
+    UPDATE orders 
+    SET status = p_new_status 
+    WHERE order_id = p_order_id;
+    
+    -- Optional: Insert into audit log table if it exists
+    -- INSERT INTO order_status_history (order_id, old_status, new_status, changed_by, changed_at)
+    -- VALUES (p_order_id, v_current_status, p_new_status, p_changed_by, NOW());
+END$$
+
+DELIMITER ;
 
 SET FOREIGN_KEY_CHECKS = 1;
