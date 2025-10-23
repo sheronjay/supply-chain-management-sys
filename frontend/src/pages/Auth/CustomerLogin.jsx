@@ -164,17 +164,31 @@ export default function CustomerLogin() {
                 />
               </div>
 
+              {/* -----------------------------
+                  UPDATE THIS PART: Replace the city input with a dropdown
+              ------------------------------- */}
               <div className="form-group">
                 <label htmlFor="city">City</label>
-                <input
-                  type="text"
+                <select
                   id="city"
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
-                  placeholder=""
-                />
+                  required
+                >
+                  <option value="">Select a city</option>
+                  <option value="Colombo">Colombo</option>
+                  <option value="Negombo">Negombo</option>
+                  <option value="Galle">Galle</option>
+                  <option value="Matara">Matara</option>
+                  <option value="Jaffna">Jaffna</option>
+                  <option value="Trincomalee">Trincomalee</option>
+                </select>
               </div>
+              {/* -----------------------------
+                  END OF UPDATED PART
+              ------------------------------- */}
+
             </>
           )}
 
