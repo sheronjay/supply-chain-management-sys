@@ -126,10 +126,18 @@ const AddOrderModal = ({ isOpen, onClose, onCreate, customerName, subCities = []
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Add New Order</h2>
-          <button className="close-btn" onClick={onClose}>
-            ×
-          </button>
+          <div className="modal-title-row">
+            <h2>Add New Order</h2>
+            <button
+              type="button"
+              className="close-btn"
+              onClick={onClose}
+              aria-label="Close add order modal"
+            >
+              ×
+            </button>
+          </div>
+          <p className="lead-time-note">*Orders must be placed at least 7 days in advance</p>
         </div>
 
         <form onSubmit={handleSubmit} className="order-form">

@@ -3,9 +3,9 @@ import './ScheduleTable.css'
 const ScheduleTable = ({ trips, statusTone, loading }) => (
   <section className="train-schedule__card">
     <header className="train-schedule__tabs">
-      <button type="button" className="train-schedule__tab train-schedule__tab--active">
+      {/* <button type="button" className="train-schedule__tab train-schedule__tab--active">
         Train Schedule
-      </button>
+      </button> */}
     </header>
 
     <table className="train-schedule__table">

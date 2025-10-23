@@ -5,7 +5,7 @@ export const listUsers = async () => {
   const connection = await pool.getConnection();
   try {
     const [rows] = await connection.query(
-      `SELECT user_id, store_id, name, designation, is_employed FROM users`
+      `SELECT user_id, store_id, name, designation, is_employed FROM users WHERE designation <> 'Admin'`
     );
     return rows;
   } finally {
@@ -91,5 +91,4 @@ export const toggleEmployment = async (userId, isEmployed) => {
     connection.release();
   }
 };
-
 
