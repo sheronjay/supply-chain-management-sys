@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import api from "../../../services/api";
 import "./AddOrderModal.css";
 
-const AddOrderModal = ({ isOpen, onClose, onCreate, customerName }) => {
+const AddOrderModal = ({ isOpen, onClose, onCreate, customerName, subCities = [] }) => {
   const [formData, setFormData] = useState({
     route: "",
     items: [{ name: "", qty: 1, price: 0 }],
@@ -33,7 +33,13 @@ const AddOrderModal = ({ isOpen, onClose, onCreate, customerName }) => {
 
   const handleItemChange = (index, field, value) => {
     const updatedItems = [...formData.items];
-    updatedItems[index][field] = value;
+    
+    // Convert quantity to integer if it's the qty field
+    if (field === 'qty') {
+      updatedItems[index][field] = parseInt(value, 10) || 0;
+    } else {
+      updatedItems[index][field] = value;
+    }
 
     // If product name changes, update the price from products list
     if (field === 'name' && products.length > 0) {
@@ -88,9 +94,15 @@ const AddOrderModal = ({ isOpen, onClose, onCreate, customerName }) => {
     
     try {
       const totalAmount = calculateTotal();
+      // Ensure quantities are properly converted to integers
+      const processedItems = validItems.map(item => ({
+        ...item,
+        qty: parseInt(item.qty, 10) || 0
+      }));
+      
       await onCreate({
         route: formData.route,
-        items: validItems,
+        items: processedItems,
         totalAmount,
       });
 
@@ -135,39 +147,11 @@ const AddOrderModal = ({ isOpen, onClose, onCreate, customerName }) => {
               required
             >
               <option value="">Select a sub-city</option>
-              <optgroup label="Colombo">
-                <option value="Pettah">Pettah</option>
-                <option value="Thimbirigasyaya">Thimbirigasyaya</option>
-                <option value="Dehiwala">Dehiwala</option>
-              </optgroup>
-              <optgroup label="Kandy">
-                <option value="Peradeniya">Peradeniya</option>
-                <option value="Katugastota">Katugastota</option>
-                <option value="Gampola">Gampola</option>
-              </optgroup>
-              <optgroup label="Negombo">
-                <option value="Kochchikade">Kochchikade</option>
-                <option value="Katana">Katana</option>
-                <option value="Wattala">Wattala</option>
-              </optgroup>
-              <optgroup label="Galle">
-                <option value="Unawatuna">Unawatuna</option>
-                <option value="Hikkaduwa">Hikkaduwa</option>
-                <option value="Ambalangoda">Ambalangoda</option>
-              </optgroup>
-              <optgroup label="Matara">
-                <option value="Weligama">Weligama</option>
-                <option value="Hakmana">Hakmana</option>
-                <option value="Dikwella">Dikwella</option>
-              </optgroup>
-              <optgroup label="Jaffna">
-                <option value="Nallur">Nallur</option>
-                <option value="Chavakachcheri">Chavakachcheri</option>
-              </optgroup>
-              <optgroup label="Trincomalee">
-                <option value="Uppuveli">Uppuveli</option>
-                <option value="Kinniya">Kinniya</option>
-              </optgroup>
+              {subCities.map((subCity) => (
+                <option key={subCity.sub_city_id} value={subCity.sub_city_name}>
+                  {subCity.sub_city_name}
+                </option>
+              ))}
             </select>
           </div>
 

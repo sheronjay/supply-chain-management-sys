@@ -129,10 +129,11 @@ const getCompletedDeliveries = async (req, res) => {
 
 const getOrderHistory = async (req, res) => {
   try{
-    //FOR testing use a fixed date  
-    const endDate = new Date('2025-10-27');
-    const startDate = new Date(endDate);
-    startDate.setDate(endDate.getDate() - 6);
+  // Use current date as end date and 6 days before as start date
+  const endDate = new Date();
+  endDate.setHours(0, 0, 0, 0); // Normalize to midnight for consistency
+  const startDate = new Date(endDate);
+  startDate.setDate(endDate.getDate() - 6);
 
     const [rows] = await pool.query(
       `SELECT

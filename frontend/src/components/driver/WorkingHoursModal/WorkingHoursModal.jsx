@@ -3,13 +3,13 @@ import PropTypes from 'prop-types'
 import './WorkingHoursModal.css'
 
 const WorkingHoursModal = ({ isOpen, onClose, currentHours, onUpdate }) => {
-  const [hours, setHours] = useState('')
+  const [hoursToAdd, setHoursToAdd] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
     if (isOpen) {
-      setHours(currentHours?.toString() || '0')
+      setHoursToAdd('')
       setError('')
     }
   }, [isOpen, currentHours])
@@ -18,23 +18,29 @@ const WorkingHoursModal = ({ isOpen, onClose, currentHours, onUpdate }) => {
     e.preventDefault()
     setError('')
 
-    const hoursNum = parseFloat(hours)
-    if (isNaN(hoursNum) || hoursNum < 0) {
-      setError('Please enter a valid positive number')
+    const hoursNum = parseFloat(hoursToAdd)
+    if (isNaN(hoursNum) || hoursNum <= 0) {
+      setError('Please enter a valid positive number of hours to add')
       return
     }
 
-    if (hoursNum > 168) {
-      setError('Working hours cannot exceed 168 hours per week')
+    if (hoursNum > 40) {
+      setError('Cannot add more than 40 hours at once')
+      return
+    }
+
+    const newTotal = (currentHours || 0) + hoursNum
+    if (newTotal > 40) {
+      setError(`Cannot add ${hoursNum} hours. This would exceed the weekly limit of 40 hours. Current: ${currentHours || 0}, would become: ${newTotal}`)
       return
     }
 
     setIsSubmitting(true)
     try {
-      await onUpdate(hoursNum)
+      await onUpdate(newTotal)
       onClose()
     } catch (err) {
-      setError(err.message || 'Failed to update working hours')
+      setError(err.message || 'Failed to add working hours')
     } finally {
       setIsSubmitting(false)
     }
@@ -46,7 +52,7 @@ const WorkingHoursModal = ({ isOpen, onClose, currentHours, onUpdate }) => {
     <div className="working-hours-modal-overlay" onClick={onClose}>
       <div className="working-hours-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Update Working Hours</h2>
+          <h2>Add Working Hours</h2>
           <button className="close-button" onClick={onClose} aria-label="Close modal">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 6L6 18M6 6l12 12" />
@@ -57,24 +63,24 @@ const WorkingHoursModal = ({ isOpen, onClose, currentHours, onUpdate }) => {
         <form onSubmit={handleSubmit}>
           <div className="modal-body">
             <div className="form-group">
-              <label htmlFor="working-hours">
-                Total Working Hours
-                <span className="label-hint">(Current: {currentHours} hours)</span>
+              <label htmlFor="hours-to-add">
+                Hours to Add
+                <span className="label-hint">(Current: {currentHours || 0} hours)</span>
               </label>
               <input
-                id="working-hours"
+                id="hours-to-add"
                 type="number"
                 step="0.5"
-                min="0"
-                max="168"
-                value={hours}
-                onChange={(e) => setHours(e.target.value)}
-                placeholder="Enter total hours worked"
+                min="0.5"
+                max="40"
+                value={hoursToAdd}
+                onChange={(e) => setHoursToAdd(e.target.value)}
+                placeholder="Enter hours to add"
                 className="hours-input"
                 autoFocus
               />
               <div className="input-hint">
-                Enter the total number of hours you have worked this week
+                Enter the number of hours you want to add to your weekly total
               </div>
             </div>
 
@@ -90,13 +96,19 @@ const WorkingHoursModal = ({ isOpen, onClose, currentHours, onUpdate }) => {
 
             <div className="hours-info">
               <div className="info-item">
-                <span className="info-label">Weekly Limit:</span>
-                <span className="info-value">40 hours</span>
+                <span className="info-label">Current Hours:</span>
+                <span className="info-value">{currentHours || 0} / 40 hours</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">After Adding:</span>
+                <span className={`info-value ${(currentHours || 0) + parseFloat(hoursToAdd || 0) >= 40 ? 'warning' : 'normal'}`}>
+                  {(currentHours || 0) + parseFloat(hoursToAdd || 0)} / 40 hours
+                </span>
               </div>
               <div className="info-item">
                 <span className="info-label">Status:</span>
-                <span className={`info-value ${parseFloat(hours) >= 40 ? 'warning' : 'normal'}`}>
-                  {parseFloat(hours) >= 40 ? 'Limit Reached' : 'Within Limit'}
+                <span className={`info-value ${(currentHours || 0) >= 40 ? 'warning' : 'normal'}`}>
+                  {(currentHours || 0) >= 40 ? 'Limit Reached' : 'Can Add More'}
                 </span>
               </div>
             </div>
@@ -114,24 +126,24 @@ const WorkingHoursModal = ({ isOpen, onClose, currentHours, onUpdate }) => {
             <button
               type="submit"
               className="btn-submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !hoursToAdd || parseFloat(hoursToAdd) <= 0}
             >
               {isSubmitting ? (
                 <>
                   <span className="button-spinner"></span>
-                  Updating...
+                  Adding...
                 </>
               ) : (
                 <>
                   <svg viewBox="0 0 24 24" className="submit-icon">
-                    <polyline
-                      points="20 6 9 17 4 12"
+                    <path
+                      d="M12 5v14M5 12h14"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
                     />
                   </svg>
-                  Update Hours
+                  Add Hours
                 </>
               )}
             </button>

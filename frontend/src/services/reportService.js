@@ -52,6 +52,125 @@ const reportService = {
       throw new Error(message);
     }
   },
+
+  /**
+   * Get quarterly sales report by value
+   */
+  getQuarterlySalesValue: async (year) => {
+    try {
+      const params = {};
+      if (year) params.year = year;
+
+      const user = getCurrentUser();
+      if (user && user.store_id) params.storeId = user.store_id;
+
+      const response = await api.get('/reports/quarterly-sales-value', { params });
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.error || error.message || 'Failed to fetch quarterly sales value report';
+      throw new Error(message);
+    }
+  },
+
+  /**
+   * Get quarterly sales report by volume
+   */
+  getQuarterlySalesVolume: async (year) => {
+    try {
+      const params = {};
+      if (year) params.year = year;
+
+      const user = getCurrentUser();
+      if (user && user.store_id) params.storeId = user.store_id;
+
+      const response = await api.get('/reports/quarterly-sales-volume', { params });
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.error || error.message || 'Failed to fetch quarterly sales volume report';
+      throw new Error(message);
+    }
+  },
+
+  /**
+   * Get most ordered items in a quarter
+   */
+  getMostOrderedItems: async (year, quarter) => {
+    try {
+      const params = {};
+      if (year) params.year = year;
+      if (quarter) params.quarter = quarter;
+
+      const user = getCurrentUser();
+      if (user && user.store_id) params.storeId = user.store_id;
+
+      const response = await api.get('/reports/most-ordered-items', { params });
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.error || error.message || 'Failed to fetch most ordered items report';
+      throw new Error(message);
+    }
+  },
+
+  /**
+   * Get driver and assistant working hours report
+   */
+  getWorkingHoursReport: async (startDate, endDate) => {
+    try {
+      const params = {};
+      if (startDate) params.startDate = startDate;
+      if (endDate) params.endDate = endDate;
+
+      const user = getCurrentUser();
+      if (user && user.store_id) params.storeId = user.store_id;
+
+      const response = await api.get('/reports/working-hours', { params });
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.error || error.message || 'Failed to fetch working hours report';
+      throw new Error(message);
+    }
+  },
+
+  /**
+   * Get truck usage analysis report
+   */
+  getTruckUsageReport: async (year, month) => {
+    try {
+      const params = {};
+      if (year) params.year = year;
+      if (month) params.month = month;
+
+      const user = getCurrentUser();
+      if (user && user.store_id) params.storeId = user.store_id;
+
+      const response = await api.get('/reports/truck-usage', { params });
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.error || error.message || 'Failed to fetch truck usage report';
+      throw new Error(message);
+    }
+  },
+
+  /**
+   * Get customer order history report
+   */
+  getCustomerOrderHistory: async (customerId, startDate, endDate) => {
+    try {
+      const params = {};
+      if (customerId) params.customerId = customerId;
+      if (startDate) params.startDate = startDate;
+      if (endDate) params.endDate = endDate;
+
+      const user = getCurrentUser();
+      if (user && user.store_id) params.storeId = user.store_id;
+
+      const response = await api.get('/reports/customer-order-history', { params });
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.error || error.message || 'Failed to fetch customer order history report';
+      throw new Error(message);
+    }
+  },
 };
 
 export default reportService;

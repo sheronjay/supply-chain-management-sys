@@ -200,12 +200,27 @@ CREATE TABLE IF NOT EXISTS store_managers (
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS delivery_employees (
-  user_id         VARCHAR(255) PRIMARY KEY,       -- ERD “Delivery employee (PK User_ID)”
+  user_id         VARCHAR(255) PRIMARY KEY,       -- ERD "Delivery employee (PK User_ID)"
   working_hours   VARCHAR(255),
   availability    TINYINT(1) NOT NULL DEFAULT 1,
   CONSTRAINT fk_delivery_employees_user
     FOREIGN KEY (user_id) REFERENCES users(user_id)
     ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Table to track weekly working hours for drivers
+CREATE TABLE IF NOT EXISTS driver_working_hours (
+  id              INT AUTO_INCREMENT PRIMARY KEY,
+  driver_id       VARCHAR(255) NOT NULL,
+  week_start_date DATE NOT NULL,                  -- Monday of the week
+  hours_worked    DECIMAL(5,2) NOT NULL DEFAULT 0,
+  added_date      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  added_by        VARCHAR(255) DEFAULT 'DRIVER',  -- 'DRIVER' or 'ADMIN'
+  notes           TEXT,
+  CONSTRAINT fk_dwh_driver
+    FOREIGN KEY (driver_id) REFERENCES delivery_employees(user_id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  UNIQUE KEY unique_driver_week (driver_id, week_start_date)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS admins (
@@ -216,6 +231,66 @@ CREATE TABLE IF NOT EXISTS admins (
   CONSTRAINT uq_admins_username UNIQUE (username),
   CONSTRAINT uq_admins_email UNIQUE (email)
 ) ENGINE=InnoDB;
+
+-- =========================
+-- Alerts System
+-- =========================
+CREATE TABLE IF NOT EXISTS store_manager_alerts (
+  alert_id        INT AUTO_INCREMENT PRIMARY KEY,
+  store_id        VARCHAR(255) NOT NULL,
+  order_id        VARCHAR(255),
+  alert_type      VARCHAR(50) NOT NULL,           -- 'ORDER_DELIVERED', 'LOW_STOCK', etc.
+  title           VARCHAR(255) NOT NULL,
+  message         TEXT NOT NULL,
+  status          VARCHAR(20) DEFAULT 'unread',    -- 'unread' or 'read'
+  created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_alerts_store
+    FOREIGN KEY (store_id) REFERENCES stores(store_id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_alerts_order
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  KEY idx_alerts_store (store_id),
+  KEY idx_alerts_status (status),
+  KEY idx_alerts_created (created_at)
+) ENGINE=InnoDB;
+
+-- =========================
+-- Triggers
+-- =========================
+DELIMITER $$
+
+CREATE TRIGGER after_order_delivered
+AFTER UPDATE ON orders
+FOR EACH ROW
+BEGIN
+  -- Only trigger when status changes TO 'DELIVERED'
+  -- AND the order has a valid store_id
+  -- AND the store is NOT the main store (store_id should not be NULL and should exist in stores table)
+  IF NEW.status = 'DELIVERED' AND OLD.status != 'DELIVERED' AND NEW.store_id IS NOT NULL THEN
+    -- Create an alert for the store manager (excluding main store manager)
+    -- Main store manager has user_id 'USR-MGR-MAIN' and store_id = NULL
+    -- Store managers have store_id set to their respective stores
+    INSERT INTO store_manager_alerts (
+      store_id,
+      order_id,
+      alert_type,
+      title,
+      message,
+      status
+    )
+    VALUES (
+      NEW.store_id,
+      NEW.order_id,
+      'ORDER_DELIVERED',
+      'Order Delivered Successfully',
+      CONCAT('Order ', NEW.order_id, ' has been successfully delivered to the customer.'),
+      'unread'
+    );
+  END IF;
+END$$
+
+DELIMITER ;
 
 -- =========================
 -- Core reference data
@@ -312,16 +387,16 @@ INSERT INTO train_schedules (trip_id, day_date, start_time, arrival_time, train_
 -- Products
 -- =========================
 INSERT INTO products (product_id, product_name, unit_price, space_consumption_rate, stock_quantity, order_per_quarter) VALUES
-('PRD-DET-1KG','Detergent 1kg', 850.00,0.50, 1200, 900),
-('PRD-SHP-500','Shampoo 500ml', 950.00,0.30, 1500, 1100),
-('PRD-SOAP-100','Bath Soap 100g', 180.00,0.10, 5000, 4200),
-('PRD-TP-120','Toothpaste 120g', 320.00,0.12, 3000, 2100),
-('PRD-TEA-200','Ceylon Tea 200g', 700.00,0.25, 2200, 1600),
-('PRD-MLK-1L','UHT Milk 1L', 380.00,0.40, 2400, 1800),
-('PRD-BIS-200','Biscuits 200g', 250.00,0.15, 4000, 3000),
-('PRD-CLR-1L','Floor Cleaner 1L', 620.00,0.35, 1300, 900),
-('PRD-OFK-5L','Cooking Oil 5L', 2200.00,0.80, 800, 500),
-('PRD-RIC-10','Rice 10kg', 1500.00,1.20, 900, 600);
+('PRD-DET-1KG','Detergent 1kg', 850.00,0.50, 1200, 0),
+('PRD-SHP-500','Shampoo 500ml', 950.00,0.30, 1500, 0),
+('PRD-SOAP-100','Bath Soap 100g', 180.00,0.10, 5000, 0),
+('PRD-TP-120','Toothpaste 120g', 320.00,0.12, 3000, 0),
+('PRD-TEA-200','Ceylon Tea 200g', 700.00,0.25, 2200, 0),
+('PRD-MLK-1L','UHT Milk 1L', 380.00,0.40, 2400, 0),
+('PRD-BIS-200','Biscuits 200g', 250.00,0.15, 4000, 0),
+('PRD-CLR-1L','Floor Cleaner 1L', 620.00,0.35, 1300, 0),
+('PRD-OFK-5L','Cooking Oil 5L', 2200.00,0.80, 800, 0),
+('PRD-RIC-10','Rice 10kg', 1500.00,1.20, 900, 0);
 
 -- =========================
 -- Customers
@@ -598,8 +673,107 @@ INSERT INTO delivery_employees (user_id, working_hours, availability) VALUES
 ('USR-ASS-TRI-01',20.25,1),
 ('USR-ASS-TRI-02',18.50,1);
 
+-- Sample working hours data for current week (assuming current week starts 2025-10-20)
+INSERT INTO driver_working_hours (driver_id, week_start_date, hours_worked, added_by, notes) VALUES
+('USR-DRV-CMB-01', '2025-10-20', 25.50, 'DRIVER', 'Initial hours for current week'),
+('USR-DRV-CMB-02', '2025-10-20', 18.75, 'DRIVER', 'Initial hours for current week'),
+('USR-DRV-CMB-03', '2025-10-20', 32.25, 'DRIVER', 'Initial hours for current week');
+
 INSERT INTO admins (admin_id, username, email, password) VALUES
 ('ADM-ROOT','root','root@kandypack.lk','$2y$dummyhash');
 
+-- =========================
+-- Business Logic Functions
+-- =========================
+DELIMITER $$
+
+-- Function to validate order status transitions
+CREATE FUNCTION can_transition_order_status(
+    p_order_id VARCHAR(255),
+    p_new_status VARCHAR(50)
+) RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    DECLARE v_current_status VARCHAR(50);
+    DECLARE v_has_truck BOOLEAN;
+    DECLARE v_has_train BOOLEAN;
+    
+    -- Get current order state
+    SELECT 
+        o.status,
+        (o.truck_id IS NOT NULL),
+        (tso.trip_id IS NOT NULL)
+    INTO v_current_status, v_has_truck, v_has_train
+    FROM orders o
+    LEFT JOIN train_schedule_orders tso ON o.order_id = tso.order_id
+    WHERE o.order_id = p_order_id;
+    
+    -- If order not found, return FALSE
+    IF v_current_status IS NULL THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Business rules for valid transitions
+    -- PENDING -> TRAIN: Must be assigned to a train
+    IF v_current_status = 'PENDING' AND p_new_status = 'TRAIN' AND v_has_train THEN
+        RETURN TRUE;
+    -- TRAIN -> IN-STORE: Store manager accepts arrival
+    ELSEIF v_current_status = 'TRAIN' AND p_new_status = 'IN-STORE' THEN
+        RETURN TRUE;
+    -- IN-STORE -> TRUCK: Must have truck assigned
+    ELSEIF v_current_status = 'IN-STORE' AND p_new_status = 'TRUCK' AND v_has_truck THEN
+        RETURN TRUE;
+    -- TRUCK -> DELIVERED: Driver confirms delivery
+    ELSEIF v_current_status = 'TRUCK' AND p_new_status = 'DELIVERED' THEN
+        RETURN TRUE;
+    END IF;
+    
+    -- All other transitions are invalid
+    RETURN FALSE;
+END$$
+
+-- Stored procedure to safely update order status with validation
+CREATE PROCEDURE update_order_status_safe(
+    IN p_order_id VARCHAR(255),
+    IN p_new_status VARCHAR(50),
+    IN p_changed_by VARCHAR(255)
+)
+BEGIN
+    DECLARE v_can_transition BOOLEAN;
+    DECLARE v_current_status VARCHAR(50);
+    DECLARE v_error_message VARCHAR(255);
+    
+    -- Check if transition is valid
+    SET v_can_transition = can_transition_order_status(p_order_id, p_new_status);
+    
+    IF NOT v_can_transition THEN
+        -- Get current status for better error message
+        SELECT status INTO v_current_status FROM orders WHERE order_id = p_order_id;
+        
+        IF v_current_status IS NULL THEN
+            SET v_error_message = 'Order not found';
+        ELSEIF v_current_status = 'IN-STORE' AND p_new_status = 'TRUCK' THEN
+            SET v_error_message = 'Cannot dispatch order: No truck assigned';
+        ELSEIF v_current_status = 'PENDING' AND p_new_status = 'TRAIN' THEN
+            SET v_error_message = 'Cannot move to train: Order not assigned to train schedule';
+        ELSE
+            SET v_error_message = CONCAT('Invalid status transition from ', v_current_status, ' to ', p_new_status);
+        END IF;
+        
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = v_error_message;
+    END IF;
+    
+    -- Update the order status
+    UPDATE orders 
+    SET status = p_new_status 
+    WHERE order_id = p_order_id;
+    
+    -- Optional: Insert into audit log table if it exists
+    -- INSERT INTO order_status_history (order_id, old_status, new_status, changed_by, changed_at)
+    -- VALUES (p_order_id, v_current_status, p_new_status, p_changed_by, NOW());
+END$$
+
+DELIMITER ;
 
 SET FOREIGN_KEY_CHECKS = 1;

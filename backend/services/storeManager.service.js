@@ -84,6 +84,7 @@ export async function getStoreInventory(storeId) {
 
 /**
  * Accept an order - update status from 'TRAIN' to 'IN-STORE'
+ * Uses database stored procedure for safe status transition validation
  */
 export async function acceptOrder(orderId, managerId) {
     const connection = await pool.getConnection();
@@ -91,7 +92,7 @@ export async function acceptOrder(orderId, managerId) {
     try {
         await connection.beginTransaction();
         
-        // First, check if order exists and has status 'TRAIN'
+        // First, check if order exists
         const [orders] = await connection.query(
             'SELECT order_id, status, store_id FROM orders WHERE order_id = ?',
             [orderId]
@@ -101,15 +102,20 @@ export async function acceptOrder(orderId, managerId) {
             throw new Error('Order not found');
         }
         
-        if (orders[0].status !== 'TRAIN') {
-            throw new Error(`Order cannot be accepted. Current status: ${orders[0].status}`);
+        // Use stored procedure for safe status transition
+        // This validates business rules (e.g., order must be in 'TRAIN' status)
+        try {
+            await connection.query(
+                'CALL update_order_status_safe(?, ?, ?)',
+                [orderId, 'IN-STORE', managerId]
+            );
+        } catch (dbError) {
+            // Handle validation errors from stored procedure
+            if (dbError.sqlState === '45000') {
+                throw new Error(dbError.sqlMessage || 'Invalid order status transition');
+            }
+            throw dbError;
         }
-        
-        // Update order status to 'IN-STORE'
-        await connection.query(
-            'UPDATE orders SET status = ? WHERE order_id = ?',
-            ['IN-STORE', orderId]
-        );
         
         await connection.commit();
         
@@ -220,8 +226,9 @@ export async function getAssistants(storeId) {
 /**
  * Assign an order to a truck with driver and assistant
  * Updates the order with truck assignment and changes status to 'TRUCK'
+ * Uses database stored procedure for safe status transition validation
  */
-export async function assignOrderToTruck(orderId, truckId, driverId, assistantId) {
+export async function assignOrderToTruck(orderId, truckId, driverId, assistantId, managerId = 'SYSTEM') {
     const connection = await pool.getConnection();
     
     try {
@@ -269,13 +276,28 @@ export async function assignOrderToTruck(orderId, truckId, driverId, assistantId
             throw new Error('Assistant has already worked 40 or more hours');
         }
         
-        // Update order with truck, driver, assistant and change status to 'TRUCK'
+        // First, update order with truck, driver, and assistant assignments
         await connection.query(
             `UPDATE orders 
-             SET truck_id = ?, driver_id = ?, assistant_id = ?, status = 'TRUCK' 
+             SET truck_id = ?, driver_id = ?, assistant_id = ? 
              WHERE order_id = ?`,
             [truckId, driverId, assistantId, orderId]
         );
+        
+        // Then use stored procedure for safe status transition to 'TRUCK'
+        // This validates that truck is assigned before changing status
+        try {
+            await connection.query(
+                'CALL update_order_status_safe(?, ?, ?)',
+                [orderId, 'TRUCK', managerId]
+            );
+        } catch (dbError) {
+            // Handle validation errors from stored procedure
+            if (dbError.sqlState === '45000') {
+                throw new Error(dbError.sqlMessage || 'Invalid order status transition');
+            }
+            throw dbError;
+        }
         
         await connection.commit();
         
@@ -295,4 +317,3 @@ export async function assignOrderToTruck(orderId, truckId, driverId, assistantId
         connection.release();
     }
 }
-

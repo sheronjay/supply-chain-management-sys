@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import Orders from './pages/Orders/Orders';
 import UserOrders from './pages/userOrders/UserOrders';
 import MainStores from './pages/MainStores/MainStores';
+import ProductManagement from './pages/ProductManagement/ProductManagement';
 import StoreManager from './pages/StoreManager/StoreManager';
 import Drivers from './pages/Drivers/Drivers';
 import TrainSchedule from './pages/TrainSchedule/TrainSchedule';
@@ -72,6 +73,17 @@ function App() {
               <ProtectedRoute allowedUserTypes={['employee']}>
                 <DashboardLayout pageName="MainStores">
                   <MainStores />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/product-management"
+            element={
+              <ProtectedRoute allowedUserTypes={['employee']}>
+                <DashboardLayout pageName="ProductManagement">
+                  <ProductManagement />
                 </DashboardLayout>
               </ProtectedRoute>
             }

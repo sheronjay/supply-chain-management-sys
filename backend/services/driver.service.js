@@ -83,6 +83,7 @@ export async function getDriverDetails(driverId) {
 
 /**
  * Mark an order as delivered
+ * Uses database stored procedure for safe status transition validation
  */
 export async function markOrderAsDelivered(orderId, driverId) {
     const connection = await pool.getConnection();
@@ -90,7 +91,7 @@ export async function markOrderAsDelivered(orderId, driverId) {
     try {
         await connection.beginTransaction();
         
-        // Verify the order belongs to this driver and has status 'TRUCK'
+        // Verify the order belongs to this driver
         const [orders] = await connection.query(
             'SELECT order_id, status, driver_id FROM orders WHERE order_id = ?',
             [orderId]
@@ -104,15 +105,20 @@ export async function markOrderAsDelivered(orderId, driverId) {
             throw new Error('This order is not assigned to you');
         }
         
-        if (orders[0].status !== 'TRUCK') {
-            throw new Error(`Order cannot be marked as delivered. Current status: ${orders[0].status}`);
+        // Use stored procedure for safe status transition
+        // This validates that the order is in 'TRUCK' status
+        try {
+            await connection.query(
+                'CALL update_order_status_safe(?, ?, ?)',
+                [orderId, 'DELIVERED', driverId]
+            );
+        } catch (dbError) {
+            // Handle validation errors from stored procedure
+            if (dbError.sqlState === '45000') {
+                throw new Error(dbError.sqlMessage || 'Invalid order status transition');
+            }
+            throw dbError;
         }
-        
-        // Update order status to 'DELIVERED'
-        await connection.query(
-            'UPDATE orders SET status = ? WHERE order_id = ?',
-            ['DELIVERED', orderId]
-        );
         
         await connection.commit();
         
@@ -131,7 +137,17 @@ export async function markOrderAsDelivered(orderId, driverId) {
 }
 
 /**
- * Update driver's working hours
+ * Get current week's start date (Monday)
+ */
+function getWeekStartDate(date = new Date()) {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+    return new Date(d.setDate(diff));
+}
+
+/**
+ * Update driver's working hours with weekly limit and no-deduction enforcement
  */
 export async function updateWorkingHours(driverId, workingHours) {
     const connection = await pool.getConnection();
@@ -139,9 +155,9 @@ export async function updateWorkingHours(driverId, workingHours) {
     try {
         await connection.beginTransaction();
         
-        // Verify the driver exists
+        // Verify the driver exists and get current hours
         const [drivers] = await connection.query(
-            'SELECT user_id FROM delivery_employees WHERE user_id = ?',
+            'SELECT user_id, working_hours FROM delivery_employees WHERE user_id = ?',
             [driverId]
         );
         
@@ -155,6 +171,21 @@ export async function updateWorkingHours(driverId, workingHours) {
             throw new Error('Invalid working hours. Must be a positive number');
         }
         
+        const WEEKLY_LIMIT = 40;
+        const currentHours = parseFloat(drivers[0].working_hours || 0);
+        
+        // Prevent deduction - only allow setting higher values
+        if (hours < currentHours) {
+            throw new Error(`Cannot reduce working hours. Current hours: ${currentHours}. You can only add more hours, not reduce them.`);
+        }
+        
+        // Check weekly limit
+        if (hours > WEEKLY_LIMIT) {
+            throw new Error(`Working hours cannot exceed the weekly limit of ${WEEKLY_LIMIT} hours`);
+        }
+        
+        const hoursToAdd = hours - currentHours;
+        
         // Update working hours
         await connection.query(
             'UPDATE delivery_employees SET working_hours = ? WHERE user_id = ?',
@@ -165,9 +196,13 @@ export async function updateWorkingHours(driverId, workingHours) {
         
         return {
             success: true,
-            message: 'Working hours updated successfully',
+            message: hoursToAdd > 0 ? 
+                `Added ${hoursToAdd} hours successfully. Total hours this week: ${hours}/${WEEKLY_LIMIT}` :
+                `Working hours remain at ${hours}/${WEEKLY_LIMIT}`,
             driverId,
-            workingHours: hours
+            hoursAdded: hoursToAdd,
+            totalHours: hours,
+            weeklyLimit: WEEKLY_LIMIT
         };
     } catch (err) {
         await connection.rollback();
