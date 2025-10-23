@@ -35,6 +35,12 @@ export function AuthProvider({ children }) {
   };
 
   const customerSignup = async (customerData) => {
+    if(customerData.phone_number.length !== 10){
+      throw new Error('Phone number must be 10 digits long');
+    }
+    if(customerData.password.length < 6){
+      throw new Error('Password must be at least 6 characters long');
+    }
     const data = await authService.customerSignup(customerData);
     localStorage.setItem('token', data.token);
     setUser(data.user);
