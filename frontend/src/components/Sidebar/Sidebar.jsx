@@ -35,7 +35,7 @@ const driverNavItems = [
 ]
 
 const bottomItems = [
-  { key: 'Settings', label: 'Settings', icon: 'settings' },
+  // { key: 'Settings', label: 'Settings', icon: 'settings' },
   { key: 'SignOut', label: 'Sign Out', icon: 'signout' },
 ]
 
@@ -136,13 +136,13 @@ const Icon = ({ type }) => {
           <path d="M15 18.5a4.5 4.5 0 0 1 4-2.5h.5" />
         </svg>
       )
-    case 'settings':
-      return (
-        <svg viewBox="0 0 24 24" className="sidebar__icon" aria-hidden>
-          <path d="m12 15 0 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-          <path d="m19.4 13.5-.7 1.2.3 1.4-1.2.7-1.4-.3-1.2.7-.7 1.2-1.4-.3-.7-1.2h-1.4l-.7 1.2-1.4.3-.7-1.2-1.2-.7-1.4.3-1.2-.7.3-1.4-.7-1.2L3 12l.7-1.2-.3-1.4 1.2-.7 1.4.3 1.2-.7.7-1.2 1.4.3.7 1.2h1.4l.7-1.2 1.4-.3.7 1.2 1.2.7 1.4-.3 1.2.7-.3 1.4.7 1.2Z" />
-        </svg>
-      )
+    // case 'settings':
+    //   return (
+    //     <svg viewBox="0 0 24 24" className="sidebar__icon" aria-hidden>
+    //       <path d="m12 15 0 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+    //       <path d="m19.4 13.5-.7 1.2.3 1.4-1.2.7-1.4-.3-1.2.7-.7 1.2-1.4-.3-.7-1.2h-1.4l-.7 1.2-1.4.3-.7-1.2-1.2-.7-1.4.3-1.2-.7.3-1.4-.7-1.2L3 12l.7-1.2-.3-1.4 1.2-.7 1.4.3 1.2-.7.7-1.2 1.4.3.7 1.2h1.4l.7-1.2 1.4-.3.7 1.2 1.2.7 1.4-.3 1.2.7-.3 1.4.7 1.2Z" />
+    //     </svg>
+    //   )
     case 'signout':
       return (
         <svg viewBox="0 0 24 24" className="sidebar__icon" aria-hidden>

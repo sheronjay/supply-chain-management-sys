@@ -54,8 +54,8 @@ router.put(
     body('workingHours')
       .isNumeric()
       .withMessage('Working hours must be a number')
-      .isFloat({ min: 0, max: 24 })
-      .withMessage('Working hours must be between 0 and 24'),
+      .isFloat({ min: 0, max: 40 })
+      .withMessage('Working hours must be between 0 and 40'),
   ],
   validateRequest,
   driverController.updateWorkingHours
