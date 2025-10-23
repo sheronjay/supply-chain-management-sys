@@ -1,6 +1,6 @@
 import './ScheduleTable.css'
 
-const ScheduleTable = ({ trips, statusTone }) => (
+const ScheduleTable = ({ trips, statusTone, loading }) => (
   <section className="train-schedule__card">
     <header className="train-schedule__tabs">
       <button type="button" className="train-schedule__tab train-schedule__tab--active">
@@ -23,7 +23,13 @@ const ScheduleTable = ({ trips, statusTone }) => (
         </tr>
       </thead>
       <tbody>
-        {trips.length === 0 ? (
+        {loading ? (
+          <tr>
+            <td colSpan="9" style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
+              Loading schedules...
+            </td>
+          </tr>
+        ) : trips.length === 0 ? (
           <tr>
             <td colSpan="9" style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
               No train schedules available

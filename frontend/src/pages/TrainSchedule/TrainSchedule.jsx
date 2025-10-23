@@ -3,12 +3,14 @@ import { fetchTrainSchedules } from '../../services/mainStoresService'
 import ScheduleHeader from '../../components/trainSchedule/ScheduleHeader/ScheduleHeader'
 import ScheduleAlerts from '../../components/trainSchedule/ScheduleAlerts/ScheduleAlerts'
 import ScheduleTable from '../../components/trainSchedule/ScheduleTable/ScheduleTable'
+import AddScheduleModal from '../../components/trainSchedule/AddScheduleModal/AddScheduleModal'
 import './TrainSchedule.css'
 
 const TrainSchedule = () => {
   const [trips, setTrips] = useState([])
   const [loading, setLoading] = useState(true)
   const [alerts, setAlerts] = useState([])
+  const [showAddModal, setShowAddModal] = useState(false)
 
   useEffect(() => {
     loadTrainSchedules()
@@ -102,6 +104,20 @@ const TrainSchedule = () => {
     'At Capacity': 'neutral',
   }
 
+  const handleAddSchedule = () => {
+    setShowAddModal(true)
+  }
+
+  const handleCloseModal = () => {
+    setShowAddModal(false)
+  }
+
+  const handleScheduleAdded = (newSchedule) => {
+    // Refresh the schedule list after adding a new schedule
+    loadTrainSchedules()
+    setShowAddModal(false)
+  }
+
   if (loading) {
     return (
       <div className="train-schedule">
@@ -112,9 +128,15 @@ const TrainSchedule = () => {
 
   return (
     <div className="train-schedule">
-      <ScheduleHeader onRefresh={loadTrainSchedules} />
+      <ScheduleHeader onRefresh={loadTrainSchedules} onAddSchedule={handleAddSchedule} loading={loading} />
       {alerts.length > 0 && <ScheduleAlerts alerts={alerts} />}
-      <ScheduleTable trips={trips} statusTone={statusTone} />
+      <ScheduleTable trips={trips} statusTone={statusTone} loading={loading} />
+      {showAddModal && (
+        <AddScheduleModal 
+          onClose={handleCloseModal} 
+          onAdd={handleScheduleAdded} 
+        />
+      )}
     </div>
   )
 }

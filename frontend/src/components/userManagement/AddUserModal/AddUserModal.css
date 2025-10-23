@@ -1,0 +1,45 @@
+.umodal__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.umodal__content {
+  background: #fff;
+  width: 90%;
+  max-width: 480px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.15);
+}
+.umodal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.umodal__close {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #6b7280;
+}
+.umodal__form { padding: 16px 20px; }
+.umodal__group { margin-bottom: 14px; }
+.umodal__group label { display:block; margin-bottom:6px; color:#374151; font-size: 14px; }
+.umodal__group input, .umodal__group select {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+.umodal__error { background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; padding:10px; border-radius:6px; }
+.umodal__actions { display:flex; justify-content:flex-end; gap: 10px; margin-top: 12px; }
+.btn-primary { background:#2563eb; color:#fff; border:none; padding:8px 14px; border-radius:6px; }
+.btn-secondary { background:#f3f4f6; color:#374151; border:1px solid #d1d5db; padding:8px 14px; border-radius:6px; }
+
+

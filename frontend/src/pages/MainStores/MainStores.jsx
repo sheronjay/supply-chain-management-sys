@@ -64,20 +64,7 @@ const MainStores = () => {
           </div>
         </div>
 
-        <div className="stat-card">
-          <div className="stat-icon stat-icon-capacity">
-            <svg viewBox="0 0 24 24">
-              <rect x="6" y="5" width="12" height="10" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
-              <path d="M6 13h12M9 5V3h6v2" stroke="currentColor" strokeWidth="2" />
-            </svg>
-          </div>
-          <div className="stat-content">
-            <div className="stat-value">
-              {orders.reduce((sum, order) => sum + parseFloat(order.total_capacity_required || 0), 0).toFixed(2)}
-            </div>
-            <div className="stat-label">Total Capacity Required</div>
-          </div>
-        </div>
+        {/* Removed Total Capacity Required card as requested */}
 
         <div className="stat-card">
           <div className="stat-icon stat-icon-value">

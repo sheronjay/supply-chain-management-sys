@@ -1,6 +1,6 @@
 import './ScheduleHeader.css'
 
-const ScheduleHeader = ({ onRefresh }) => {
+const ScheduleHeader = ({ onRefresh, onAddSchedule, loading }) => {
   const today = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -14,13 +14,21 @@ const ScheduleHeader = ({ onRefresh }) => {
         <p>Today, {today}</p>
       </div>
       <div className="train-schedule__actions">
+        <button 
+          type="button" 
+          className="train-schedule__button train-schedule__button--primary"
+          onClick={onAddSchedule}
+        >
+          Add New Schedule
+        </button>
         {onRefresh && (
           <button 
             type="button" 
             className="train-schedule__button train-schedule__button--secondary"
             onClick={onRefresh}
+            disabled={loading}
           >
-            Refresh Schedule
+            {loading ? 'Refreshing...' : 'Refresh Schedule'}
           </button>
         )}
       </div>
