@@ -112,7 +112,7 @@ export default function CustomerLogin() {
           {error && <div className="error-message">{error}</div>}
 
           <div className="form-group">
-            <label htmlFor="email">Username</label>
+            <label htmlFor="email">Email</label>
             <input
               type="email"
               id="email"

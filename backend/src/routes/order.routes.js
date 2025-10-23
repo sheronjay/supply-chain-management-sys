@@ -34,8 +34,12 @@ router.post(
   authenticateUser,
   [
     body('customerId').isString().notEmpty().withMessage('Customer ID is required'),
-    body('products').isArray({ min: 1 }).withMessage('Products array is required'),
-    body('totalPrice').isFloat({ gt: 0 }).withMessage('Total price must be a positive number'),
+    body('items').isArray({ min: 1 }).withMessage('Items array is required'),
+    body('items.*.name').isString().notEmpty().withMessage('Each item must include a product name'),
+    body('items.*.qty')
+      .custom(value => !Number.isNaN(parseInt(value, 10)) && parseInt(value, 10) > 0)
+      .withMessage('Each item quantity must be a positive number'),
+    body('totalAmount').isFloat({ gt: 0 }).withMessage('Total amount must be a positive number'),
   ],
   validateRequest,
   orderController.createOrder
